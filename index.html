@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>BoodooScan — GNP Colorimetric Biosensor Analyzer</title>
+  <title>BoodooScan Auto — GNP Colorimetric Biosensor Analyzer</title>
   <!-- Tailwind CSS -->
   <script src="https://cdn.tailwindcss.com"></script>
   <!-- Google Fonts: Inter & JetBrains Mono -->
@@ -114,7 +114,7 @@
             </div>
             <div class="p-3 bg-slate-50/60 flex flex-col sm:flex-row sm:items-start gap-1 sm:gap-4">
               <span class="font-mono font-bold text-navy-900 sm:w-28 shrink-0">a* (CIE Redness)</span>
-              <p class="text-slate-600">Green-to-red color axis in CIE L*a*b* space, separated from brightness. Red dispersed GNPs have high positive values (+25 to +55); aggregated purple/gray GNPs are lower (0 to +18). Used for the <strong>QC Gate</strong> (Water Control must be ≤ 22.0).</p>
+              <p class="text-slate-600">Green-to-red color axis in CIE L*a*b* space, separated from brightness. Combined with the blue-yellow axis (b*) and R/B ratio for the <strong>QC Gate</strong>: purple/violet/gray controls pass, while unaggregated red/pink controls (a* &gt; 24, b* &gt; -6, R/B &gt; 1.20) are flagged INVALID.</p>
             </div>
             <div class="p-3 bg-white flex flex-col sm:flex-row sm:items-start gap-1 sm:gap-4">
               <span class="font-mono font-bold text-teal-700 sm:w-28 shrink-0">Δa*</span>
@@ -126,7 +126,7 @@
             </div>
             <div class="p-3 bg-white flex flex-col sm:flex-row sm:items-start gap-1 sm:gap-4">
               <span class="font-mono font-bold text-navy-900 sm:w-28 shrink-0">Legacy R/B</span>
-              <p class="text-slate-600">Simple linear raw Red/Blue ratio normalized to the Water Control, included so users can benchmark the new CIE L*a*b* and Beer–Lambert metrics against the original app formula developed by Thinh Nyugen.</p>
+              <p class="text-slate-600">Simple linear raw Red/Blue ratio normalized to the Water Control, included so you can benchmark the new CIE L*a*b* and Beer–Lambert metrics against the original app formula.</p>
             </div>
             <div class="p-3 bg-slate-50/60 flex flex-col sm:flex-row sm:items-start gap-1 sm:gap-4">
               <span class="font-mono font-bold text-amber-800 sm:w-28 shrink-0">Sig / Max NT</span>
@@ -360,7 +360,7 @@
             </div>
             <div>
               <h2 id="qcTitle" class="text-sm font-bold text-slate-800">Water-Control QC Gate: Waiting for Photo</h2>
-              <p id="qcSubtitle" class="text-xs text-slate-500">Checks that the Water Control (C) aggregated to purple/gray (a* ≤ 22) before trusting sample calls.</p>
+              <p id="qcSubtitle" class="text-xs text-slate-500">Checks that the Water Control (C) aggregated to purple/blue/gray rather than staying red before trusting sample calls.</p>
             </div>
           </div>
           <span id="qcBadge" class="text-xs font-mono font-bold px-2.5 py-1 rounded-full bg-slate-100 text-slate-600 shrink-0">PENDING</span>
@@ -510,7 +510,7 @@
   </main>
 
   <footer class="text-center py-3 text-xs text-slate-400 border-t border-slate-200 bg-white mt-4">
-    BoodooScan • Client-Side 4-Sided Scan-Box &amp; White-Rack Colorimetry • Runs 100% locally in your browser
+    BoodooScan Auto • Client-Side 4-Sided Scan-Box &amp; White-Rack Colorimetry • Runs 100% locally in your browser
   </footer>
 
   <!-- Hidden Offscreen Canvases -->
@@ -1218,34 +1218,34 @@
 
       const ctrlItem = rawItems.find(i => i.roi.role === 'control');
 
-      // Step 2: Water-Control QC Gate
+      // Step 2: Water-Control QC Gate (purple/violet/gray pass; only truly red/pink unaggregated controls fail)
       if (!ctrlItem) {
         state.qcStatus = 'NO_CTRL';
-      } else if (ctrlItem.lab.a > 22.0) {
-        state.qcStatus = 'INVALID';
       } else {
-        state.qcStatus = 'PASS';
+        const ctrlRB = ctrlItem.wb.r / Math.max(1, ctrlItem.wb.b);
+        const isWaterStillRed = (ctrlItem.lab.a > 24.0 && ctrlItem.lab.b > -6.0 && ctrlRB > 1.20);
+        state.qcStatus = isWaterStillRed ? 'INVALID' : 'PASS';
       }
 
       // Step 3: Relative metrics vs Water Control
-      const withRel = rawItems.map(item => {
-        if (item.roi.role === 'white') {
-          return { ...item, deltaA: null, deltaE: null, relAbs: null, legacyRB: null, ratioVsMaxNT: null, call: 'WB REF' };
-        }
-        if (!ctrlItem) {
-          return { ...item, deltaA: null, deltaE: null, relAbs: null, legacyRB: null, ratioVsMaxNT: null, call: item.roi.role === 'nontarget' ? 'NON-TARGET' : 'NO CTRL' };
-        }
-        const deltaA = item.lab.a - ctrlItem.lab.a;
-        const deltaE = calcDeltaE(item.lab, ctrlItem.lab);
-        const relAbs = ctrlItem.absRatio > 0.001 ? item.absRatio / ctrlItem.absRatio : 1.0;
-        const legacyRB = ctrlItem.rbRatio > 0.001 ? item.rbRatio / ctrlItem.rbRatio : 1.0;
-        return { ...item, deltaA, deltaE, relAbs, legacyRB, ratioVsMaxNT: null, call: '' };
-      });
-
-      // Step 4: Non-Target Calibration Baseline
-      const ntItems = withRel.filter(i => i.roi.role === 'nontarget' && i.relAbs !== null);
-      let maxNTDeltaA = null;
-      let maxNTRelAbs = null;
+// ... existing code ... -->
+      if (state.qcStatus === 'PASS') {
+        banner.classList.add('border-emerald-200', 'bg-emerald-50/70');
+        icon.className = 'w-9 h-9 rounded-full bg-emerald-100 text-emerald-700 flex items-center justify-center shrink-0';
+        title.textContent = 'Water-Control QC Gate: PASS';
+        subtitle.textContent = `Water Control aggregated properly (a* = ${ctrlItem.lab.a.toFixed(1)}, b* = ${ctrlItem.lab.b.toFixed(1)}). Sample calls are valid.`;
+        badge.className = 'text-xs font-mono font-bold px-2.5 py-1 rounded-full bg-emerald-600 text-white shrink-0';
+        badge.textContent = 'PASS';
+      } else if (state.qcStatus === 'INVALID') {
+        banner.classList.add('border-rose-300', 'bg-rose-50');
+        icon.className = 'w-9 h-9 rounded-full bg-rose-100 text-rose-700 flex items-center justify-center shrink-0';
+        title.textContent = 'Water-Control QC Gate: RUN INVALID';
+        subtitle.textContent = `Water Control stayed red/pink (a* = ${ctrlItem.lab.a.toFixed(1)}, b* = ${ctrlItem.lab.b.toFixed(1)}). Check HCl volume or GNP batch before trusting calls.`;
+        badge.className = 'text-xs font-mono font-bold px-2.5 py-1 rounded-full bg-rose-600 text-white shrink-0';
+        badge.textContent = 'INVALID';
+      } else {
+// ... existing code ... -->
+            <th class="py-2 px-2 text-right"><span class="th-tip" title="CIE L*a*b* redness axis (independent of brightness). Used with b* and R/B by the Water QC Gate.">a*</span></th>
       if (ntItems.length > 0) {
         maxNTDeltaA = Math.max(...ntItems.map(i => i.deltaA));
         maxNTRelAbs = Math.max(...ntItems.map(i => i.relAbs));
