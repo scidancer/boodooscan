@@ -60,12 +60,21 @@
             BoodooScan Auto
             <span class="text-[11px] font-mono font-semibold uppercase tracking-wider px-2 py-0.5 rounded-full bg-teal-600/30 text-teal-300 border border-teal-500/30">v3</span>
           </h1>
-          <p class="text-xs text-slate-400">4-Sided Scan-Box GNP Biosensor Analyzer • White-Rack Context Filter &amp; NT Calibration</p>
+          <p class="text-xs text-slate-400">GNP Colorimetric Biosensor Analyzer • Auto-Detection &amp; QC Gate</p>
         </div>
       </div>
 
       <!-- Top Actions -->
       <div class="flex flex-wrap items-center gap-2">
+        <label for="cameraInput" class="cursor-pointer text-xs sm:text-sm font-semibold bg-teal-600 hover:bg-teal-500 text-white px-3.5 py-1.5 rounded-lg transition flex items-center gap-1.5 shadow-sm">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z" />
+            <path stroke-linecap="round" stroke-linejoin="round" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z" />
+          </svg>
+          <span>Take Photo</span>
+        </label>
+        <input id="cameraInput" type="file" accept="image/*" capture="environment" class="hidden" />
+
         <label for="fileInput" class="cursor-pointer text-xs sm:text-sm font-semibold bg-white text-navy-900 hover:bg-slate-100 px-3.5 py-1.5 rounded-lg transition flex items-center gap-1.5 shadow-sm">
           <svg class="w-4 h-4 text-teal-600" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" d="M4 16v2a2 2 0 002 2h12a2 2 0 002-2v-2M12 12V3m0 0l-4 4m4-4l4 4" />
@@ -148,7 +157,7 @@
               </div>
             </label>
 
-            <!-- Active Drag-Over Overlay (works when empty OR replacing a photo) -->
+            <!-- Active Drag-Over Overlay -->
             <div id="canvasDragOverlay" class="hidden absolute inset-0 z-20 bg-navy-900/80 backdrop-blur-[2px] border-2 border-dashed border-teal-400 m-3 rounded-xl flex flex-col items-center justify-center pointer-events-none">
               <div class="w-12 h-12 rounded-2xl bg-teal-500/20 border border-teal-400/60 flex items-center justify-center text-teal-300 mb-2.5">
                 <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
@@ -162,7 +171,7 @@
             <canvas id="imageCanvas" class="hidden max-w-full h-auto"></canvas>
           </div>
 
-          <!-- Scan Box & CV Settings Footer -->
+          <!-- Scan Box & CV Controls Footer -->
           <div class="px-4 py-3 bg-slate-50 border-t border-slate-200 space-y-2.5">
             <div class="flex flex-wrap items-center justify-between gap-2 text-[11px] text-slate-600">
               <span class="flex items-center gap-1.5">
@@ -173,101 +182,103 @@
             </div>
 
             <div class="flex flex-wrap items-center justify-between gap-3 pt-1 border-t border-slate-200/70">
-              <div class="flex items-center gap-2 flex-1 min-w-[190px]">
-                <label for="sensitivitySlider" class="text-xs font-semibold text-slate-700 whitespace-nowrap">Sensitivity:</label>
-                <input id="sensitivitySlider" type="range" min="0.06" max="0.28" step="0.01" value="0.12" class="flex-1 accent-teal-600 cursor-pointer" />
-                <span id="sensitivityVal" class="text-xs font-mono font-semibold text-navy-900 bg-white border border-slate-200 px-1.5 py-0.5 rounded w-11 text-center">0.12</span>
+              <div class="flex items-center gap-2 text-xs">
+                <label for="sensitivitySlider" class="font-medium text-slate-600">Sensitivity:</label>
+                <input id="sensitivitySlider" type="range" min="0.06" max="0.28" step="0.01" value="0.12" class="w-24 accent-teal-600 cursor-pointer" />
+                <span id="sensitivityVal" class="font-mono text-slate-700 w-9">0.12</span>
               </div>
 
-              <label class="flex items-center gap-1.5 cursor-pointer select-none">
-                <input id="wbToggle" type="checkbox" checked class="w-4 h-4 rounded accent-teal-600 cursor-pointer" />
-                <span class="text-xs font-medium text-slate-700">White-Bal (W)</span>
+              <label class="flex items-center gap-1.5 text-xs font-medium text-slate-700 cursor-pointer select-none">
+                <input id="wbToggle" type="checkbox" checked class="w-3.5 h-3.5 rounded accent-teal-600 cursor-pointer" />
+                <span>Auto White Balance (W)</span>
               </label>
-
-              <div class="flex items-center gap-2 text-[11px] text-slate-500">
-                <span class="inline-flex items-center gap-1"><span class="w-2 h-2 rounded-full bg-violet-500"></span>C</span>
-                <span class="inline-flex items-center gap-1"><span class="w-2 h-2 rounded-full bg-amber-500"></span>NT</span>
-                <span class="inline-flex items-center gap-1"><span class="w-2 h-2 rounded-full bg-emerald-500"></span>Pos</span>
-                <span class="inline-flex items-center gap-1"><span class="w-2 h-2 rounded-full bg-slate-500"></span>Neg</span>
-              </div>
             </div>
           </div>
         </section>
 
         <!-- Compact Run / Photo Notes Card -->
         <section class="bg-white rounded-xl border border-slate-200 shadow-sm p-3.5">
-          <label for="runNotes" class="block text-[11px] font-semibold uppercase tracking-wider text-slate-500 mb-1.5">Run / Photo Notes</label>
-          <div class="flex gap-2">
-            <input id="runNotes" type="text" placeholder="e.g., 10/14 5 min 5 uL HCl — ASFV p72"
-              class="flex-1 px-3 py-1.5 text-sm bg-slate-50 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-500 focus:bg-white transition" />
-            <button id="saveSessionBtn" onclick="saveCurrentPhotoToSession()" disabled
-              class="px-3.5 py-1.5 bg-navy-900 hover:bg-navy-800 disabled:bg-slate-200 disabled:text-slate-400 disabled:cursor-not-allowed text-white text-xs font-semibold rounded-lg transition shrink-0">
-              Save Run
-            </button>
-          </div>
+          <label for="runNotesInput" class="block text-[11px] font-bold uppercase tracking-wider text-slate-500 mb-1.5">Run / Photo Notes</label>
+          <input id="runNotesInput" type="text" placeholder="e.g., ASFV p72 — 5 min, 7 µL HCl, Batch B"
+            class="w-full px-3 py-2 text-xs bg-slate-50 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-500 focus:bg-white transition" />
         </section>
 
       </div>
 
       <!-- =================================================================== -->
-      <!-- RIGHT COLUMN (7 cols on xl): QC Banner, NT Calibration, Table & Log -->
+      <!-- RIGHT COLUMN (7 cols on xl): QC Gate, Settings, Results, Session    -->
       <!-- =================================================================== -->
       <div class="xl:col-span-7 space-y-4">
 
         <!-- Water-Control QC Gate Banner -->
-        <div id="qcBanner" class="hidden rounded-xl border px-4 py-3 flex flex-wrap items-center justify-between gap-3 shadow-sm">
+        <section id="qcBanner" class="rounded-xl border border-slate-200 bg-white px-4 py-3 shadow-sm flex items-center justify-between gap-3 transition-colors">
           <div class="flex items-center gap-3">
-            <span id="qcIcon" class="shrink-0"></span>
+            <div id="qcIcon" class="w-9 h-9 rounded-full bg-slate-100 text-slate-500 flex items-center justify-center shrink-0">
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+            </div>
             <div>
-              <p id="qcTitle" class="text-sm font-bold"></p>
-              <p id="qcDetail" class="text-xs opacity-90 font-mono"></p>
+              <h2 id="qcTitle" class="text-sm font-bold text-slate-800">Water-Control QC Gate: Waiting for Photo</h2>
+              <p id="qcSubtitle" class="text-xs text-slate-500">Checks that the Water Control (C) aggregated to purple/gray (a* ≤ 22) before trusting sample calls.</p>
             </div>
           </div>
-          <span id="qcBadge" class="text-xs font-mono font-bold uppercase px-2.5 py-1 rounded-full shrink-0"></span>
-        </div>
+          <span id="qcBadge" class="text-xs font-mono font-bold px-2.5 py-1 rounded-full bg-slate-100 text-slate-600 shrink-0">PENDING</span>
+        </section>
 
-        <!-- Non-Target & Cutoff Calibration Card -->
-        <section class="bg-white rounded-xl border border-slate-200 shadow-sm p-4 space-y-3">
-          <div class="flex flex-wrap items-center justify-between gap-2 border-b border-slate-100 pb-2.5">
+        <!-- Collapsible Calibration & Cutoff Settings Card -->
+        <section class="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
+          <button type="button" onclick="toggleCalibrationSettings()"
+            class="w-full px-4 py-3 flex flex-wrap items-center justify-between gap-2 hover:bg-slate-50 transition text-left">
             <div class="flex items-center gap-2">
-              <h2 class="text-xs font-bold text-navy-900 uppercase tracking-wider">Decision &amp; Non-Target Calibration</h2>
+              <svg class="w-4 h-4 text-slate-500" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
+                <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+              </svg>
+              <h2 class="text-xs font-bold text-navy-900 uppercase tracking-wider">Calibration &amp; Cutoff Settings</h2>
             </div>
 
-            <!-- Non-Target Baseline Summary Pill -->
-            <div id="ntSummaryPill" class="hidden text-[11px] font-mono px-2.5 py-1 rounded-full bg-amber-50 text-amber-900 border border-amber-200 flex items-center gap-1.5">
-              <span class="w-2 h-2 rounded-full bg-amber-500"></span>
-              <span id="ntSummaryText">Max NT: —</span>
+            <div class="flex items-center gap-2">
+              <div id="ntSummaryPill" class="hidden text-[11px] font-mono px-2.5 py-0.5 rounded-full bg-amber-50 text-amber-900 border border-amber-200 flex items-center gap-1.5">
+                <span class="w-2 h-2 rounded-full bg-amber-500"></span>
+                <span id="ntSummaryText">Max NT: —</span>
+              </div>
+              <svg id="calibrationChevron" class="w-4 h-4 text-slate-400 transition-transform duration-200" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7" />
+              </svg>
             </div>
-          </div>
+          </button>
 
-          <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 items-end">
-            <div>
-              <label for="cutoffDeltaA" class="block text-[11px] font-semibold text-slate-600 mb-1">Water Cutoff Δa*</label>
-              <input id="cutoffDeltaA" type="number" step="0.5" value="10.0"
-                class="w-full px-2.5 py-1.5 text-xs font-mono font-semibold bg-slate-50 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-500" />
-            </div>
-            <div>
-              <label for="cutoffRelAbs" class="block text-[11px] font-semibold text-slate-600 mb-1">Water Cutoff Rel A_G/A_R</label>
-              <input id="cutoffRelAbs" type="number" step="0.05" value="1.30"
-                class="w-full px-2.5 py-1.5 text-xs font-mono font-semibold bg-slate-50 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-500" />
-            </div>
-            <div>
-              <label for="ntMarginDeltaA" class="block text-[11px] font-semibold text-slate-600 mb-1">NT Margin (+Δa* / ×Rel)</label>
-              <div class="flex gap-1.5">
-                <input id="ntMarginDeltaA" type="number" step="0.5" value="5.0" title="Extra Δa* above Max Non-Target"
-                  class="w-1/2 px-2 py-1.5 text-xs font-mono font-semibold bg-slate-50 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-500" />
-                <input id="ntMarginMult" type="number" step="0.05" value="1.25" title="Multiplier above Max Non-Target Rel A_G/A_R"
-                  class="w-1/2 px-2 py-1.5 text-xs font-mono font-semibold bg-slate-50 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-500" />
+          <div id="calibrationBody" class="hidden px-4 pb-4 pt-3 border-t border-slate-100 space-y-3">
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 items-end">
+              <div>
+                <label for="cutoffDeltaA" class="block text-[11px] font-semibold text-slate-600 mb-1">Water Cutoff Δa*</label>
+                <input id="cutoffDeltaA" type="number" step="0.5" value="10.0"
+                  class="w-full px-2.5 py-1.5 text-xs font-mono font-semibold bg-slate-50 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-500" />
+              </div>
+              <div>
+                <label for="cutoffRelAbs" class="block text-[11px] font-semibold text-slate-600 mb-1">Water Cutoff Signal (Rel A_G/A_R)</label>
+                <input id="cutoffRelAbs" type="number" step="0.05" value="1.30"
+                  class="w-full px-2.5 py-1.5 text-xs font-mono font-semibold bg-slate-50 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-500" />
+              </div>
+              <div>
+                <label for="ntMarginDeltaA" class="block text-[11px] font-semibold text-slate-600 mb-1">NT Margin (+Δa* / ×Signal)</label>
+                <div class="flex gap-1.5">
+                  <input id="ntMarginDeltaA" type="number" step="0.5" value="5.0" title="Extra Δa* above Max Non-Target"
+                    class="w-1/2 px-2 py-1.5 text-xs font-mono font-semibold bg-slate-50 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-500" />
+                  <input id="ntMarginMult" type="number" step="0.05" value="1.25" title="Multiplier above Max Non-Target Signal"
+                    class="w-1/2 px-2 py-1.5 text-xs font-mono font-semibold bg-slate-50 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-500" />
+                </div>
               </div>
             </div>
-          </div>
 
-          <div class="flex flex-wrap items-center justify-between gap-2 pt-1">
-            <label class="flex items-center gap-2 cursor-pointer select-none">
-              <input id="ntCalibrateToggle" type="checkbox" class="w-4 h-4 rounded accent-amber-600 cursor-pointer" />
-              <span class="text-xs font-semibold text-slate-800">Calibrate Cutoff to Non-Target Controls</span>
-            </label>
-            <span class="text-[11px] text-slate-500">Auto-enables when any tube is set to <span class="font-semibold text-amber-700">Non-Target (NT)</span></span>
+            <div class="flex flex-wrap items-center justify-between gap-2 pt-1">
+              <label class="flex items-center gap-2 cursor-pointer select-none">
+                <input id="ntCalibrateToggle" type="checkbox" class="w-4 h-4 rounded accent-amber-600 cursor-pointer" />
+                <span class="text-xs font-semibold text-slate-800">Calibrate Cutoff to Non-Target Controls</span>
+              </label>
+              <span class="text-[11px] text-slate-500">Auto-enables when any tube is set to <span class="font-semibold text-amber-700">Non-Target (NT)</span></span>
+            </div>
           </div>
         </section>
 
@@ -275,43 +286,44 @@
         <section class="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
           <div class="px-4 py-2.5 bg-slate-50 border-b border-slate-200 flex flex-wrap items-center justify-between gap-2">
             <div>
-              <h2 class="text-xs font-bold text-navy-900 uppercase tracking-wider">Detected Tubes &amp; Metrics</h2>
-              <p class="text-[11px] text-slate-500">Change any tube's <strong>Role</strong> (C / NT / S) or rename inline. Drag circles on photo to nudge.</p>
+              <h2 class="text-xs font-bold text-navy-900 uppercase tracking-wider">Detected Tubes &amp; Results</h2>
+              <p class="text-[11px] text-slate-500">Tag any tube's <strong>Role</strong> (C / NT / S) or rename inline. Drag circles on photo to nudge.</p>
             </div>
-            <span id="currentRoiCount" class="text-xs font-mono text-slate-500">0 tubes</span>
+            <div class="flex items-center gap-3">
+              <label class="flex items-center gap-1.5 cursor-pointer select-none bg-white border border-slate-200 px-2.5 py-1 rounded-lg hover:bg-slate-50 transition">
+                <input id="researchModeToggle" type="checkbox" class="w-3.5 h-3.5 rounded accent-teal-600 cursor-pointer" />
+                <span class="text-[11px] font-semibold text-slate-700">Research Mode</span>
+              </label>
+              <span id="currentRoiCount" class="text-xs font-mono text-slate-500">0 tubes</span>
+            </div>
           </div>
 
           <div class="overflow-x-auto">
             <table class="w-full text-left border-collapse">
-              <thead>
+              <thead id="resultsTableHead">
                 <tr class="bg-slate-50/80 border-b border-slate-200 text-[10px] font-semibold uppercase tracking-wider text-slate-500">
-                  <th class="py-2 px-2.5">Tube</th>
+                  <th class="py-2 px-3">Tube</th>
                   <th class="py-2 px-2">Role</th>
-                  <th class="py-2 px-2 text-right">a*</th>
-                  <th class="py-2 px-2 text-right">Δa*</th>
-                  <th class="py-2 px-2 text-right">ΔE</th>
-                  <th class="py-2 px-2 text-right">Rel A_G/A_R</th>
-                  <th class="py-2 px-2 text-right">Legacy R/B</th>
-                  <th class="py-2 px-2 text-right">Sig / Max NT</th>
-                  <th class="py-2 px-2 text-center">Call</th>
+                  <th class="py-2 px-3 text-right">Signal</th>
+                  <th class="py-2 px-3 text-center">Result</th>
                   <th class="py-2 px-2 text-center">×</th>
                 </tr>
               </thead>
               <tbody id="resultsTableBody" class="divide-y divide-slate-100 text-xs">
                 <tr>
-                  <td colspan="10" class="py-8 text-center text-slate-400">Upload a photo to detect tubes inside the Scan Box.</td>
+                  <td colspan="5" class="py-8 text-center text-slate-400">Take or drop a photo to detect tubes inside the Scan Box.</td>
                 </tr>
               </tbody>
             </table>
           </div>
         </section>
 
-        <!-- Batch Session Log -->
+        <!-- Single Clean Batch Session Log -->
         <section class="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
           <div class="px-4 py-2.5 bg-slate-50 border-b border-slate-200 flex flex-wrap items-center justify-between gap-2">
             <div>
               <h2 class="text-xs font-bold text-navy-900 uppercase tracking-wider">Session Log (<span id="sessionRowCount" class="font-mono">0</span> rows)</h2>
-              <p class="text-[11px] text-slate-500">Save multiple runs, then export one CSV for Python, R, or Excel.</p>
+              <p class="text-[11px] text-slate-500">Exports all 21 full research metrics (RGB, L*a*b*, Δa*, ΔE, A_G/A_R, NT ratio) to CSV.</p>
             </div>
             <div class="flex items-center gap-2">
               <button id="clearSessionBtn" onclick="clearSessionLog()" disabled
@@ -333,15 +345,13 @@
                   <th class="py-2 px-2">Tube</th>
                   <th class="py-2 px-2">Role</th>
                   <th class="py-2 px-2 text-center">QC</th>
-                  <th class="py-2 px-2 text-right">Δa*</th>
-                  <th class="py-2 px-2 text-right">Rel A_G/A_R</th>
-                  <th class="py-2 px-2 text-right">vs Max NT</th>
-                  <th class="py-2 px-2 text-center">Call</th>
+                  <th class="py-2 px-2 text-right">Signal</th>
+                  <th class="py-2 px-2 text-center">Result</th>
                 </tr>
               </thead>
               <tbody id="sessionLogBody" class="divide-y divide-slate-100 text-[11px]">
                 <tr>
-                  <td colspan="8" class="py-5 text-center text-slate-400">Session log is empty. Click "Save Run" to record a photo.</td>
+                  <td colspan="6" class="py-5 text-center text-slate-400">Session log is empty. Click "Save Run" to record a photo.</td>
                 </tr>
               </tbody>
             </table>
@@ -372,13 +382,15 @@
       boxRight: 0.92,
       boxTop: 0.25,
       boxBottom: 0.55,
-      sensitivity: 0.12,        // HSV saturation & luminance-drop sensitivity inside Scan Box
+      sensitivity: 0.12,
       useWhiteBalance: true,
       ntCalibrate: false,
       cutoffDeltaA: 10.0,
       cutoffRelAbs: 1.30,
       ntMarginDeltaA: 5.0,
       ntMarginMult: 1.25,
+      researchMode: false,
+      settingsOpen: false,
       manualAddMode: false,
       dragAction: null,
       rois: [],
@@ -387,7 +399,9 @@
       sessionLog: []
     };
 
-    // Canvas & Context References
+    let nextRoiId = 1;
+
+    // DOM References
     const imageCanvas = document.getElementById('imageCanvas');
     const ctx = imageCanvas.getContext('2d');
     const offscreenCanvas = document.getElementById('offscreenCanvas');
@@ -395,48 +409,52 @@
     const cvCanvas = document.getElementById('cvCanvas');
     const cvCtx = cvCanvas.getContext('2d', { willReadFrequently: true });
 
-    // =========================================================================
-    // INITIALIZATION & EVENT LISTENERS
-    // =========================================================================
     const fileInput = document.getElementById('fileInput');
+    const cameraInput = document.getElementById('cameraInput');
     const canvasWrapper = document.getElementById('canvasWrapper');
     const canvasDragOverlay = document.getElementById('canvasDragOverlay');
     let dragCounter = 0;
 
-    fileInput.addEventListener('change', (e) => {
-      if (e.target.files && e.target.files[0]) {
-        loadImageFile(e.target.files[0]);
-        e.target.value = '';
-      }
-    });
-
-    // Prevent browser from opening dropped image in a new tab if dropped slightly outside
-    ['dragover', 'drop'].forEach(evt => {
-      window.addEventListener(evt, (e) => e.preventDefault());
+    // =========================================================================
+    // EVENT LISTENERS: UPLOAD, CAMERA, DRAG-AND-DROP, SETTINGS
+    // =========================================================================
+    [fileInput, cameraInput].forEach(inputEl => {
+      inputEl.addEventListener('change', (e) => {
+        if (e.target.files && e.target.files[0]) {
+          loadImageFile(e.target.files[0]);
+          e.target.value = '';
+        }
+      });
     });
 
     canvasWrapper.addEventListener('dragenter', (e) => {
       e.preventDefault();
+      e.stopPropagation();
       dragCounter++;
       canvasDragOverlay.classList.remove('hidden');
     });
 
     canvasWrapper.addEventListener('dragover', (e) => {
       e.preventDefault();
-      canvasDragOverlay.classList.remove('hidden');
+      e.stopPropagation();
     });
 
     canvasWrapper.addEventListener('dragleave', (e) => {
       e.preventDefault();
-      dragCounter = Math.max(0, dragCounter - 1);
-      if (dragCounter === 0) canvasDragOverlay.classList.add('hidden');
+      e.stopPropagation();
+      dragCounter--;
+      if (dragCounter <= 0) {
+        dragCounter = 0;
+        canvasDragOverlay.classList.add('hidden');
+      }
     });
 
     canvasWrapper.addEventListener('drop', (e) => {
       e.preventDefault();
+      e.stopPropagation();
       dragCounter = 0;
       canvasDragOverlay.classList.add('hidden');
-      if (e.dataTransfer.files && e.dataTransfer.files[0]) {
+      if (e.dataTransfer && e.dataTransfer.files && e.dataTransfer.files[0]) {
         loadImageFile(e.dataTransfer.files[0]);
       }
     });
@@ -445,7 +463,6 @@
       state.sensitivity = parseFloat(e.target.value);
       document.getElementById('sensitivityVal').textContent = state.sensitivity.toFixed(2);
     });
-
     document.getElementById('sensitivitySlider').addEventListener('change', () => {
       if (state.image) runAutoDetection();
     });
@@ -455,32 +472,57 @@
       recalculateAndRender();
     });
 
+    document.getElementById('researchModeToggle').addEventListener('change', (e) => {
+      state.researchMode = e.target.checked;
+      renderResultsTable();
+    });
+
     document.getElementById('ntCalibrateToggle').addEventListener('change', (e) => {
       state.ntCalibrate = e.target.checked;
       recalculateAndRender();
     });
 
-    ['cutoffDeltaA', 'cutoffRelAbs', 'ntMarginDeltaA', 'ntMarginMult'].forEach((id) => {
+    ['cutoffDeltaA', 'cutoffRelAbs', 'ntMarginDeltaA', 'ntMarginMult'].forEach(id => {
       document.getElementById(id).addEventListener('input', (e) => {
         const val = parseFloat(e.target.value);
-        if (!Number.isNaN(val)) {
+        if (!isNaN(val)) {
           state[id] = val;
           recalculateAndRender();
         }
       });
     });
 
-    imageCanvas.addEventListener('pointerdown', onPointerDown);
-    imageCanvas.addEventListener('pointermove', onPointerMove);
-    window.addEventListener('pointerup', onPointerUp);
-    window.addEventListener('pointercancel', onPointerUp);
-    window.addEventListener('resize', () => {
-      if (state.image) renderDisplayCanvas();
+    function toggleCalibrationSettings() {
+      state.settingsOpen = !state.settingsOpen;
+      document.getElementById('calibrationBody').classList.toggle('hidden', !state.settingsOpen);
+      document.getElementById('calibrationChevron').classList.toggle('rotate-180', state.settingsOpen);
+    }
+
+    function toggleManualAddMode() {
+      state.manualAddMode = !state.manualAddMode;
+      const btn = document.getElementById('manualAddBtn');
+      if (state.manualAddMode) {
+        btn.classList.add('bg-teal-50', 'border-teal-500', 'text-teal-800');
+        btn.textContent = 'Click Photo to Place Tube (ESC)';
+        imageCanvas.style.cursor = 'crosshair';
+        showToast('Click directly on any tube tip to add a manual sampling circle.');
+      } else {
+        btn.classList.remove('bg-teal-50', 'border-teal-500', 'text-teal-800');
+        btn.textContent = '+ Add Manual Tube';
+        imageCanvas.style.cursor = 'default';
+      }
+    }
+
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && state.manualAddMode) toggleManualAddMode();
     });
 
+    // =========================================================================
+    // IMAGE LOADING
+    // =========================================================================
     function loadImageFile(file) {
-      if (!file || !file.type.startsWith('image/')) {
-        showToast('Please select a valid image file.', 'error');
+      if (!file.type.startsWith('image/')) {
+        showToast('Please select a valid image file (JPG, PNG, etc.).', 'error');
         return;
       }
       const reader = new FileReader();
@@ -489,32 +531,36 @@
         img.onload = () => {
           state.image = img;
           state.fileName = file.name;
-          state.boxLeft = 0.08;
-          state.boxRight = 0.92;
-          state.boxTop = 0.25;
-          state.boxBottom = 0.55;
+          state.rois = [];
+          state.computed = [];
           state.manualAddMode = false;
+          document.getElementById('manualAddBtn').classList.remove('bg-teal-50', 'border-teal-500', 'text-teal-800');
+          document.getElementById('manualAddBtn').textContent = '+ Add Manual Tube';
 
+          // Populate full-res offscreen canvas for accurate color sampling
           offscreenCanvas.width = img.naturalWidth;
           offscreenCanvas.height = img.naturalHeight;
           offCtx.drawImage(img, 0, 0);
 
-          document.getElementById('currentFileName').textContent = file.name;
-          document.getElementById('emptyCanvasPrompt').classList.add('hidden');
+          // Set display canvas size
+          imageCanvas.width = img.naturalWidth;
+          imageCanvas.height = img.naturalHeight;
           imageCanvas.classList.remove('hidden');
+          document.getElementById('emptyCanvasPrompt').classList.add('hidden');
+          document.getElementById('currentFileName').textContent = file.name;
           document.getElementById('redetectBtn').disabled = false;
           document.getElementById('manualAddBtn').disabled = false;
 
-          updateBoxLabel();
-          updateManualAddBtnUI();
           runAutoDetection();
         };
-        img.onerror = () => showToast('Could not load image file.', 'error');
         img.src = ev.target.result;
       };
       reader.readAsDataURL(file);
     }
 
+    // =========================================================================
+    // COLOR SPACE & OPTICAL MATH
+    // =========================================================================
     function rgbToHsv(r, g, b) {
       const rn = r / 255, gn = g / 255, bn = b / 255;
       const max = Math.max(rn, gn, bn);
@@ -532,404 +578,385 @@
       return { h, s, v: max };
     }
 
+    function rgbToLab(r, g, b) {
+      let rn = r / 255, gn = g / 255, bn = b / 255;
+      rn = rn > 0.04045 ? Math.pow((rn + 0.055) / 1.055, 2.4) : rn / 12.92;
+      gn = gn > 0.04045 ? Math.pow((gn + 0.055) / 1.055, 2.4) : gn / 12.92;
+      bn = bn > 0.04045 ? Math.pow((bn + 0.055) / 1.055, 2.4) : bn / 12.92;
+
+      const x = (rn * 0.4124 + gn * 0.3576 + bn * 0.1805) / 0.95047;
+      const y = (rn * 0.2126 + gn * 0.7152 + bn * 0.0722) / 1.00000;
+      const z = (rn * 0.0193 + gn * 0.1192 + bn * 0.9505) / 1.08883;
+
+      const f = (t) => t > 0.008856 ? Math.cbrt(t) : (7.787 * t) + (16 / 116);
+      const fx = f(x), fy = f(y), fz = f(z);
+      return {
+        L: (116 * fy) - 16,
+        a: 500 * (fx - fy),
+        b: 200 * (fy - fz)
+      };
+    }
+
+    function calcDeltaE(lab1, lab2) {
+      const dL = lab1.L - lab2.L;
+      const da = lab1.a - lab2.a;
+      const db = lab1.b - lab2.b;
+      return Math.sqrt(dL * dL + da * da + db * db);
+    }
+
+    function calcPseudoAbsRatio(r, g, refR, refG) {
+      const safeR = Math.max(1, Math.min(r, refR - 0.5));
+      const safeG = Math.max(1, Math.min(g, refG - 0.5));
+      const Ag = -Math.log10(safeG / Math.max(1, refG));
+      const Ar = -Math.log10(safeR / Math.max(1, refR));
+      return Ar > 0.001 ? Ag / Ar : 0;
+    }
+
+    // Glare/shadow-rejected circular sampling (trims top 15% & bottom 15% luminance)
+    function sampleCircleTrimmed(cx, cy, radius) {
+      const w = offscreenCanvas.width;
+      const h = offscreenCanvas.height;
+      const rInt = Math.max(3, Math.round(radius));
+      const x0 = Math.max(0, Math.round(cx) - rInt);
+      const y0 = Math.max(0, Math.round(cy) - rInt);
+      const x1 = Math.min(w - 1, Math.round(cx) + rInt);
+      const y1 = Math.min(h - 1, Math.round(cy) + rInt);
+      const bw = x1 - x0 + 1;
+      const bh = y1 - y0 + 1;
+      if (bw <= 0 || bh <= 0) return { r: 128, g: 128, b: 128 };
+
+      const imgData = offCtx.getImageData(x0, y0, bw, bh).data;
+      const pixels = [];
+      const rSq = rInt * rInt;
+      for (let py = 0; py < bh; py++) {
+        const dy = (y0 + py) - cy;
+        for (let px = 0; px < bw; px++) {
+          const dx = (x0 + px) - cx;
+          if (dx * dx + dy * dy <= rSq) {
+            const idx = (py * bw + px) * 4;
+            const r = imgData[idx], g = imgData[idx + 1], b = imgData[idx + 2];
+            const lum = 0.299 * r + 0.587 * g + 0.114 * b;
+            pixels.push({ r, g, b, lum });
+          }
+        }
+      }
+      if (pixels.length === 0) return { r: 128, g: 128, b: 128 };
+      pixels.sort((a, b) => a.lum - b.lum);
+      const trim = Math.floor(pixels.length * 0.15);
+      const kept = pixels.slice(trim, pixels.length - trim);
+      const arr = kept.length > 0 ? kept : pixels;
+      let sr = 0, sg = 0, sb = 0;
+      for (const p of arr) { sr += p.r; sg += p.g; sb += p.b; }
+      return { r: sr / arr.length, g: sg / arr.length, b: sb / arr.length };
+    }
+
     // =========================================================================
-    // AUTO-DETECTION PIPELINE (DUAL-MODE + ROW-GUIDED AGGREGATED RECOVERY)
+    // COMPUTER VISION: DUAL-MODE LOCAL WHITE-RACK SUBTRACTION AUTO-DETECTOR
     // =========================================================================
+    function estimateRackLuminance(data, w, h, xStart, xEnd, yStart, yEnd) {
+      const lums = [];
+      for (let y = yStart; y < yEnd; y += 2) {
+        for (let x = xStart; x < xEnd; x += 2) {
+          const idx = (y * w + x) * 4;
+          const r = data[idx], g = data[idx + 1], b = data[idx + 2];
+          const hsv = rgbToHsv(r, g, b);
+          const lum = 0.299 * r + 0.587 * g + 0.114 * b;
+          if (hsv.s < 0.16 && lum > 135 && lum < 252) lums.push(lum);
+        }
+      }
+      if (lums.length < 15) return 210;
+      lums.sort((a, b) => a - b);
+      return lums[Math.floor(lums.length * 0.65)];
+    }
+
+    function hasWhiteRackFlanks(data, w, h, cx, cy, rad) {
+      let whiteCount = 0;
+      let total = 0;
+      const offsets = [-rad * 2.6, -rad * 2.0, rad * 2.0, rad * 2.6];
+      for (const ox of offsets) {
+        const sx = Math.round(cx + ox);
+        const sy = Math.round(cy);
+        if (sx >= 2 && sx < w - 2 && sy >= 2 && sy < h - 2) {
+          total++;
+          const idx = (sy * w + sx) * 4;
+          const r = data[idx], g = data[idx + 1], b = data[idx + 2];
+          const hsv = rgbToHsv(r, g, b);
+          const lum = 0.299 * r + 0.587 * g + 0.114 * b;
+          if (lum > 125 && hsv.s < 0.22) whiteCount++;
+        }
+      }
+      return total >= 2 && (whiteCount / total) >= 0.5;
+    }
+
+    function getLocalFlankLum(data, w, h, x, y, offsetPx) {
+      const lums = [];
+      for (const ox of [-offsetPx, offsetPx]) {
+        const sx = Math.round(x + ox);
+        if (sx >= 1 && sx < w - 1) {
+          const idx = (y * w + sx) * 4;
+          const r = data[idx], g = data[idx + 1], b = data[idx + 2];
+          const hsv = rgbToHsv(r, g, b);
+          const lum = 0.299 * r + 0.587 * g + 0.114 * b;
+          if (hsv.s < 0.18 && lum > 115) lums.push(lum);
+        }
+      }
+      if (lums.length < 2) return null;
+      return (lums[0] + lums[1]) * 0.5;
+    }
+
     function runAutoDetection() {
       if (!state.image) return;
-      const t0 = performance.now();
+      const origW = state.image.naturalWidth;
+      const origH = state.image.naturalHeight;
 
-      // 1. Downscale to ~400px wide for fast blob segmentation
-      const targetW = 400;
-      const scale = targetW / state.image.naturalWidth;
-      const cvW = targetW;
-      const cvH = Math.max(1, Math.round(state.image.naturalHeight * scale));
+      const cvW = 400;
+      const scale = cvW / origW;
+      const cvH = Math.round(origH * scale);
       cvCanvas.width = cvW;
       cvCanvas.height = cvH;
       cvCtx.drawImage(state.image, 0, 0, cvW, cvH);
 
-      const data = cvCtx.getImageData(0, 0, cvW, cvH).data;
+      const imgData = cvCtx.getImageData(0, 0, cvW, cvH);
+      const data = imgData.data;
+
+      const xStart = Math.max(0, Math.floor(state.boxLeft * cvW));
+      const xEnd = Math.min(cvW, Math.ceil(state.boxRight * cvW));
+      const yStart = Math.max(0, Math.floor(state.boxTop * cvH));
+      const yEnd = Math.min(cvH, Math.ceil(state.boxBottom * cvH));
+
+      const rackLum = estimateRackLuminance(data, cvW, cvH, xStart, xEnd, yStart, yEnd);
       const mask = new Uint8Array(cvW * cvH);
+      const minSat = state.sensitivity;
+      const localOffset = Math.max(10, Math.round(cvW * 0.036));
+      const minLumDrop = Math.max(16, Math.round(14 + minSat * 95));
 
-      // Restrict scanning strictly to the 4-sided Scan Box
-      const xMin = clamp(Math.floor(cvW * state.boxLeft), 0, cvW - 1);
-      const xMax = clamp(Math.ceil(cvW * state.boxRight), xMin + 1, cvW);
-      const yMin = clamp(Math.floor(cvH * state.boxTop), 0, cvH - 1);
-      const yMax = clamp(Math.ceil(cvH * state.boxBottom), yMin + 1, cvH);
-      const satThresh = state.sensitivity;
-
-      // 1b. Precompute luminance and local horizontal white-rack contrast
-      //     Comparing each pixel to its immediate left/right rack (±14px) eliminates
-      //     lighting gradients and horizontal seams while preserving pale aggregated tubes.
-      const flankOff = Math.max(12, Math.round(cvW * 0.038));
-      const lumDropThresh = Math.max(22, Math.round(satThresh * 230));
-
-      // 2. Dual-Mode Pixel Classifier:
-      //    Mode A: Chromatic GNP liquid (Red/Pink/Magenta or Purple/Blue-Gray)
-      //    Mode B: Heavily aggregated pale gray/lavender liquid darker than its IMMEDIATE local rack
-      for (let y = yMin; y < yMax; y++) {
-        for (let x = xMin; x < xMax; x++) {
+      for (let y = yStart; y < yEnd; y++) {
+        for (let x = xStart; x < xEnd; x++) {
           const idx = (y * cvW + x) * 4;
           const r = data[idx], g = data[idx + 1], b = data[idx + 2];
+          const hsv = rgbToHsv(r, g, b);
+          const lum = 0.299 * r + 0.587 * g + 0.114 * b;
 
-          // Reject yellow labeling tape explicitly
-          if (r > 140 && g > 130 && b < 115) continue;
+          // Exclude yellow tape, bright glare, and very dark benchtop/shadows
+          const isYellowTape = (hsv.h >= 34 && hsv.h <= 88 && hsv.s > 0.24);
+          if (isYellowTape || lum < 25 || lum > 240) continue;
 
-          const { h, s, v } = rgbToHsv(r, g, b);
-          const lum = 0.2126 * r + 0.7152 * g + 0.0722 * b;
-          const maxRGB = Math.max(r, g, b);
+          // Mode A: Chromatic GNP liquid (red, pink, magenta, purple, lavender, blue-gray)
+          const isRedPurpleHue = (hsv.h >= 210 || hsv.h <= 25);
+          const isChromatic = isRedPurpleHue && hsv.s >= minSat && hsv.v >= 0.18 && hsv.v <= 0.94;
 
-          // Reject very dark neutral shadows & bright white plastic glare
-          if (maxRGB < 50 && s < 0.25) continue;
-          if (v > 0.90 || v < 0.14) continue;
-          // Reject saturated yellow/green/tan background clutter
-          if (s >= 0.16 && h >= 30 && h <= 185) continue;
-
-          const isRedPink = (h >= 315 || h <= 25) && (r > g + 10) && s >= satThresh;
-          const isPurpleBlueGray = (h >= 200 && h < 315) && (b > g + 4 || r > g + 4) && s >= Math.max(0.06, satThresh * 0.70);
-
-          // Mode B: Local flanking contrast for heavily aggregated pale gray/lavender tips
-          let isAggregatedGray = false;
-          const isWarmYellowish = (r > b + 14 && g > b + 10);
-          if (!isRedPink && !isPurpleBlueGray && !isWarmYellowish && s < 0.22 && lum >= 55 && lum <= 198) {
-            const lx = Math.max(0, x - flankOff);
-            const rx = Math.min(cvW - 1, x + flankOff);
-            const lIdx = (y * cvW + lx) * 4;
-            const rIdx = (y * cvW + rx) * 4;
-            const lLum = 0.2126 * data[lIdx] + 0.7152 * data[lIdx + 1] + 0.0722 * data[lIdx + 2];
-            const rLum = 0.2126 * data[rIdx] + 0.7152 * data[rIdx + 1] + 0.0722 * data[rIdx + 2];
-            const lSat = rgbToHsv(data[lIdx], data[lIdx + 1], data[lIdx + 2]).s;
-            const rSat = rgbToHsv(data[rIdx], data[rIdx + 1], data[rIdx + 2]).s;
-
-            // Both flanks (or the clean white flank near an edge) must be clearly brighter white rack
-            const leftWhite = lLum > 150 && lSat < 0.16;
-            const rightWhite = rLum > 150 && rSat < 0.16;
-            if (leftWhite && rightWhite) {
-              const localRackLum = 0.5 * (lLum + rLum);
-              if ((localRackLum - lum) >= lumDropThresh) {
-                isAggregatedGray = true;
-              }
+          // Mode B: Heavily aggregated pale gray/lavender liquid detected by LOCAL flank luminance drop
+          let isPaleAggregated = false;
+          if (!isChromatic && hsv.s < 0.20 && lum < rackLum - 12 && (b >= g - 4)) {
+            const flankLum = getLocalFlankLum(data, cvW, cvH, x, y, localOffset);
+            if (flankLum !== null && (flankLum - lum) >= minLumDrop) {
+              isPaleAggregated = true;
             }
           }
 
-          if (isRedPink || isPurpleBlueGray || isAggregatedGray) {
+          if (isChromatic || isPaleAggregated) {
             mask[y * cvW + x] = 1;
           }
         }
       }
 
-      // 3. 4-Connected Component Labeling (BFS Flood Fill inside Scan Box)
+      // Connected-component flood fill
       const visited = new Uint8Array(cvW * cvH);
       const rawBlobs = [];
-      const queue = new Int32Array(cvW * cvH);
-
-      for (let y = yMin; y < yMax; y++) {
-        for (let x = xMin; x < xMax; x++) {
-          const start = y * cvW + x;
-          if (mask[start] === 1 && !visited[start]) {
-            let head = 0, tail = 0;
-            queue[tail++] = start;
-            visited[start] = 1;
-
-            let sumX = 0, sumY = 0, area = 0;
+      for (let y = yStart; y < yEnd; y++) {
+        for (let x = xStart; x < xEnd; x++) {
+          const startPos = y * cvW + x;
+          if (mask[startPos] === 1 && visited[startPos] === 0) {
+            const stack = [startPos];
+            visited[startPos] = 1;
+            let sumX = 0, sumY = 0, count = 0;
             let minX = x, maxX = x, minY = y, maxY = y;
 
-            while (head < tail) {
-              const cur = queue[head++];
-              const cx = cur % cvW;
-              const cy = (cur - cx) / cvW;
-              sumX += cx; sumY += cy; area++;
-              if (cx < minX) minX = cx;
-              if (cx > maxX) maxX = cx;
-              if (cy < minY) minY = cy;
-              if (cy > maxY) maxY = cy;
+            while (stack.length > 0) {
+              const p = stack.pop();
+              const px = p % cvW;
+              const py = (p - px) / cvW;
+              sumX += px; sumY += py; count++;
+              if (px < minX) minX = px;
+              if (px > maxX) maxX = px;
+              if (py < minY) minY = py;
+              if (py > maxY) maxY = py;
 
-              if (cx > xMin) { const n = cur - 1; if (mask[n] && !visited[n]) { visited[n] = 1; queue[tail++] = n; } }
-              if (cx < xMax - 1) { const n = cur + 1; if (mask[n] && !visited[n]) { visited[n] = 1; queue[tail++] = n; } }
-              if (cy > yMin) { const n = cur - cvW; if (mask[n] && !visited[n]) { visited[n] = 1; queue[tail++] = n; } }
-              if (cy < yMax - 1) { const n = cur + cvW; if (mask[n] && !visited[n]) { visited[n] = 1; queue[tail++] = n; } }
+              const neighbors = [p - 1, p + 1, p - cvW, p + cvW];
+              for (const np of neighbors) {
+                if (np >= 0 && np < cvW * cvH && mask[np] === 1 && visited[np] === 0) {
+                  const nx = np % cvW;
+                  if (Math.abs(nx - px) <= 1) {
+                    visited[np] = 1;
+                    stack.push(np);
+                  }
+                }
+              }
             }
 
             const bw = maxX - minX + 1;
             const bh = maxY - minY + 1;
-            rawBlobs.push({
-              cx: sumX / area,
-              cy: sumY / area,
-              area,
-              bw,
-              bh,
-              aspect: bw / bh,
-              fillRatio: area / (bw * bh),
-              radius: Math.sqrt(area / Math.PI)
-            });
+            const aspect = bw / Math.max(1, bh);
+            if (count >= 14 && count <= 950 && bw >= 3 && bw <= 42 && bh >= 3 && bh <= 48 && aspect >= 0.28 && aspect <= 2.6) {
+              const cx = sumX / count;
+              const cy = sumY / count;
+              const estR = Math.max(3, Math.min(11, Math.sqrt(count / Math.PI) * 0.72));
+              if (hasWhiteRackFlanks(data, cvW, cvH, cx, cy, estR)) {
+                rawBlobs.push({ cx, cy, r: estR, count });
+              }
+            }
           }
         }
       }
 
-      // 4. Filter by compact liquid-tip geometry + Local White-Rack Contrast Filter
-      const boxArea = (xMax - xMin) * (yMax - yMin);
-      const minArea = Math.max(14, cvW * cvH * 0.00018);
-      const maxArea = Math.min(cvW * cvH * 0.022, boxArea * 0.16);
-
-      const candidates = rawBlobs.filter(b => {
-        if (b.area < minArea || b.area > maxArea) return false;
-        if (b.aspect < 0.30 || b.aspect > 2.0 || b.fillRatio < 0.38) return false;
-
-        // Compute blob center vs. immediate left & right white-rack flanks
-        const centerStats = sampleRegionStats(data, cvW, cvH, b.cx, b.cy, Math.max(2, b.radius * 0.6));
-        const leftFlank = getFlankStats(data, cvW, cvH, b.cx, b.cy, b.radius, -1);
-        const rightFlank = getFlankStats(data, cvW, cvH, b.cx, b.cy, b.radius, 1);
-
-        const leftOk = leftFlank && leftFlank.lum > 145 && leftFlank.sat < 0.20;
-        const rightOk = rightFlank && rightFlank.lum > 145 && rightFlank.sat < 0.20;
-        if (!leftOk && !rightOk) return false;
-
-        // Require true local contrast against the adjacent white rack (eliminates blank-rack shading)
-        const localRackLum = (leftOk && rightOk)
-          ? 0.5 * (leftFlank.lum + rightFlank.lum)
-          : (leftOk ? leftFlank.lum : rightFlank.lum);
-        const localLumDrop = localRackLum - centerStats.lum;
-        const isChromatic = centerStats.sat >= Math.max(0.08, satThresh * 0.75);
-
-        return isChromatic ? (localLumDrop >= 12) : (localLumDrop >= 24);
-      });
-
-      // 5. Horizontal row-alignment consensus (±5% of image height)
-      const rowTol = cvH * 0.05;
-      let bestCluster = [];
-      let bestScore = -1;
-
-      for (const anchor of candidates) {
-        const cluster = candidates.filter(b => Math.abs(b.cy - anchor.cy) <= rowTol);
-        const score = cluster.length * 1000 + cluster.reduce((acc, b) => acc + Math.min(b.area, 200), 0);
-        if (score > bestScore) {
-          bestScore = score;
-          bestCluster = cluster;
-        }
+      // Keep horizontally aligned tube row (±5% of image height around median Y)
+      let filtered = rawBlobs;
+      if (rawBlobs.length >= 2) {
+        const sortedByArea = [...rawBlobs].sort((a, b) => b.count - a.count);
+        const topYs = sortedByArea.slice(0, Math.min(6, sortedByArea.length)).map(b => b.cy).sort((a, b) => a - b);
+        const medianY = topYs[Math.floor(topYs.length / 2)];
+        const tolY = cvH * 0.055;
+        filtered = rawBlobs.filter(b => Math.abs(b.cy - medianY) <= tolY);
       }
 
-      // 6. Sort left-to-right & merge any split sub-blobs or adjacent tube shadows (min spacing 6.5% width)
-      bestCluster.sort((a, b) => a.cx - b.cx);
-      const mergedTubes = [];
-      for (const b of bestCluster) {
-        const prev = mergedTubes[mergedTubes.length - 1];
-        if (prev && Math.abs(b.cx - prev.cx) < cvW * 0.065) {
-          // Keep the stronger/larger liquid blob rather than drifting into its cast shadow
-          if (b.area > prev.area * 1.25) {
-            prev.cx = b.cx;
-            prev.cy = b.cy;
-            prev.area = b.area;
-            prev.radius = b.radius;
+      // Merge close horizontal shadows/duplicates (within 6.5% of image width)
+      filtered.sort((a, b) => a.cx - b.cx);
+      const merged = [];
+      const minSpacing = cvW * 0.065;
+      for (const blob of filtered) {
+        if (merged.length > 0 && (blob.cx - merged[merged.length - 1].cx) < minSpacing) {
+          if (blob.count > merged[merged.length - 1].count) {
+            merged[merged.length - 1] = blob;
           }
         } else {
-          mergedTubes.push({ ...b });
+          merged.push(blob);
         }
       }
 
-      // 6b. Row-Guided Recovery Pass for Ultra-Pale Aggregated Tubes using LOCAL flank contrast
-      if (mergedTubes.length >= 1) {
-        const rowY = mergedTubes.reduce((s, b) => s + b.cy, 0) / mergedTubes.length;
-        const avgR = clamp(
-          mergedTubes.reduce((s, b) => s + Math.sqrt(b.area / Math.PI), 0) / mergedTubes.length,
-          4, 12
-        );
-        const recovered = recoverFaintTubesAlongRow(
-          data, cvW, cvH, rowY, avgR, xMin, xMax, mergedTubes
-        );
-        if (recovered.length > 0) {
-          mergedTubes.push(...recovered);
-          mergedTubes.sort((a, b) => a.cx - b.cx);
-        }
+      // Second pass: row-guided faint aggregated tube recovery
+      if (merged.length >= 1) {
+        const rowY = Math.round(merged.reduce((acc, b) => acc + b.cy, 0) / merged.length);
+        recoverFaintTubesAlongRow(data, cvW, cvH, xStart, xEnd, rowY, localOffset, merged);
+        merged.sort((a, b) => a.cx - b.cx);
       }
 
-      // Map back to native resolution
-      const invScale = 1 / scale;
-      const newRois = mergedTubes.map((b, idx) => {
-        const nativeX = b.cx * invScale;
-        const nativeY = b.cy * invScale;
-        const blobR = Math.sqrt(b.area / Math.PI) * invScale;
-        const roiR = clamp(Math.round(blobR * 0.60), 4, 24);
-        return {
-          id: Date.now() + idx + Math.random(),
-          role: idx === 0 ? 'control' : 'sample',
-          label: idx === 0 ? 'Water (C)' : `S${idx}`,
-          x: nativeX,
-          y: nativeY,
-          r: roiR
-        };
+      // Convert CV blobs back to full-resolution ROIs
+      const newRois = [];
+      const defaultRadius = Math.max(8, Math.round(origW * 0.0085));
+      merged.forEach((b, idx) => {
+        const isFirst = idx === 0;
+        newRois.push({
+          id: nextRoiId++,
+          role: isFirst ? 'control' : 'sample',
+          label: isFirst ? 'Water (C)' : `S${idx}`,
+          x: b.cx / scale,
+          y: b.cy / scale,
+          r: Math.max(defaultRadius, Math.round((b.r / scale) * 0.72))
+        });
       });
 
-      // 7. Auto-place White Reference ("W") on cleanest bright white rack area inside Scan Box
-      const avgTubeY = mergedTubes.length > 0
-        ? mergedTubes.reduce((s, b) => s + b.cy, 0) / mergedTubes.length
-        : (yMin + yMax) / 2;
-
-      const whitePatch = findCleanWhitePatch(data, cvW, cvH, avgTubeY, xMin, xMax, mergedTubes);
+      // Automatically find a clean white-balance patch on the white rack
+      const whitePatch = findCleanWhitePatch(data, cvW, cvH, xStart, xEnd, yStart, yEnd, merged);
       if (whitePatch) {
         newRois.unshift({
-          id: Date.now() - 1,
+          id: nextRoiId++,
           role: 'white',
           label: 'W',
-          x: whitePatch.x * invScale,
-          y: whitePatch.y * invScale,
-          r: clamp(Math.round(9 * invScale * 0.35), 8, 20)
+          x: whitePatch.cx / scale,
+          y: whitePatch.cy / scale,
+          r: Math.max(10, Math.round(origW * 0.011))
         });
       }
 
       state.rois = newRois;
       recalculateAndRender();
 
-      const elapsed = Math.round(performance.now() - t0);
-      const tubeCount = newRois.filter(r => r.role !== 'white').length;
-      document.getElementById('detectionSummaryBadge').textContent = `${tubeCount} tubes (${elapsed} ms)`;
-
-      if (tubeCount === 0) {
-        showToast('No tubes found in Scan Box. Drag the box over the white rack & liquid tips or lower Sensitivity.', 'info');
+      const foundTubes = newRois.filter(r => r.role !== 'white').length;
+      if (foundTubes === 0) {
+        showToast('No tubes found in Scan Box. Drag the cyan edges around the liquid tips and try again.', 'warn');
       } else {
-        showToast(`Detected ${tubeCount} tube${tubeCount === 1 ? '' : 's'} on white rack (${elapsed} ms).`, 'success');
+        showToast(`Detected ${foundTubes} tube${foundTubes === 1 ? '' : 's'} + white reference.`);
       }
-    }
-    // Samples mean luminance, saturation, and RGB inside a small square around (cx, cy)
-    function sampleRegionStats(data, w, h, cx, cy, halfR) {
-      const rInt = Math.max(2, Math.round(halfR));
-      const x0 = clamp(Math.round(cx - rInt), 0, w - 1);
-      const x1 = clamp(Math.round(cx + rInt), 0, w - 1);
-      const y0 = clamp(Math.round(cy - rInt), 0, h - 1);
-      const y1 = clamp(Math.round(cy + rInt), 0, h - 1);
-      let sumR = 0, sumG = 0, sumB = 0, sumLum = 0, sumSat = 0, count = 0;
-      for (let y = y0; y <= y1; y++) {
-        for (let x = x0; x <= x1; x++) {
-          const idx = (y * w + x) * 4;
-          const r = data[idx], g = data[idx + 1], b = data[idx + 2];
-          sumR += r; sumG += g; sumB += b;
-          sumLum += 0.2126 * r + 0.7152 * g + 0.0722 * b;
-          sumSat += rgbToHsv(r, g, b).s;
-          count++;
-        }
-      }
-      if (count === 0) return { r: 255, g: 255, b: 255, lum: 255, sat: 0 };
-      return { r: sumR / count, g: sumG / count, b: sumB / count, lum: sumLum / count, sat: sumSat / count };
     }
 
-    // Returns mean luminance, saturation, and RGB of the rack flank at ±2.2× to ±3.6× radius
-    function getFlankStats(data, w, h, cx, cy, radius, dir) {
-      const rEff = Math.max(radius, 4.5);
-      const xStart = clamp(Math.round(cx + dir * rEff * 2.2), 0, w - 1);
-      const xEnd = clamp(Math.round(cx + dir * rEff * 3.6), 0, w - 1);
-      const x0 = Math.min(xStart, xEnd);
-      const x1 = Math.max(xStart, xEnd);
-      const y0 = clamp(Math.round(cy - rEff * 0.6), 0, h - 1);
-      const y1 = clamp(Math.round(cy + rEff * 0.6), 0, h - 1);
-      let sumR = 0, sumG = 0, sumB = 0, sumLum = 0, sumSat = 0, count = 0;
-      for (let y = y0; y <= y1; y++) {
-        for (let x = x0; x <= x1; x++) {
-          const idx = (y * w + x) * 4;
-          const r = data[idx], g = data[idx + 1], b = data[idx + 2];
-          sumR += r; sumG += g; sumB += b;
-          sumLum += 0.2126 * r + 0.7152 * g + 0.0722 * b;
-          sumSat += rgbToHsv(r, g, b).s;
-          count++;
-        }
-      }
-      if (count === 0) return null;
-      return { r: sumR / count, g: sumG / count, b: sumB / count, lum: sumLum / count, sat: sumSat / count };
-    }
-
-    // Scans along the established tube row Y using STRICT LOCAL flanking contrast
-    // so lighting gradients across blank white rack never trigger false positives
-    function recoverFaintTubesAlongRow(data, w, h, rowY, avgR, xMin, xMax, existingTubes) {
-      const recovered = [];
+    function recoverFaintTubesAlongRow(data, w, h, xStart, xEnd, rowY, localOffset, existing) {
       const minGap = w * 0.08;
-      const winR = Math.max(3, Math.round(avgR * 0.65));
-      const flankDist = Math.max(13, Math.round(avgR * 2.6));
-
-      // Compute 1D LOCAL luminance-drop profile along the tube row
-      const profile = new Float32Array(w);
-      for (let x = xMin + winR; x < xMax - winR; x++) {
-        const center = sampleRegionStats(data, w, h, x, rowY, winR);
-        // Reject warm/yellow areas
-        if (center.r > center.b + 14 && center.g > center.b + 10) continue;
-
-        const leftF = (x - flankDist >= 2) ? sampleRegionStats(data, w, h, x - flankDist, rowY, winR) : null;
-        const rightF = (x + flankDist < w - 2) ? sampleRegionStats(data, w, h, x + flankDist, rowY, winR) : null;
-        const leftWhite = leftF && leftF.lum > 145 && leftF.sat < 0.18;
-        const rightWhite = rightF && rightF.lum > 145 && rightF.sat < 0.18;
-
-        if (!leftWhite && !rightWhite) continue;
-
-        // Require center to be darker than BOTH flanking sides (or the single valid side near box edge)
-        const dropL = leftWhite ? (leftF.lum - center.lum) : null;
-        const dropR = rightWhite ? (rightF.lum - center.lum) : null;
-        if (dropL !== null && dropR !== null) {
-          if (dropL >= 18 && dropR >= 18) {
-            profile[x] = Math.min(dropL, dropR);
+      const candidates = [];
+      for (let x = xStart + localOffset; x < xEnd - localOffset; x += 2) {
+        if (existing.some(b => Math.abs(b.cx - x) < minGap)) continue;
+        let sumDip = 0, nValid = 0, neutralOk = true;
+        for (let dy = -3; dy <= 3; dy += 2) {
+          const sy = rowY + dy;
+          if (sy < 2 || sy >= h - 2) continue;
+          const idx = (sy * w + x) * 4;
+          const r = data[idx], g = data[idx + 1], b = data[idx + 2];
+          const hsv = rgbToHsv(r, g, b);
+          if (hsv.h >= 34 && hsv.h <= 88 && hsv.s > 0.22) { neutralOk = false; break; }
+          const lum = 0.299 * r + 0.587 * g + 0.114 * b;
+          const flank = getLocalFlankLum(data, w, h, x, sy, localOffset);
+          if (flank !== null && b >= g - 5) {
+            sumDip += (flank - lum);
+            nValid++;
           }
-        } else {
-          const singleDrop = dropL !== null ? dropL : dropR;
-          if (singleDrop >= 24) profile[x] = singleDrop;
+        }
+        if (neutralOk && nValid >= 3) {
+          const avgDip = sumDip / nValid;
+          if (avgDip >= 18) candidates.push({ cx: x, cy: rowY, dip: avgDip });
         }
       }
 
-      // Find local maxima in local luminance drop
-      const step = Math.max(6, Math.round(avgR * 1.4));
-      for (let x = xMin + step; x < xMax - step; x++) {
-        const val = profile[x];
-        if (val < 20 || val > 155) continue;
-
-        let isPeak = true;
-        for (let dx = -step; dx <= step; dx++) {
-          if (profile[x + dx] > val) { isPeak = false; break; }
+      // Group adjacent x positions into distinct faint tube peaks
+      candidates.sort((a, b) => a.cx - b.cx);
+      let group = [];
+      const flushGroup = () => {
+        if (group.length >= 2) {
+          group.sort((a, b) => b.dip - a.dip);
+          const best = group[0];
+          if (!existing.some(b => Math.abs(b.cx - best.cx) < minGap)) {
+            existing.push({ cx: best.cx, cy: best.cy, r: 5, count: 30 });
+          }
         }
-        if (!isPeak) continue;
-
-        const allCurrent = [...existingTubes, ...recovered];
-        if (allCurrent.some(t => Math.abs(t.cx - x) < minGap)) continue;
-
-        recovered.push({
-          cx: x,
-          cy: rowY,
-          area: Math.PI * avgR * avgR,
-          radius: avgR
-        });
+        group = [];
+      };
+      for (const c of candidates) {
+        if (group.length === 0 || (c.cx - group[group.length - 1].cx) <= 6) group.push(c);
+        else { flushGroup(); group.push(c); }
       }
-      return recovered;
+      flushGroup();
     }
 
-    function findCleanWhitePatch(data, w, h, targetY, xMin, xMax, tubes) {
-      const patchR = 6;
-      const yStart = Math.max(patchR + 2, Math.floor(targetY - h * 0.14));
-      const yEnd = Math.min(h - patchR - 2, Math.ceil(targetY + h * 0.06));
-      const xStart = Math.max(patchR + 12, xMin + 12);
-      const xEnd = Math.min(w - patchR - 12, xMax - 12);
-
+    function findCleanWhitePatch(data, w, h, xStart, xEnd, yStart, yEnd, tubes) {
+      const marginX = Math.max(8, Math.round((xEnd - xStart) * 0.05));
+      const marginY = Math.max(6, Math.round((yEnd - yStart) * 0.08));
       let best = null;
-      let bestScore = -Infinity;
+      let bestScore = -1;
 
-      for (let y = yStart; y <= yEnd; y += 4) {
-        for (let x = xStart; x <= xEnd; x += 6) {
-          let tooClose = false;
-          for (const t of tubes) {
-            if (Math.hypot(x - t.cx, y - t.cy) < 18) { tooClose = true; break; }
-          }
-          if (tooClose) continue;
+      for (let y = yStart + marginY; y < yEnd - marginY; y += 6) {
+        for (let x = xStart + marginX; x < xEnd - marginX; x += 6) {
+          if (tubes.some(t => Math.hypot(t.cx - x, t.cy - y) < 20)) continue;
 
-          let sumV = 0, sumV2 = 0, sumS = 0, count = 0;
-          for (let py = y - patchR; py <= y + patchR; py += 2) {
-            for (let px = x - patchR; px <= x + patchR; px += 2) {
-              const idx = (py * w + px) * 4;
-              const { s, v } = rgbToHsv(data[idx], data[idx + 1], data[idx + 2]);
-              sumV += v; sumV2 += v * v; sumS += s; count++;
+          let sumLum = 0, sumLumSq = 0, sumSat = 0, n = 0;
+          for (let dy = -3; dy <= 3; dy += 2) {
+            for (let dx = -3; dx <= 3; dx += 2) {
+              const px = x + dx, py = y + dy;
+              if (px >= 0 && px < w && py >= 0 && py < h) {
+                const idx = (py * w + px) * 4;
+                const r = data[idx], g = data[idx + 1], b = data[idx + 2];
+                const hsv = rgbToHsv(r, g, b);
+                const lum = 0.299 * r + 0.587 * g + 0.114 * b;
+                sumLum += lum; sumLumSq += lum * lum; sumSat += hsv.s; n++;
+              }
             }
           }
-          const meanV = sumV / count;
-          const meanS = sumS / count;
-          const variance = (sumV2 / count) - (meanV * meanV);
-
-          if (meanV > 0.72 && meanS < 0.10 && variance < 0.004) {
-            const score = meanV * 2.0 - meanS * 5.0 - variance * 100;
+          if (n === 0) continue;
+          const meanLum = sumLum / n;
+          const meanSat = sumSat / n;
+          const stdLum = Math.sqrt(Math.max(0, (sumLumSq / n) - meanLum * meanLum));
+          if (meanLum > 165 && meanLum < 248 && meanSat < 0.09 && stdLum < 8) {
+            const score = meanLum - meanSat * 500 - stdLum * 4;
             if (score > bestScore) {
               bestScore = score;
-              best = { x, y };
+              best = { cx: x, cy: y };
             }
           }
         }
@@ -938,509 +965,495 @@
     }
 
     // =========================================================================
-    // CANVAS INTERACTION: DRAG 4-SIDED SCAN BOX, DRAG ROIs, OR MANUAL ADD
+    // RECALCULATE METRICS, QC GATE, AND RENDER EVERYTHING
     // =========================================================================
-    function getCanvasCoords(clientX, clientY) {
-      const rect = imageCanvas.getBoundingClientRect();
-      const dispX = clientX - rect.left;
-      const dispY = clientY - rect.top;
-      const dispW = rect.width || 1;
-      const dispH = rect.height || 1;
-      const natX = clamp((dispX / dispW) * offscreenCanvas.width, 0, offscreenCanvas.width - 1);
-      const natY = clamp((dispY / dispH) * offscreenCanvas.height, 0, offscreenCanvas.height - 1);
-      return { dispX, dispY, dispW, dispH, natX, natY };
-    }
-
-    function onPointerDown(e) {
-      if (!state.image) return;
-      const pos = getCanvasCoords(e.clientX, e.clientY);
-
-      // 1. Check if grabbing an existing ROI circle first
-      const hitRadiusNat = Math.max(20, offscreenCanvas.width * 0.022);
-      for (let i = state.rois.length - 1; i >= 0; i--) {
-        const roi = state.rois[i];
-        if (Math.hypot(pos.natX - roi.x, pos.natY - roi.y) <= Math.max(roi.r * 1.6, hitRadiusNat)) {
-          state.dragAction = { type: 'roi', id: roi.id };
-          imageCanvas.style.cursor = 'grabbing';
-          return;
-        }
-      }
-
-      // 2. If in Manual Add mode, place a new Sample tube at the clicked point
-      if (state.manualAddMode) {
-        const sampleCount = state.rois.filter(r => r.role === 'sample').length + 1;
-        const defaultR = clamp(Math.round(offscreenCanvas.width * 0.011), 6, 20);
-        const hasCtrl = state.rois.some(r => r.role === 'control');
-        state.rois.push({
-          id: Date.now() + Math.random(),
-          role: hasCtrl ? 'sample' : 'control',
-          label: hasCtrl ? `S${sampleCount}` : 'Water (C)',
-          x: pos.natX,
-          y: pos.natY,
-          r: defaultR
-        });
-        recalculateAndRender();
-        return;
-      }
-
-      // 3. Check 4-Sided Scan Box edge resize handles or interior move
-      const leftX = state.boxLeft * pos.dispW;
-      const rightX = state.boxRight * pos.dispW;
-      const topY = state.boxTop * pos.dispH;
-      const botY = state.boxBottom * pos.dispH;
-      const handleTol = 12;
-
-      const inY = pos.dispY >= topY - handleTol && pos.dispY <= botY + handleTol;
-      const inX = pos.dispX >= leftX - handleTol && pos.dispX <= rightX + handleTol;
-
-      if (inX && Math.abs(pos.dispY - topY) <= handleTol) {
-        state.dragAction = { type: 'boxTop' };
-        imageCanvas.style.cursor = 'ns-resize';
-      } else if (inX && Math.abs(pos.dispY - botY) <= handleTol) {
-        state.dragAction = { type: 'boxBottom' };
-        imageCanvas.style.cursor = 'ns-resize';
-      } else if (inY && Math.abs(pos.dispX - leftX) <= handleTol) {
-        state.dragAction = { type: 'boxLeft' };
-        imageCanvas.style.cursor = 'ew-resize';
-      } else if (inY && Math.abs(pos.dispX - rightX) <= handleTol) {
-        state.dragAction = { type: 'boxRight' };
-        imageCanvas.style.cursor = 'ew-resize';
-      } else if (pos.dispX > leftX && pos.dispX < rightX && pos.dispY > topY && pos.dispY < botY) {
-        state.dragAction = {
-          type: 'boxMove',
-          startFracX: pos.dispX / pos.dispW,
-          startFracY: pos.dispY / pos.dispH,
-          origLeft: state.boxLeft,
-          origRight: state.boxRight,
-          origTop: state.boxTop,
-          origBottom: state.boxBottom
-        };
-        imageCanvas.style.cursor = 'move';
-      }
-    }
-
-    function onPointerMove(e) {
-      if (!state.image) return;
-      const pos = getCanvasCoords(e.clientX, e.clientY);
-
-      if (!state.dragAction) {
-        if (state.manualAddMode) { imageCanvas.style.cursor = 'crosshair'; return; }
-        const leftX = state.boxLeft * pos.dispW;
-        const rightX = state.boxRight * pos.dispW;
-        const topY = state.boxTop * pos.dispH;
-        const botY = state.boxBottom * pos.dispH;
-        const inY = pos.dispY >= topY - 10 && pos.dispY <= botY + 10;
-        const inX = pos.dispX >= leftX - 10 && pos.dispX <= rightX + 10;
-
-        if (inX && (Math.abs(pos.dispY - topY) <= 10 || Math.abs(pos.dispY - botY) <= 10)) {
-          imageCanvas.style.cursor = 'ns-resize';
-        } else if (inY && (Math.abs(pos.dispX - leftX) <= 10 || Math.abs(pos.dispX - rightX) <= 10)) {
-          imageCanvas.style.cursor = 'ew-resize';
-        } else if (pos.dispX > leftX && pos.dispX < rightX && pos.dispY > topY && pos.dispY < botY) {
-          imageCanvas.style.cursor = 'grab';
-        } else {
-          imageCanvas.style.cursor = 'default';
-        }
-        return;
-      }
-
-      const fracX = clamp(pos.dispX / pos.dispW, 0.01, 0.99);
-      const fracY = clamp(pos.dispY / pos.dispH, 0.01, 0.99);
-
-      if (state.dragAction.type === 'roi') {
-        const roi = state.rois.find(r => r.id === state.dragAction.id);
-        if (roi) {
-          roi.x = pos.natX;
-          roi.y = pos.natY;
-          recalculateAndRender();
-        }
-      } else if (state.dragAction.type === 'boxTop') {
-        state.boxTop = clamp(fracY, 0.01, state.boxBottom - 0.08);
-        updateBoxLabel(); renderDisplayCanvas();
-      } else if (state.dragAction.type === 'boxBottom') {
-        state.boxBottom = clamp(fracY, state.boxTop + 0.08, 0.99);
-        updateBoxLabel(); renderDisplayCanvas();
-      } else if (state.dragAction.type === 'boxLeft') {
-        state.boxLeft = clamp(fracX, 0.01, state.boxRight - 0.12);
-        updateBoxLabel(); renderDisplayCanvas();
-      } else if (state.dragAction.type === 'boxRight') {
-        state.boxRight = clamp(fracX, state.boxLeft + 0.12, 0.99);
-        updateBoxLabel(); renderDisplayCanvas();
-      } else if (state.dragAction.type === 'boxMove') {
-        const dx = fracX - state.dragAction.startFracX;
-        const dy = fracY - state.dragAction.startFracY;
-        const w = state.dragAction.origRight - state.dragAction.origLeft;
-        const h = state.dragAction.origBottom - state.dragAction.origTop;
-        const newLeft = clamp(state.dragAction.origLeft + dx, 0.01, 0.99 - w);
-        const newTop = clamp(state.dragAction.origTop + dy, 0.01, 0.99 - h);
-        state.boxLeft = newLeft;
-        state.boxRight = newLeft + w;
-        state.boxTop = newTop;
-        state.boxBottom = newTop + h;
-        updateBoxLabel(); renderDisplayCanvas();
-      }
-    }
-
-    function onPointerUp() {
-      if (!state.dragAction) return;
-      const wasBox = state.dragAction.type.startsWith('box');
-      state.dragAction = null;
-      imageCanvas.style.cursor = state.manualAddMode ? 'crosshair' : 'default';
-      if (wasBox && state.image) {
-        runAutoDetection();
-      }
-    }
-
-    function updateBoxLabel() {
-      document.getElementById('boxRangeLabel').textContent =
-        `Box: X ${Math.round(state.boxLeft * 100)}%–${Math.round(state.boxRight * 100)}% | Y ${Math.round(state.boxTop * 100)}%–${Math.round(state.boxBottom * 100)}%`;
-    }
-
-    function toggleManualAddMode() {
-      state.manualAddMode = !state.manualAddMode;
-      updateManualAddBtnUI();
-    }
-
-    function updateManualAddBtnUI() {
-      const btn = document.getElementById('manualAddBtn');
-      if (state.manualAddMode) {
-        btn.className = 'px-3 py-1.5 rounded-lg text-xs font-semibold border border-rose-500 bg-rose-50 text-rose-700 transition';
-        btn.textContent = '✓ Click Photo to Add (Done)';
-        imageCanvas.style.cursor = 'crosshair';
-      } else {
-        btn.className = 'px-3 py-1.5 rounded-lg text-xs font-semibold border border-slate-300 bg-white text-slate-700 hover:bg-slate-100 disabled:opacity-40 transition';
-        btn.textContent = '+ Add Manual Tube';
-        imageCanvas.style.cursor = 'default';
-      }
-    }
-
-    // =========================================================================
-    // FULL-RESOLUTION COLORIMETRY, QC GATE & NON-TARGET DECISION LOGIC
-    // =========================================================================
-    function sampleCircularROI(cx, cy, radius) {
-      const rInt = Math.ceil(radius);
-      const x0 = Math.max(0, Math.floor(cx - rInt));
-      const y0 = Math.max(0, Math.floor(cy - rInt));
-      const x1 = Math.min(offscreenCanvas.width - 1, Math.ceil(cx + rInt));
-      const y1 = Math.min(offscreenCanvas.height - 1, Math.ceil(cy + rInt));
-      const w = x1 - x0 + 1;
-      const h = y1 - y0 + 1;
-
-      const imgData = offCtx.getImageData(x0, y0, w, h).data;
-      const pixels = [];
-      const rSq = radius * radius;
-
-      for (let py = 0; py < h; py++) {
-        for (let px = 0; px < w; px++) {
-          const dx = (x0 + px) - cx;
-          const dy = (y0 + py) - cy;
-          if (dx * dx + dy * dy <= rSq) {
-            const idx = (py * w + px) * 4;
-            const r = imgData[idx], g = imgData[idx + 1], b = imgData[idx + 2];
-            const lum = 0.2126 * r + 0.7152 * g + 0.0722 * b;
-            pixels.push({ r, g, b, lum });
-          }
-        }
-      }
-      if (pixels.length === 0) return { r: 1, g: 1, b: 1 };
-
-      // 15% brightest/darkest glare & shadow pixel trimming
-      let subset = pixels;
-      if (pixels.length >= 7) {
-        pixels.sort((a, b) => a.lum - b.lum);
-        const trim = Math.floor(pixels.length * 0.15);
-        subset = pixels.slice(trim, pixels.length - trim);
-      }
-
-      let sumR = 0, sumG = 0, sumB = 0;
-      for (const p of subset) { sumR += p.r; sumG += p.g; sumB += p.b; }
-      const n = subset.length;
-      return { r: sumR / n, g: sumG / n, b: sumB / n };
-    }
-
-    function rgbToLab(r, g, b) {
-      const lin = (c) => {
-        const v = c / 255.0;
-        return v <= 0.04045 ? v / 12.92 : Math.pow((v + 0.055) / 1.055, 2.4);
-      };
-      const rl = lin(r), gl = lin(g), bl = lin(b);
-      const x = (rl * 0.4124564 + gl * 0.3575761 + bl * 0.1804375) / 0.95047;
-      const y = (rl * 0.2126729 + gl * 0.7151522 + bl * 0.0721750) / 1.00000;
-      const z = (rl * 0.0193339 + gl * 0.1191920 + bl * 0.9503041) / 1.08883;
-      const f = (t) => (t > 0.008856 ? Math.cbrt(t) : (7.787 * t) + (16 / 116));
-      const fx = f(x), fy = f(y), fz = f(z);
-      return { L: (116 * fy) - 16, a: 500 * (fx - fy), b: 200 * (fy - fz) };
-    }
-
-    function clamp(val, min, max) { return Math.max(min, Math.min(max, val)); }
-
     function recalculateAndRender() {
+      if (!state.image) return;
+
       const whiteRoi = state.rois.find(r => r.role === 'white');
-      const whiteRaw = whiteRoi ? sampleCircularROI(whiteRoi.x, whiteRoi.y, whiteRoi.r) : null;
-      const applyWB = state.useWhiteBalance && whiteRaw !== null;
+      const whiteRaw = whiteRoi ? sampleCircleTrimmed(whiteRoi.x, whiteRoi.y, whiteRoi.r) : null;
 
-      const refG = whiteRaw ? Math.max(whiteRaw.g, 1) : 255.0;
-      const refR = whiteRaw ? Math.max(whiteRaw.r, 1) : 255.0;
-
-      // Step 1: Base per-ROI colorimetry (White-Balance, CIE L*a*b*, Beer-Lambert A_G/A_R, Legacy R/B)
-      const base = state.rois.map(roi => {
-        const raw = sampleCircularROI(roi.x, roi.y, roi.r);
-        const wb = applyWB ? {
-          r: clamp((raw.r / Math.max(whiteRaw.r, 1)) * 255, 0, 255),
-          g: clamp((raw.g / Math.max(whiteRaw.g, 1)) * 255, 0, 255),
-          b: clamp((raw.b / Math.max(whiteRaw.b, 1)) * 255, 0, 255)
-        } : { ...raw };
-
+      // Step 1: Sample all ROIs, apply optional white balance, compute L*a*b* and pseudo-absorbance
+      const rawItems = state.rois.map(roi => {
+        const raw = sampleCircleTrimmed(roi.x, roi.y, roi.r);
+        let wb = { ...raw };
+        if (state.useWhiteBalance && whiteRaw && roi.role !== 'white') {
+          const targetWhite = 235;
+          wb = {
+            r: Math.min(255, Math.max(1, raw.r * (targetWhite / Math.max(20, whiteRaw.r)))),
+            g: Math.min(255, Math.max(1, raw.g * (targetWhite / Math.max(20, whiteRaw.g)))),
+            b: Math.min(255, Math.max(1, raw.b * (targetWhite / Math.max(20, whiteRaw.b))))
+          };
+        }
         const lab = rgbToLab(wb.r, wb.g, wb.b);
-        const absG = -Math.log10(clamp(raw.g / refG, 0.001, 0.999));
-        const absR = -Math.log10(clamp(raw.r / refR, 0.001, 0.999));
-        const pseudoAbsRatio = absG / Math.max(absR, 0.005);
-        const rbRaw = raw.r / Math.max(raw.b, 1);
-
-        return { roi, raw, wb, lab, pseudoAbsRatio, rbRaw };
+        const refR = (state.useWhiteBalance && whiteRaw) ? 235 : 245;
+        const refG = (state.useWhiteBalance && whiteRaw) ? 235 : 245;
+        const absRatio = calcPseudoAbsRatio(wb.r, wb.g, refR, refG);
+        const rbRatio = raw.r / Math.max(1, raw.b);
+        return { roi, raw, wb, lab, absRatio, rbRatio };
       });
 
-      // Step 2: Water-Control QC Gate (a* > 22 => Stayed Red / Run Invalid)
-      const ctrl = base.find(item => item.roi.role === 'control');
-      const qcBanner = document.getElementById('qcBanner');
+      const ctrlItem = rawItems.find(i => i.roi.role === 'control');
 
-      if (ctrl) {
-        const stayedRed = ctrl.lab.a > 22.0;
-        state.qcStatus = stayedRed ? 'INVALID' : 'PASS';
-        qcBanner.classList.remove('hidden');
-
-        if (!stayedRed) {
-          qcBanner.className = 'rounded-xl border border-emerald-200 bg-emerald-50 text-emerald-900 px-4 py-3 flex flex-wrap items-center justify-between gap-3 shadow-sm';
-          document.getElementById('qcIcon').innerHTML = `<svg class="w-5 h-5 text-emerald-600" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>`;
-          document.getElementById('qcTitle').textContent = 'QC Passed: Water Control Aggregated';
-          document.getElementById('qcDetail').textContent = `Water Control a* = ${ctrl.lab.a.toFixed(1)} (≤ 22) | A_G/A_R = ${ctrl.pseudoAbsRatio.toFixed(2)}`;
-          document.getElementById('qcBadge').textContent = 'QC PASS';
-          document.getElementById('qcBadge').className = 'text-xs font-mono font-bold uppercase px-2.5 py-1 rounded-full bg-emerald-200 text-emerald-900';
-        } else {
-          qcBanner.className = 'rounded-xl border border-rose-300 bg-rose-50 text-rose-900 px-4 py-3 flex flex-wrap items-center justify-between gap-3 shadow-sm';
-          document.getElementById('qcIcon').innerHTML = `<svg class="w-5 h-5 text-rose-600" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 9v2m0 4h.01M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/></svg>`;
-          document.getElementById('qcTitle').textContent = 'QC Warning: Water Control Failed to Aggregate (Stayed Red) — Run Invalid';
-          document.getElementById('qcDetail').textContent = `Water Control a* = ${ctrl.lab.a.toFixed(1)} (> 22 threshold) | Check GNP batch or HCl volume`;
-          document.getElementById('qcBadge').textContent = 'RUN INVALID';
-          document.getElementById('qcBadge').className = 'text-xs font-mono font-bold uppercase px-2.5 py-1 rounded-full bg-rose-200 text-rose-900';
-        }
+      // Step 2: Water-Control QC Gate
+      if (!ctrlItem) {
+        state.qcStatus = 'NO_CTRL';
+      } else if (ctrlItem.lab.a > 22.0) {
+        state.qcStatus = 'INVALID';
       } else {
-        state.qcStatus = 'PENDING';
-        qcBanner.classList.add('hidden');
+        state.qcStatus = 'PASS';
       }
 
-      // Step 3: Compute Water-Relative Metrics (including ΔE color distance)
-      const withRel = base.map(item => {
-        let deltaA = null, deltaE = null, relAbs = null, legacyRB = null;
-        if (ctrl && item.roi.role !== 'white') {
-          deltaA = item.lab.a - ctrl.lab.a;
-          deltaE = Math.hypot(
-            item.lab.L - ctrl.lab.L,
-            item.lab.a - ctrl.lab.a,
-            item.lab.b - ctrl.lab.b
-          );
-          relAbs = item.pseudoAbsRatio / Math.max(ctrl.pseudoAbsRatio, 0.0001);
-          legacyRB = item.rbRaw / Math.max(ctrl.rbRaw, 0.0001);
+      // Step 3: Relative metrics vs Water Control
+      const withRel = rawItems.map(item => {
+        if (item.roi.role === 'white') {
+          return { ...item, deltaA: null, deltaE: null, relAbs: null, legacyRB: null, ratioVsMaxNT: null, call: 'WB REF' };
         }
-        return { ...item, deltaA, deltaE, relAbs, legacyRB };
+        if (!ctrlItem) {
+          return { ...item, deltaA: null, deltaE: null, relAbs: null, legacyRB: null, ratioVsMaxNT: null, call: item.roi.role === 'nontarget' ? 'NON-TARGET' : 'NO CTRL' };
+        }
+        const deltaA = item.lab.a - ctrlItem.lab.a;
+        const deltaE = calcDeltaE(item.lab, ctrlItem.lab);
+        const relAbs = ctrlItem.absRatio > 0.001 ? item.absRatio / ctrlItem.absRatio : 1.0;
+        const legacyRB = ctrlItem.rbRatio > 0.001 ? item.rbRatio / ctrlItem.rbRatio : 1.0;
+        return { ...item, deltaA, deltaE, relAbs, legacyRB, ratioVsMaxNT: null, call: '' };
       });
 
-      // Step 4: Non-Target (NT) Baseline Summary
-      const ntItems = withRel.filter(i => i.roi.role === 'nontarget' && i.deltaA !== null);
-      const ntPill = document.getElementById('ntSummaryPill');
-      let maxNtDeltaA = null;
-      let maxNtRelAbs = null;
-
+      // Step 4: Non-Target Calibration Baseline
+      const ntItems = withRel.filter(i => i.roi.role === 'nontarget' && i.relAbs !== null);
+      let maxNTDeltaA = null;
+      let maxNTRelAbs = null;
       if (ntItems.length > 0) {
-        maxNtDeltaA = Math.max(...ntItems.map(i => i.deltaA));
-        maxNtRelAbs = Math.max(...ntItems.map(i => i.relAbs));
+        maxNTDeltaA = Math.max(...ntItems.map(i => i.deltaA));
+        maxNTRelAbs = Math.max(...ntItems.map(i => i.relAbs));
+      }
+
+      const ntPill = document.getElementById('ntSummaryPill');
+      if (ntItems.length > 0) {
         ntPill.classList.remove('hidden');
-        document.getElementById('ntSummaryText').textContent =
-          `Max NT (${ntItems.length}): Δa* ${maxNtDeltaA.toFixed(1)} | Rel A_G/A_R ${maxNtRelAbs.toFixed(2)}`;
+        document.getElementById('ntSummaryText').textContent = `Max NT: ${maxNTRelAbs.toFixed(2)}× (Δa* ${maxNTDeltaA.toFixed(1)})`;
       } else {
         ntPill.classList.add('hidden');
       }
 
-      // Step 5: Final Decision Calls & Signal / Max NT Ratio
-      const useNtCal = state.ntCalibrate && ntItems.length > 0;
-      const effDeltaACutoff = useNtCal
-        ? Math.max(state.cutoffDeltaA, maxNtDeltaA + state.ntMarginDeltaA)
+      // Effective cutoffs (Water Control vs Non-Target calibrated)
+      const effDeltaA = (state.ntCalibrate && maxNTDeltaA !== null)
+        ? Math.max(state.cutoffDeltaA, maxNTDeltaA + state.ntMarginDeltaA)
         : state.cutoffDeltaA;
-      const effRelAbsCutoff = useNtCal
-        ? Math.max(state.cutoffRelAbs, maxNtRelAbs * state.ntMarginMult)
+      const effRelAbs = (state.ntCalibrate && maxNTRelAbs !== null)
+        ? Math.max(state.cutoffRelAbs, maxNTRelAbs * state.ntMarginMult)
         : state.cutoffRelAbs;
 
+      // Step 5: Final Calls
       state.computed = withRel.map(item => {
-        let ratioVsMaxNT = null;
-        let call = '—';
+        if (item.roi.role === 'white') return item;
+        if (item.roi.role === 'control') return { ...item, call: 'WATER CTRL' };
 
-        if (item.roi.role === 'white') {
-          call = 'WB REF';
-        } else if (item.roi.role === 'control') {
-          call = 'WATER CTRL';
-        } else if (item.roi.role === 'nontarget') {
-          call = 'NON-TARGET';
-        } else if (ctrl) {
-          if (maxNtRelAbs !== null && maxNtRelAbs > 0) {
-            ratioVsMaxNT = item.relAbs / maxNtRelAbs;
-          }
+        const ratioVsMaxNT = (maxNTRelAbs !== null && maxNTRelAbs > 0.001 && item.relAbs !== null)
+          ? item.relAbs / maxNTRelAbs
+          : null;
 
-          if (state.qcStatus === 'INVALID') {
-            call = 'INVALID';
-          } else {
-            const passA = item.deltaA >= effDeltaACutoff;
-            const passAbs = item.relAbs >= effRelAbsCutoff;
-            if (passA && passAbs) call = 'POSITIVE';
-            else if (passA || passAbs) call = 'BORDERLINE';
-            else call = 'NEGATIVE';
-          }
+        if (item.roi.role === 'nontarget') {
+          return { ...item, ratioVsMaxNT, call: 'NON-TARGET' };
+        }
+        if (state.qcStatus === 'INVALID') {
+          return { ...item, ratioVsMaxNT, call: 'INVALID' };
+        }
+        if (!ctrlItem) {
+          return { ...item, ratioVsMaxNT, call: 'NO CTRL' };
         }
 
+        const passA = item.deltaA >= effDeltaA;
+        const passAbs = item.relAbs >= effRelAbs;
+        let call = 'NEGATIVE';
+        if (passA && passAbs) call = 'POSITIVE';
+        else if (passA || passAbs) call = 'BORDERLINE';
         return { ...item, ratioVsMaxNT, call };
       });
 
-      renderDisplayCanvas();
+      const tubeCount = state.rois.filter(r => r.role !== 'white').length;
+      document.getElementById('detectionSummaryBadge').textContent = `${tubeCount} tube${tubeCount === 1 ? '' : 's'}`;
+      document.getElementById('headerSaveBtn').disabled = tubeCount === 0;
+      document.getElementById('boxRangeLabel').textContent =
+        `Box: X ${Math.round(state.boxLeft * 100)}%–${Math.round(state.boxRight * 100)}% | Y ${Math.round(state.boxTop * 100)}%–${Math.round(state.boxBottom * 100)}%`;
+
+      updateQcBanner(ctrlItem);
+      drawCanvas();
       renderResultsTable();
-      updateActionButtons();
+    }
+
+    function updateQcBanner(ctrlItem) {
+      const banner = document.getElementById('qcBanner');
+      const icon = document.getElementById('qcIcon');
+      const title = document.getElementById('qcTitle');
+      const subtitle = document.getElementById('qcSubtitle');
+      const badge = document.getElementById('qcBadge');
+
+      banner.className = 'rounded-xl border px-4 py-3 shadow-sm flex items-center justify-between gap-3 transition-colors';
+      if (state.qcStatus === 'PASS') {
+        banner.classList.add('border-emerald-200', 'bg-emerald-50/70');
+        icon.className = 'w-9 h-9 rounded-full bg-emerald-100 text-emerald-700 flex items-center justify-center shrink-0';
+        title.textContent = 'Water-Control QC Gate: PASS';
+        subtitle.textContent = `Water Control aggregated properly (a* = ${ctrlItem.lab.a.toFixed(1)} ≤ 22.0). Sample calls are valid.`;
+        badge.className = 'text-xs font-mono font-bold px-2.5 py-1 rounded-full bg-emerald-600 text-white shrink-0';
+        badge.textContent = 'PASS';
+      } else if (state.qcStatus === 'INVALID') {
+        banner.classList.add('border-rose-300', 'bg-rose-50');
+        icon.className = 'w-9 h-9 rounded-full bg-rose-100 text-rose-700 flex items-center justify-center shrink-0';
+        title.textContent = 'Water-Control QC Gate: RUN INVALID';
+        subtitle.textContent = `Water Control stayed too red (a* = ${ctrlItem.lab.a.toFixed(1)} > 22.0). Check HCl volume or GNP batch before trusting calls.`;
+        badge.className = 'text-xs font-mono font-bold px-2.5 py-1 rounded-full bg-rose-600 text-white shrink-0';
+        badge.textContent = 'INVALID';
+      } else {
+        banner.classList.add('border-amber-200', 'bg-amber-50/70');
+        icon.className = 'w-9 h-9 rounded-full bg-amber-100 text-amber-700 flex items-center justify-center shrink-0';
+        title.textContent = 'Water-Control QC Gate: No Water Control Tagged';
+        subtitle.textContent = 'Tag one tube as Water Control (C) in the Role column to compute signals and run QC.';
+        badge.className = 'text-xs font-mono font-bold px-2.5 py-1 rounded-full bg-amber-500 text-white shrink-0';
+        badge.textContent = 'NO CTRL';
+      }
     }
 
     // =========================================================================
-    // CANVAS, TABLE & SESSION LOG RENDERING
+    // CANVAS DRAWING (4-SIDED SCAN BOX + COLORED ROI RINGS)
     // =========================================================================
-    function renderDisplayCanvas() {
+    function drawCanvas() {
       if (!state.image) return;
-      const wrapper = document.getElementById('canvasWrapper');
-      const maxW = wrapper.clientWidth || 560;
-      const maxH = 440;
-      const ratio = Math.min(maxW / state.image.naturalWidth, maxH / state.image.naturalHeight, 1);
+      const w = imageCanvas.width;
+      const h = imageCanvas.height;
+      ctx.clearRect(0, 0, w, h);
+      ctx.drawImage(state.image, 0, 0, w, h);
 
-      imageCanvas.width = Math.round(state.image.naturalWidth * ratio);
-      imageCanvas.height = Math.round(state.image.naturalHeight * ratio);
+      const bx1 = state.boxLeft * w;
+      const bx2 = state.boxRight * w;
+      const by1 = state.boxTop * h;
+      const by2 = state.boxBottom * h;
+      const bw = bx2 - bx1;
+      const bh = by2 - by1;
 
-      ctx.clearRect(0, 0, imageCanvas.width, imageCanvas.height);
-      ctx.drawImage(state.image, 0, 0, imageCanvas.width, imageCanvas.height);
+      // Dim outside Scan Box
+      ctx.fillStyle = 'rgba(15, 23, 42, 0.42)';
+      ctx.fillRect(0, 0, w, by1);
+      ctx.fillRect(0, by2, w, h - by2);
+      ctx.fillRect(0, by1, bx1, bh);
+      ctx.fillRect(bx2, by1, w - bx2, bh);
 
-      // --- Draw Semi-Transparent Mask Outside 4-Sided Scan Box ---
-      const bLeft = Math.round(state.boxLeft * imageCanvas.width);
-      const bRight = Math.round(state.boxRight * imageCanvas.width);
-      const bTop = Math.round(state.boxTop * imageCanvas.height);
-      const bBot = Math.round(state.boxBottom * imageCanvas.height);
-      const bW = bRight - bLeft;
-      const bH = bBot - bTop;
-
-      ctx.fillStyle = 'rgba(15, 23, 42, 0.48)';
-      ctx.fillRect(0, 0, imageCanvas.width, bTop);                              // Top mask
-      ctx.fillRect(0, bBot, imageCanvas.width, imageCanvas.height - bBot);      // Bottom mask
-      ctx.fillRect(0, bTop, bLeft, bH);                                         // Left mask
-      ctx.fillRect(bRight, bTop, imageCanvas.width - bRight, bH);               // Right mask
-
-      // --- Draw 4-Sided Dashed Cyan Scan Box & 4 Edge Handles ---
+      // Dashed Cyan Scan Box border
+      const lw = Math.max(2, w * 0.0028);
       ctx.save();
-      ctx.strokeStyle = '#22D3EE';
-      ctx.lineWidth = 2;
-      ctx.setLineDash([7, 4]);
-      ctx.strokeRect(bLeft, bTop, bW, bH);
+      ctx.strokeStyle = '#06B6D4';
+      ctx.lineWidth = lw;
+      ctx.setLineDash([lw * 3.5, lw * 2.5]);
+      ctx.strokeRect(bx1, by1, bw, bh);
       ctx.restore();
 
-      const midX = bLeft + bW / 2;
-      const midY = bTop + bH / 2;
-      // Top & Bottom horizontal handle pills
-      [bTop, bBot].forEach(hy => {
-        ctx.fillStyle = '#06B6D4';
-        ctx.beginPath();
-        ctx.roundRect(midX - 20, hy - 4, 40, 8, 4);
-        ctx.fill();
-        ctx.strokeStyle = '#FFFFFF';
-        ctx.lineWidth = 1;
-        ctx.stroke();
-      });
-      // Left & Right vertical handle pills
-      [bLeft, bRight].forEach(hx => {
-        ctx.fillStyle = '#06B6D4';
-        ctx.beginPath();
-        ctx.roundRect(hx - 4, midY - 20, 8, 40, 4);
-        ctx.fill();
-        ctx.strokeStyle = '#FFFFFF';
-        ctx.lineWidth = 1;
-        ctx.stroke();
-      });
+      // 4 Edge Drag Handles
+      const handleLen = Math.max(28, w * 0.06);
+      const handleThick = Math.max(6, w * 0.0085);
+      ctx.fillStyle = '#06B6D4';
+      ctx.strokeStyle = '#FFFFFF';
+      ctx.lineWidth = Math.max(1.5, lw * 0.6);
 
-      // Scan Box corner label
-      ctx.font = '600 10px Inter, sans-serif';
-      ctx.fillStyle = 'rgba(6, 182, 212, 0.92)';
+      const drawHandle = (x, y, rw, rh) => {
+        ctx.beginPath();
+        ctx.roundRect(x, y, rw, rh, Math.min(rw, rh) / 2);
+        ctx.fill();
+        ctx.stroke();
+      };
+      drawHandle(bx1 + bw / 2 - handleLen / 2, by1 - handleThick / 2, handleLen, handleThick);
+      drawHandle(bx1 + bw / 2 - handleLen / 2, by2 - handleThick / 2, handleLen, handleThick);
+      drawHandle(bx1 - handleThick / 2, by1 + bh / 2 - handleLen / 2, handleThick, handleLen);
+      drawHandle(bx2 - handleThick / 2, by1 + bh / 2 - handleLen / 2, handleThick, handleLen);
+
+      // Scan Box label tag
+      const tagFont = Math.max(11, Math.round(w * 0.015));
+      ctx.font = `700 ${tagFont}px Inter, sans-serif`;
+      const tagText = 'SCAN BOX';
+      const tagW = ctx.measureText(tagText).width + tagFont * 1.1;
+      const tagH = tagFont * 1.65;
+      ctx.fillStyle = '#06B6D4';
       ctx.beginPath();
-      ctx.roundRect(bLeft + 6, bTop + 6, 68, 16, 4);
+      ctx.roundRect(bx1 + 6, by1 + 6, tagW, tagH, 4);
       ctx.fill();
       ctx.fillStyle = '#FFFFFF';
       ctx.textAlign = 'left';
       ctx.textBaseline = 'middle';
-      ctx.fillText('SCAN BOX', bLeft + 12, bTop + 14);
+      ctx.fillText(tagText, bx1 + 6 + tagFont * 0.55, by1 + 6 + tagH / 2);
 
-      // --- Draw ROI Circles ---
-      const scaleX = imageCanvas.width / offscreenCanvas.width;
-      const scaleY = imageCanvas.height / offscreenCanvas.height;
-
-      state.computed.forEach(item => {
-        const roi = item.roi;
-        const dx = roi.x * scaleX;
-        const dy = roi.y * scaleY;
-        const dr = Math.max(5, roi.r * scaleX);
-
+      // Draw detected tube circles & labels
+      for (const item of state.computed) {
+        const { roi, call } = item;
         let ringColor = '#64748B';
         if (roi.role === 'white') ringColor = '#94A3B8';
         else if (roi.role === 'control') ringColor = '#8B5CF6';
-        else if (roi.role === 'nontarget') ringColor = '#F59E0B';
-        else if (item.call === 'POSITIVE') ringColor = '#10B981';
-        else if (item.call === 'BORDERLINE') ringColor = '#F59E0B';
+        else if (roi.role === 'nontarget') ringColor = '#D97706';
+        else if (call === 'POSITIVE') ringColor = '#10B981';
+        else if (call === 'BORDERLINE') ringColor = '#F59E0B';
+        else if (call === 'INVALID') ringColor = '#E11D48';
 
-        // Contrast halo
         ctx.save();
         ctx.beginPath();
-        ctx.arc(dx, dy, dr + 1.5, 0, Math.PI * 2);
-        ctx.lineWidth = 2.5;
-        ctx.strokeStyle = 'rgba(255,255,255,0.9)';
+        ctx.arc(roi.x, roi.y, roi.r, 0, Math.PI * 2);
+        ctx.strokeStyle = '#FFFFFF';
+        ctx.lineWidth = Math.max(4, w * 0.0055);
         ctx.stroke();
 
-        // Colored ring
         ctx.beginPath();
-        ctx.arc(dx, dy, dr, 0, Math.PI * 2);
-        ctx.lineWidth = 2.2;
-        if (roi.role === 'white') ctx.setLineDash([3, 2]);
+        ctx.arc(roi.x, roi.y, roi.r, 0, Math.PI * 2);
         ctx.strokeStyle = ringColor;
+        ctx.lineWidth = Math.max(2.2, w * 0.003);
+        if (roi.role === 'white') ctx.setLineDash([4, 3]);
         ctx.stroke();
         ctx.restore();
 
-        // Label badge
-        ctx.font = '600 10px Inter, sans-serif';
+        // Pill label above ROI
+        const lFont = Math.max(11, Math.round(w * 0.0155));
+        ctx.font = `700 ${lFont}px Inter, sans-serif`;
         const textW = ctx.measureText(roi.label).width;
-        const pillW = textW + 8;
-        const pillH = 16;
-        const px = dx - pillW / 2;
-        const py = dy - dr - pillH - 4;
+        const padX = lFont * 0.45;
+        const pillW = textW + padX * 2;
+        const pillH = lFont * 1.5;
+        const pillX = roi.x - pillW / 2;
+        const pillY = roi.y - roi.r - pillH - Math.max(4, w * 0.005);
 
         ctx.fillStyle = 'rgba(15, 23, 42, 0.88)';
         ctx.beginPath();
-        ctx.roundRect(px, py, pillW, pillH, 4);
+        ctx.roundRect(pillX, pillY, pillW, pillH, 5);
         ctx.fill();
 
         ctx.fillStyle = '#FFFFFF';
         ctx.textAlign = 'center';
         ctx.textBaseline = 'middle';
-        ctx.fillText(roi.label, dx, py + pillH / 2);
-      });
+        ctx.fillText(roi.label, roi.x, pillY + pillH / 2);
+      }
+    }
+
+    // =========================================================================
+    // POINTER INTERACTIONS: DRAG 4-SIDED SCAN BOX, DRAG ROIs, OR ADD MANUAL ROI
+    // =========================================================================
+    function getCanvasCoords(e) {
+      const rect = imageCanvas.getBoundingClientRect();
+      const scaleX = imageCanvas.width / rect.width;
+      const scaleY = imageCanvas.height / rect.height;
+      return {
+        x: (e.clientX - rect.left) * scaleX,
+        y: (e.clientY - rect.top) * scaleY
+      };
+    }
+
+    function hitTest(pos) {
+      const w = imageCanvas.width;
+      const h = imageCanvas.height;
+
+      // 1. Check ROI circles first
+      for (let i = state.rois.length - 1; i >= 0; i--) {
+        const roi = state.rois[i];
+        if (Math.hypot(pos.x - roi.x, pos.y - roi.y) <= Math.max(roi.r * 1.6, w * 0.022)) {
+          return { type: 'roi', roi };
+        }
+      }
+
+      // 2. Check 4 edges of the Scan Box
+      const bx1 = state.boxLeft * w, bx2 = state.boxRight * w;
+      const by1 = state.boxTop * h, by2 = state.boxBottom * h;
+      const edgeTol = Math.max(16, w * 0.024);
+
+      if (Math.abs(pos.y - by1) <= edgeTol && pos.x >= bx1 - edgeTol && pos.x <= bx2 + edgeTol) return { type: 'top' };
+      if (Math.abs(pos.y - by2) <= edgeTol && pos.x >= bx1 - edgeTol && pos.x <= bx2 + edgeTol) return { type: 'bottom' };
+      if (Math.abs(pos.x - bx1) <= edgeTol && pos.y >= by1 - edgeTol && pos.y <= by2 + edgeTol) return { type: 'left' };
+      if (Math.abs(pos.x - bx2) <= edgeTol && pos.y >= by1 - edgeTol && pos.y <= by2 + edgeTol) return { type: 'right' };
+
+      // 3. Inside Scan Box -> move box
+      if (pos.x > bx1 && pos.x < bx2 && pos.y > by1 && pos.y < by2) {
+        return {
+          type: 'moveBox',
+          startX: pos.x / w,
+          startY: pos.y / h,
+          origLeft: state.boxLeft,
+          origRight: state.boxRight,
+          origTop: state.boxTop,
+          origBottom: state.boxBottom
+        };
+      }
+      return null;
+    }
+
+    imageCanvas.addEventListener('pointerdown', (e) => {
+      if (!state.image) return;
+      const pos = getCanvasCoords(e);
+
+      if (state.manualAddMode) {
+        const sampleCount = state.rois.filter(r => r.role === 'sample').length;
+        const hasCtrl = state.rois.some(r => r.role === 'control');
+        state.rois.push({
+          id: nextRoiId++,
+          role: hasCtrl ? 'sample' : 'control',
+          label: hasCtrl ? `S${sampleCount + 1}` : 'Water (C)',
+          x: pos.x,
+          y: pos.y,
+          r: Math.max(9, Math.round(imageCanvas.width * 0.009))
+        });
+        toggleManualAddMode();
+        recalculateAndRender();
+        return;
+      }
+
+      const hit = hitTest(pos);
+      if (hit) {
+        state.dragAction = hit;
+        imageCanvas.setPointerCapture(e.pointerId);
+      }
+    });
+
+    imageCanvas.addEventListener('pointermove', (e) => {
+      if (!state.image) return;
+      const pos = getCanvasCoords(e);
+      const w = imageCanvas.width;
+      const h = imageCanvas.height;
+
+      if (!state.dragAction) {
+        if (state.manualAddMode) { imageCanvas.style.cursor = 'crosshair'; return; }
+        const hit = hitTest(pos);
+        if (!hit) imageCanvas.style.cursor = 'default';
+        else if (hit.type === 'roi' || hit.type === 'moveBox') imageCanvas.style.cursor = 'move';
+        else if (hit.type === 'top' || hit.type === 'bottom') imageCanvas.style.cursor = 'ns-resize';
+        else imageCanvas.style.cursor = 'ew-resize';
+        return;
+      }
+
+      const fx = Math.max(0, Math.min(1, pos.x / w));
+      const fy = Math.max(0, Math.min(1, pos.y / h));
+
+      if (state.dragAction.type === 'roi') {
+        state.dragAction.roi.x = Math.max(0, Math.min(w, pos.x));
+        state.dragAction.roi.y = Math.max(0, Math.min(h, pos.y));
+        recalculateAndRender();
+      } else if (state.dragAction.type === 'top') {
+        state.boxTop = Math.min(state.boxBottom - 0.08, Math.max(0.02, fy));
+        drawCanvas();
+      } else if (state.dragAction.type === 'bottom') {
+        state.boxBottom = Math.max(state.boxTop + 0.08, Math.min(0.98, fy));
+        drawCanvas();
+      } else if (state.dragAction.type === 'left') {
+        state.boxLeft = Math.min(state.boxRight - 0.12, Math.max(0.01, fx));
+        drawCanvas();
+      } else if (state.dragAction.type === 'right') {
+        state.boxRight = Math.max(state.boxLeft + 0.12, Math.min(0.99, fx));
+        drawCanvas();
+      } else if (state.dragAction.type === 'moveBox') {
+        const dx = fx - state.dragAction.startX;
+        const dy = fy - state.dragAction.startY;
+        const bw = state.dragAction.origRight - state.dragAction.origLeft;
+        const bh = state.dragAction.origBottom - state.dragAction.origTop;
+        let nl = Math.max(0.01, Math.min(0.99 - bw, state.dragAction.origLeft + dx));
+        let nt = Math.max(0.01, Math.min(0.99 - bh, state.dragAction.origTop + dy));
+        state.boxLeft = nl; state.boxRight = nl + bw;
+        state.boxTop = nt; state.boxBottom = nt + bh;
+        drawCanvas();
+      }
+    });
+
+    imageCanvas.addEventListener('pointerup', (e) => {
+      if (!state.dragAction) return;
+      const actionType = state.dragAction.type;
+      state.dragAction = null;
+      try { imageCanvas.releasePointerCapture(e.pointerId); } catch (_) {}
+      if (actionType !== 'roi') {
+        runAutoDetection();
+      }
+    });
+
+    // =========================================================================
+    // TABLE ACTIONS & RENDERING
+    // =========================================================================
+    function changeRole(id, newRole) {
+      const target = state.rois.find(r => r.id === id);
+      if (!target) return;
+
+      if (newRole === 'control') {
+        state.rois.forEach(r => {
+          if (r.role === 'control' && r.id !== id) {
+            r.role = 'sample';
+            if (r.label === 'Water (C)') r.label = 'S';
+          }
+        });
+        target.role = 'control';
+        if (target.label.startsWith('S') || target.label.startsWith('NT')) target.label = 'Water (C)';
+      } else if (newRole === 'nontarget') {
+        target.role = 'nontarget';
+        if (target.label === 'Water (C)' || /^S\d*$/.test(target.label)) {
+          const ntCount = state.rois.filter(r => r.role === 'nontarget').length;
+          target.label = `NT${ntCount}`;
+        }
+        state.ntCalibrate = true;
+        document.getElementById('ntCalibrateToggle').checked = true;
+      } else {
+        target.role = 'sample';
+        if (target.label === 'Water (C)' || /^NT\d*$/.test(target.label)) {
+          const sCount = state.rois.filter(r => r.role === 'sample').length;
+          target.label = `S${sCount}`;
+        }
+      }
+      recalculateAndRender();
+    }
+
+    function renameROI(id, newLabel) {
+      const target = state.rois.find(r => r.id === id);
+      if (!target) return;
+      const trimmed = newLabel.trim();
+      if (trimmed) target.label = trimmed;
+      drawCanvas();
+    }
+
+    function deleteROI(id) {
+      state.rois = state.rois.filter(r => r.id !== id);
+      recalculateAndRender();
     }
 
     function renderResultsTable() {
+      const thead = document.getElementById('resultsTableHead');
       const tbody = document.getElementById('resultsTableBody');
       const tubeCount = state.computed.filter(c => c.roi.role !== 'white').length;
       document.getElementById('currentRoiCount').textContent = `${tubeCount} tube${tubeCount === 1 ? '' : 's'}`;
 
-      if (state.computed.length === 0) {
-        tbody.innerHTML = `<tr><td colspan="10" class="py-8 text-center text-slate-400">Upload a photo to detect tubes inside the Scan Box.</td></tr>`;
+      const hasNT = state.computed.some(c => c.roi.role === 'nontarget');
+      const visibleItems = state.researchMode
+        ? state.computed
+        : state.computed.filter(c => c.roi.role !== 'white');
+
+      if (state.researchMode) {
+        thead.innerHTML = `
+          <tr class="bg-slate-50/80 border-b border-slate-200 text-[10px] font-semibold uppercase tracking-wider text-slate-500">
+            <th class="py-2 px-2.5">Tube</th>
+            <th class="py-2 px-2">Role</th>
+            <th class="py-2 px-2 text-right">a*</th>
+            <th class="py-2 px-2 text-right">Δa*</th>
+            <th class="py-2 px-2 text-right">ΔE</th>
+            <th class="py-2 px-2 text-right">Rel A_G/A_R</th>
+            <th class="py-2 px-2 text-right">Legacy R/B</th>
+            <th class="py-2 px-2 text-right">Sig / Max NT</th>
+            <th class="py-2 px-2 text-center">Result</th>
+            <th class="py-2 px-2 text-center">×</th>
+          </tr>`;
+      } else {
+        thead.innerHTML = `
+          <tr class="bg-slate-50/80 border-b border-slate-200 text-[10px] font-semibold uppercase tracking-wider text-slate-500">
+            <th class="py-2 px-3">Tube</th>
+            <th class="py-2 px-2">Role</th>
+            <th class="py-2 px-3 text-right">Signal</th>
+            ${hasNT ? '<th class="py-2 px-2 text-right">vs Max NT</th>' : ''}
+            <th class="py-2 px-3 text-center">Result</th>
+            <th class="py-2 px-2 text-center">×</th>
+          </tr>`;
+      }
+
+      const colSpan = state.researchMode ? 10 : (hasNT ? 6 : 5);
+      if (visibleItems.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="${colSpan}" class="py-8 text-center text-slate-400">Take or drop a photo to detect tubes inside the Scan Box.</td></tr>`;
         return;
       }
 
-      tbody.innerHTML = state.computed.map(item => {
+      tbody.innerHTML = visibleItems.map(item => {
         const swatch = `rgb(${Math.round(item.wb.r)}, ${Math.round(item.wb.g)}, ${Math.round(item.wb.b)})`;
         const isWhite = item.roi.role === 'white';
 
@@ -1454,42 +1467,98 @@
               }">
               <option value="control" ${item.roi.role === 'control' ? 'selected' : ''}>Water Control (C)</option>
               <option value="nontarget" ${item.roi.role === 'nontarget' ? 'selected' : ''}>Non-Target (NT)</option>
-              <option value="sample" ${item.roi.role === 'sample' ? 'selected' : ''}>Sample / Target (S)</option>
+              <option value="sample" ${item.roi.role === 'sample' ? 'selected' : ''}>Sample (S)</option>
             </select>`;
 
         let callBadge = `<span class="text-slate-400 font-mono">—</span>`;
-        if (item.call === 'POSITIVE') callBadge = `<span class="px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800 border border-emerald-200 text-[10px] font-bold">POSITIVE</span>`;
-        else if (item.call === 'BORDERLINE') callBadge = `<span class="px-2 py-0.5 rounded-full bg-amber-100 text-amber-800 border border-amber-200 text-[10px] font-bold">BORDERLINE</span>`;
-        else if (item.call === 'NEGATIVE') callBadge = `<span class="px-2 py-0.5 rounded-full bg-slate-100 text-slate-700 border border-slate-200 text-[10px] font-bold">NEGATIVE</span>`;
-        else if (item.call === 'INVALID') callBadge = `<span class="px-2 py-0.5 rounded-full bg-rose-200 text-rose-900 text-[10px] font-bold">INVALID</span>`;
-        else if (item.call === 'WATER CTRL') callBadge = `<span class="px-2 py-0.5 rounded-full bg-violet-100 text-violet-800 text-[10px] font-semibold">WATER</span>`;
-        else if (item.call === 'NON-TARGET') callBadge = `<span class="px-2 py-0.5 rounded-full bg-amber-100 text-amber-800 text-[10px] font-semibold">NT CTRL</span>`;
-        else if (item.call === 'WB REF') callBadge = `<span class="px-2 py-0.5 rounded-full bg-slate-100 text-slate-600 text-[10px] font-semibold">WB</span>`;
+        if (item.call === 'POSITIVE') callBadge = `<span class="px-2.5 py-0.5 rounded-full bg-emerald-100 text-emerald-800 border border-emerald-200 text-[10px] font-bold">POSITIVE</span>`;
+        else if (item.call === 'BORDERLINE') callBadge = `<span class="px-2.5 py-0.5 rounded-full bg-amber-100 text-amber-800 border border-amber-200 text-[10px] font-bold">BORDERLINE</span>`;
+        else if (item.call === 'NEGATIVE') callBadge = `<span class="px-2.5 py-0.5 rounded-full bg-slate-100 text-slate-700 border border-slate-200 text-[10px] font-bold">NEGATIVE</span>`;
+        else if (item.call === 'INVALID') callBadge = `<span class="px-2.5 py-0.5 rounded-full bg-rose-200 text-rose-900 text-[10px] font-bold">INVALID</span>`;
+        else if (item.call === 'WATER CTRL') callBadge = `<span class="px-2.5 py-0.5 rounded-full bg-violet-100 text-violet-800 text-[10px] font-semibold">WATER</span>`;
+        else if (item.call === 'NON-TARGET') callBadge = `<span class="px-2.5 py-0.5 rounded-full bg-amber-100 text-amber-800 text-[10px] font-semibold">NT CTRL</span>`;
+        else if (item.call === 'WB REF') callBadge = `<span class="px-2.5 py-0.5 rounded-full bg-slate-100 text-slate-600 text-[10px] font-semibold">WB</span>`;
+
+        const tubeCell = `
+          <td class="py-2 px-3">
+            <div class="flex items-center gap-2">
+              <span class="w-4 h-4 rounded-full border border-slate-300 shrink-0 shadow-inner" style="background-color: ${swatch}"></span>
+              <input type="text" value="${escapeHtml(item.roi.label)}" onchange="renameROI(${item.roi.id}, this.value)"
+                class="w-24 px-1 py-0.5 text-xs font-semibold text-navy-900 bg-transparent hover:bg-white focus:bg-white border border-transparent hover:border-slate-300 focus:border-teal-500 rounded focus:outline-none" />
+            </div>
+          </td>`;
+
+        const delCell = `
+          <td class="py-2 px-2 text-center">
+            <button onclick="deleteROI(${item.roi.id})" title="Delete tube"
+              class="text-slate-400 hover:text-rose-600 p-1 rounded hover:bg-rose-50 transition font-bold">×</button>
+          </td>`;
+
+        if (state.researchMode) {
+          return `
+            <tr class="hover:bg-slate-50/80 transition">
+              ${tubeCell}
+              <td class="py-2 px-2">${roleControl}</td>
+              <td class="py-2 px-2 font-mono text-right text-slate-600">${item.lab.a.toFixed(1)}</td>
+              <td class="py-2 px-2 font-mono text-right font-semibold text-teal-700 bg-teal-50/40">${item.deltaA != null ? item.deltaA.toFixed(1) : '—'}</td>
+              <td class="py-2 px-2 font-mono text-right text-slate-600">${item.deltaE != null ? item.deltaE.toFixed(1) : '—'}</td>
+              <td class="py-2 px-2 font-mono text-right font-semibold">${item.relAbs != null ? item.relAbs.toFixed(2) : '—'}</td>
+              <td class="py-2 px-2 font-mono text-right text-slate-600">${item.legacyRB != null ? item.legacyRB.toFixed(2) : '—'}</td>
+              <td class="py-2 px-2 font-mono text-right ${item.ratioVsMaxNT != null ? 'font-semibold text-amber-800 bg-amber-50/40' : 'text-slate-400'}">${item.ratioVsMaxNT != null ? item.ratioVsMaxNT.toFixed(2) + '×' : '—'}</td>
+              <td class="py-2 px-2 text-center">${callBadge}</td>
+              ${delCell}
+            </tr>`;
+        }
 
         return `
           <tr class="hover:bg-slate-50/80 transition">
-            <td class="py-2 px-2.5">
-              <div class="flex items-center gap-2">
-                <span class="w-4 h-4 rounded-full border border-slate-300 shrink-0 shadow-inner" style="background-color: ${swatch}"></span>
-                <input type="text" value="${escapeHtml(item.roi.label)}" onchange="renameROI(${item.roi.id}, this.value)"
-                  class="w-24 px-1 py-0.5 text-xs font-semibold text-navy-900 bg-transparent hover:bg-white focus:bg-white border border-transparent hover:border-slate-300 focus:border-teal-500 rounded focus:outline-none" />
-              </div>
-            </td>
+            ${tubeCell}
             <td class="py-2 px-2">${roleControl}</td>
-            <td class="py-2 px-2 font-mono text-right text-slate-600">${item.lab.a.toFixed(1)}</td>
-            <td class="py-2 px-2 font-mono text-right font-semibold text-teal-700 bg-teal-50/40">${item.deltaA != null ? item.deltaA.toFixed(1) : '—'}</td>
-            <td class="py-2 px-2 font-mono text-right text-slate-600">${item.deltaE != null ? item.deltaE.toFixed(1) : '—'}</td>
-            <td class="py-2 px-2 font-mono text-right font-semibold">${item.relAbs != null ? item.relAbs.toFixed(2) : '—'}</td>
-            <td class="py-2 px-2 font-mono text-right text-slate-600">${item.legacyRB != null ? item.legacyRB.toFixed(2) : '—'}</td>
-            <td class="py-2 px-2 font-mono text-right ${item.ratioVsMaxNT != null ? 'font-semibold text-amber-800 bg-amber-50/40' : 'text-slate-400'}">${item.ratioVsMaxNT != null ? item.ratioVsMaxNT.toFixed(2) + '×' : '—'}</td>
-            <td class="py-2 px-2 text-center">${callBadge}</td>
-            <td class="py-2 px-2 text-center">
-              <button onclick="deleteROI(${item.roi.id})" title="Delete tube"
-                class="text-slate-400 hover:text-rose-600 p-1 rounded hover:bg-rose-50 transition font-bold">×</button>
-            </td>
-          </tr>
-        `;
+            <td class="py-2 px-3 font-mono text-right font-semibold text-navy-900">${item.relAbs != null ? item.relAbs.toFixed(2) : '—'}</td>
+            ${hasNT ? `<td class="py-2 px-2 font-mono text-right ${item.ratioVsMaxNT != null ? 'font-semibold text-amber-800' : 'text-slate-400'}">${item.ratioVsMaxNT != null ? item.ratioVsMaxNT.toFixed(2) + '×' : '—'}</td>` : ''}
+            <td class="py-2 px-3 text-center">${callBadge}</td>
+            ${delCell}
+          </tr>`;
       }).join('');
+    }
+
+    // =========================================================================
+    // BATCH SESSION LOG & 21-COLUMN RESEARCH CSV EXPORT
+    // =========================================================================
+    function saveCurrentPhotoToSession() {
+      const tubes = state.computed.filter(c => c.roi.role !== 'white');
+      if (tubes.length === 0) return;
+      const runNotes = document.getElementById('runNotesInput').value.trim();
+      const timestamp = new Date().toISOString();
+
+      tubes.forEach(item => {
+        state.sessionLog.push({
+          Timestamp: timestamp,
+          FileName: state.fileName,
+          RunNotes: runNotes,
+          TubeLabel: item.roi.label,
+          Role: item.roi.role,
+          QC_Status: state.qcStatus,
+          Raw_R: item.raw.r.toFixed(2),
+          Raw_G: item.raw.g.toFixed(2),
+          Raw_B: item.raw.b.toFixed(2),
+          WB_R: item.wb.r.toFixed(2),
+          WB_G: item.wb.g.toFixed(2),
+          WB_B: item.wb.b.toFixed(2),
+          CIE_L: item.lab.L.toFixed(2),
+          CIE_a: item.lab.a.toFixed(2),
+          CIE_b: item.lab.b.toFixed(2),
+          Delta_a: item.deltaA != null ? item.deltaA.toFixed(2) : '',
+          Delta_E: item.deltaE != null ? item.deltaE.toFixed(2) : '',
+          Rel_AG_AR: item.relAbs != null ? item.relAbs.toFixed(4) : '',
+          Legacy_RB: item.legacyRB != null ? item.legacyRB.toFixed(4) : '',
+          Ratio_vs_Max_NT: item.ratioVsMaxNT != null ? item.ratioVsMaxNT.toFixed(4) : '',
+          Call: item.call
+        });
+      });
+
+      renderSessionLog();
+      showToast(`Saved ${tubes.length} tube${tubes.length === 1 ? '' : 's'} to Session Log.`);
     }
 
     function renderSessionLog() {
@@ -1504,164 +1573,71 @@
       document.getElementById('clearSessionBtn').disabled = !hasRows;
 
       if (!hasRows) {
-        tbody.innerHTML = `<tr><td colspan="8" class="py-5 text-center text-slate-400">Session log is empty. Click "Save Run" to record a photo.</td></tr>`;
+        tbody.innerHTML = `<tr><td colspan="6" class="py-5 text-center text-slate-400">Session log is empty. Click "Save Run" to record a photo.</td></tr>`;
         return;
       }
 
       tbody.innerHTML = state.sessionLog.map(row => `
         <tr class="hover:bg-slate-50">
-          <td class="py-1.5 px-2.5 text-slate-600 max-w-[120px] truncate" title="${escapeHtml(row.RunNotes)}">${escapeHtml(row.RunNotes || '—')}</td>
+          <td class="py-1.5 px-2.5 text-slate-600 max-w-[130px] truncate" title="${escapeHtml(row.RunNotes)}">${escapeHtml(row.RunNotes || '—')}</td>
           <td class="py-1.5 px-2 font-semibold text-navy-900">${escapeHtml(row.TubeLabel)}</td>
           <td class="py-1.5 px-2 uppercase text-[10px] text-slate-500">${row.Role}</td>
           <td class="py-1.5 px-2 text-center">
             <span class="text-[10px] font-mono font-bold px-1.5 py-0.5 rounded ${row.QC_Status === 'PASS' ? 'bg-emerald-100 text-emerald-800' : row.QC_Status === 'INVALID' ? 'bg-rose-100 text-rose-800' : 'bg-slate-100 text-slate-600'}">${row.QC_Status}</span>
           </td>
-          <td class="py-1.5 px-2 font-mono text-right">${row.Delta_a_vs_Water}</td>
-          <td class="py-1.5 px-2 font-mono text-right">${row.Rel_AG_AR}</td>
-          <td class="py-1.5 px-2 font-mono text-right">${row.Ratio_vs_Max_NT || '—'}</td>
+          <td class="py-1.5 px-2 font-mono text-right font-semibold">${row.Rel_AG_AR ? Number(row.Rel_AG_AR).toFixed(2) : '—'}</td>
           <td class="py-1.5 px-2 text-center font-bold ${row.Call === 'POSITIVE' ? 'text-emerald-600' : row.Call === 'BORDERLINE' ? 'text-amber-600' : row.Call === 'NEGATIVE' ? 'text-slate-600' : 'text-slate-500'}">${row.Call}</td>
         </tr>
       `).join('');
     }
 
-    // =========================================================================
-    // ROLE CHANGES, RENAMING, SESSION LOG & CSV EXPORT
-    // =========================================================================
-    function changeRole(id, newRole) {
-      const roi = state.rois.find(r => r.id === id);
-      if (!roi) return;
-
-      // Ensure only one Water Control (C) exists at a time
-      if (newRole === 'control') {
-        state.rois.forEach(r => { if (r.role === 'control' && r.id !== id) r.role = 'sample'; });
-      }
-      roi.role = newRole;
-
-      // Auto-enable Non-Target Calibration when any tube is marked Non-Target
-      if (newRole === 'nontarget' && !state.ntCalibrate) {
-        state.ntCalibrate = true;
-        document.getElementById('ntCalibrateToggle').checked = true;
-        showToast('Non-Target calibration enabled automatically.', 'info');
-      }
-      recalculateAndRender();
-    }
-
-    function renameROI(id, newLabel) {
-      const roi = state.rois.find(r => r.id === id);
-      if (roi && newLabel.trim()) {
-        roi.label = newLabel.trim();
-        renderDisplayCanvas();
-      }
-    }
-
-    function deleteROI(id) {
-      state.rois = state.rois.filter(r => r.id !== id);
-      recalculateAndRender();
-    }
-
-    function updateActionButtons() {
-      const hasData = state.computed.length > 0;
-      document.getElementById('saveSessionBtn').disabled = !hasData;
-      document.getElementById('headerSaveBtn').disabled = !hasData;
-    }
-
-    function saveCurrentPhotoToSession() {
-      if (state.computed.length === 0) return;
-      const notes = document.getElementById('runNotes').value.trim();
-      const timestamp = new Date().toISOString();
-
-      state.computed.forEach(item => {
-        state.sessionLog.push({
-          Timestamp: timestamp,
-          PhotoName: state.fileName || 'Untitled_Photo',
-          RunNotes: notes,
-          TubeLabel: item.roi.label,
-          Role: item.roi.role,
-          Raw_R: item.raw.r.toFixed(2),
-          Raw_G: item.raw.g.toFixed(2),
-          Raw_B: item.raw.b.toFixed(2),
-          WB_R: item.wb.r.toFixed(2),
-          WB_G: item.wb.g.toFixed(2),
-          WB_B: item.wb.b.toFixed(2),
-          L_star: item.lab.L.toFixed(2),
-          a_star: item.lab.a.toFixed(2),
-          b_star: item.lab.b.toFixed(2),
-          Delta_a_vs_Water: item.deltaA !== null ? item.deltaA.toFixed(2) : '',
-          Delta_E_vs_Water: item.deltaE !== null ? item.deltaE.toFixed(2) : '',
-          Rel_AG_AR: item.relAbs !== null ? item.relAbs.toFixed(4) : '',
-          Legacy_RB: item.legacyRB !== null ? item.legacyRB.toFixed(4) : '',
-          Ratio_vs_Max_NT: item.ratioVsMaxNT !== null ? item.ratioVsMaxNT.toFixed(4) : '',
-          QC_Status: state.qcStatus,
-          Call: item.call
-        });
-      });
-
-      renderSessionLog();
-      showToast(`Saved ${state.computed.length} rows to Session Log.`, 'success');
-    }
-
     function clearSessionLog() {
       state.sessionLog = [];
       renderSessionLog();
-      showToast('Session Log cleared.', 'info');
+      showToast('Session log cleared.');
     }
 
     function exportSessionCSV() {
       if (state.sessionLog.length === 0) return;
-      const headers = [
-        'Timestamp', 'PhotoName', 'RunNotes', 'TubeLabel', 'Role',
-        'Raw_R', 'Raw_G', 'Raw_B', 'WB_R', 'WB_G', 'WB_B',
-        'L_star', 'a_star', 'b_star', 'Delta_a_vs_Water', 'Delta_E_vs_Water',
-        'Rel_AG_AR', 'Legacy_RB', 'Ratio_vs_Max_NT', 'QC_Status', 'Call'
+      const headers = Object.keys(state.sessionLog[0]);
+      const csvLines = [
+        headers.join(','),
+        ...state.sessionLog.map(row =>
+          headers.map(h => `"${String(row[h] ?? '').replace(/"/g, '""')}"`).join(',')
+        )
       ];
-      const esc = (v) => {
-        const s = String(v ?? '');
-        return /[",\n]/.test(s) ? `"${s.replace(/"/g, '""')}"` : s;
-      };
-      const csv = [headers.join(','), ...state.sessionLog.map(r => headers.map(h => esc(r[h])).join(','))].join('\n');
-
-      try {
-        const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
-        const url = URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        const date = new Date().toISOString().slice(0, 10);
-        a.href = url;
-        a.download = `BoodooScan_Auto_v3_${date}.csv`;
-        document.body.appendChild(a);
-        a.click();
-        document.body.removeChild(a);
-        URL.revokeObjectURL(url);
-        showToast(`Exported BoodooScan_Auto_v3_${date}.csv`, 'success');
-      } catch (err) {
-        const ta = document.createElement('textarea');
-        ta.value = csv;
-        document.body.appendChild(ta);
-        ta.select();
-        document.execCommand('copy');
-        document.body.removeChild(ta);
-        showToast('CSV copied to clipboard.', 'info');
-      }
+      const blob = new Blob([csvLines.join('\n')], { type: 'text/csv;charset=utf-8;' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `BoodooScan_Session_${new Date().toISOString().slice(0, 10)}.csv`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+      showToast('Exported 21-column research CSV.');
     }
 
+    // =========================================================================
+    // UTILITIES
+    // =========================================================================
     function escapeHtml(str) {
-      return String(str).replace(/[&<>"']/g, m => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[m]));
+      return String(str).replace(/[&<>"']/g, m => ({
+        '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
+      }[m]));
     }
 
-    function showToast(message, type = 'info') {
+    function showToast(msg, type = 'info') {
       const container = document.getElementById('toastContainer');
-      const colors = {
-        success: 'bg-emerald-700 text-white border-emerald-600',
-        error: 'bg-rose-700 text-white border-rose-600',
-        info: 'bg-navy-900 text-white border-slate-700'
-      };
       const toast = document.createElement('div');
-      toast.className = `pointer-events-auto px-4 py-2.5 rounded-xl border shadow-lg text-xs font-medium transition-opacity duration-300 ${colors[type] || colors.info}`;
-      toast.textContent = message;
+      const bg = type === 'error' ? 'bg-rose-600' : type === 'warn' ? 'bg-amber-600' : 'bg-navy-900';
+      toast.className = `${bg} text-white text-xs font-medium px-3.5 py-2.5 rounded-lg shadow-lg border border-white/10 transition-opacity duration-300`;
+      toast.textContent = msg;
       container.appendChild(toast);
       setTimeout(() => {
         toast.classList.add('opacity-0');
         setTimeout(() => toast.remove(), 300);
-      }, 3000);
+      }, 2800);
     }
   </script>
 </body>
