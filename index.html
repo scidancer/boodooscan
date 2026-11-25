@@ -25,6 +25,18 @@
         }
       }
     };
+
+    window.triggerPhotoPicker = function triggerPhotoPicker(inputId) {
+      const el = document.getElementById(inputId);
+      if (!el) return;
+      try {
+        if (typeof el.showPicker === 'function') {
+          el.showPicker();
+          return;
+        }
+      } catch (_) {}
+      el.click();
+    };
   </script>
   <style>
     body {
@@ -60,7 +72,7 @@
           <span class="w-7 h-7 rounded-lg bg-teal-600/30 border border-teal-400/40 text-teal-300 flex items-center justify-center font-bold text-sm">?</span>
           <div>
             <h2 class="text-base font-bold leading-tight">BoodooScan Auto Guide</h2>
-            <p class="text-[11px] text-slate-400">Quick workflow, Research Mode metrics, and photo tips</p>
+            <p class="text-[11px] text-slate-400">Quick workflow, per-tube notes, Research Mode, and photo tips</p>
           </div>
         </div>
         <button type="button" onclick="closeGuideModal()" class="text-slate-400 hover:text-white p-1.5 rounded-lg hover:bg-slate-800 transition text-lg leading-none" aria-label="Close guide">×</button>
@@ -80,18 +92,18 @@
           <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <div class="p-3.5 rounded-xl bg-slate-50 border border-slate-200">
               <span class="inline-block text-[10px] font-mono font-bold uppercase px-2 py-0.5 rounded bg-teal-100 text-teal-800 mb-1.5">Step 1</span>
-              <h3 class="font-bold text-navy-900 mb-1">Take or Drop a Photo</h3>
-              <p class="text-slate-600">Tap <strong>Take Photo</strong> on Android or drag and drop a rack image directly onto the dark canvas. Everything runs locally in your browser—no photos leave your device.</p>
+              <h3 class="font-bold text-navy-900 mb-1">Take, Upload, or Paste a Photo</h3>
+              <p class="text-slate-600">Tap <strong>Take Photo</strong> on Android/iPhone to open your rear camera, click <strong>Upload Photo</strong>, drag &amp; drop a file, or press <strong>Ctrl+V / Cmd+V</strong> anywhere on the page to paste a copied image.</p>
             </div>
             <div class="p-3.5 rounded-xl bg-slate-50 border border-slate-200">
               <span class="inline-block text-[10px] font-mono font-bold uppercase px-2 py-0.5 rounded bg-cyan-100 text-cyan-800 mb-1.5">Step 2</span>
-              <h3 class="font-bold text-navy-900 mb-1">Frame the Liquid Tips</h3>
-              <p class="text-slate-600">Drag any of the 4 edges of the cyan <strong>Scan Box</strong> around the white rack and liquid tips to crop out pipette boxes, caps, and yellow tape. Auto-detection re-runs when you release.</p>
+              <h3 class="font-bold text-navy-900 mb-1">Frame Only the Liquid Tips</h3>
+              <p class="text-slate-600">Keep the cyan <strong>Scan Box</strong> tightly around the conical liquid tips (below the plastic caps/rack lip and above the yellow tape). Auto-detection locks onto the colored liquid core at the bottom of each tube.</p>
             </div>
             <div class="p-3.5 rounded-xl bg-slate-50 border border-slate-200">
               <span class="inline-block text-[10px] font-mono font-bold uppercase px-2 py-0.5 rounded bg-violet-100 text-violet-800 mb-1.5">Step 3</span>
-              <h3 class="font-bold text-navy-900 mb-1">Check Roles (C / NT / S)</h3>
-              <p class="text-slate-600">The leftmost tube defaults to <strong>Water Control (C)</strong>. You can change any tube to <strong>Non-Target (NT)</strong> (e.g., CSFV or bacteria) or <strong>Sample (S)</strong>, rename labels inline, or drag circles to nudge.</p>
+              <h3 class="font-bold text-navy-900 mb-1">Tag Roles &amp; Per-Tube Notes</h3>
+              <p class="text-slate-600">The leftmost tube defaults to <strong>Water Control (C)</strong>. Set any tube to <strong>Non-Target (NT)</strong> or <strong>Sample (S)</strong>, rename labels inline, or type sample/replicate details in each tube's <strong>Tube Note</strong> box.</p>
             </div>
             <div class="p-3.5 rounded-xl bg-slate-50 border border-slate-200">
               <span class="inline-block text-[10px] font-mono font-bold uppercase px-2 py-0.5 rounded bg-emerald-100 text-emerald-800 mb-1.5">Step 4</span>
@@ -99,14 +111,17 @@
               <p class="text-slate-600">Verify the <strong>Water-Control QC Gate</strong> shows <strong>PASS</strong>, click <strong>Save Run</strong> (auto-saved in your browser), and click <strong>Export CSV</strong> when finished with your batch.</p>
             </div>
           </div>
-          <div class="p-3 rounded-xl bg-amber-50 border border-amber-200 text-amber-900 text-[11px]">
-            <strong>Tip for very pale / heavily aggregated tubes:</strong> Lower the <strong>Sensitivity</strong> slider slightly or click <strong>+ Add Manual Tube</strong> to place a sampling ring directly on the liquid.
+
+          <div class="p-3.5 rounded-xl bg-sky-50 border border-sky-200 text-sky-950 text-[11px] space-y-1">
+            <p class="font-bold text-sky-900">Quick Shortcuts (Android &amp; Computer):</p>
+            <p>• <strong>On Android / iPhone:</strong> Tap <strong>Upload Photo</strong>, open the top-left menu / <strong>Browse</strong> in your phone's picker, and pick from <strong>Google Photos</strong> or Gallery.</p>
+            <p>• <strong>On Laptop / Desktop:</strong> Right-click any photo in your browser or folder → <strong>Copy image</strong>, then click anywhere on BoodooScan and press <strong>Ctrl+V</strong> (or <strong>Cmd+V</strong> on Mac).</p>
           </div>
         </div>
 
         <!-- TAB 2: METRICS & RESEARCH MODE -->
         <div id="guideTabMetrics" class="hidden space-y-3">
-          <p class="text-slate-600">By default, everyday users see only <strong>Tube</strong>, <strong>Role</strong>, <strong>Signal</strong>, and <strong>Result</strong>. Toggle <strong>Research Mode</strong> on to inspect every colorimetric metric below (all 21 columns are always included in the exported CSV).</p>
+          <p class="text-slate-600">By default, everyday users see only <strong>Tube</strong>, <strong>Tube Note</strong>, <strong>Role</strong>, <strong>Signal</strong>, and <strong>Result</strong> (<strong>POSITIVE</strong> or <strong>NEGATIVE</strong>). Toggle <strong>Research Mode</strong> on to inspect every colorimetric metric below (all 22 columns are always included in the exported CSV).</p>
           <div class="divide-y divide-slate-200 border border-slate-200 rounded-xl overflow-hidden">
             <div class="p-3 bg-white flex flex-col sm:flex-row sm:items-start gap-1 sm:gap-4">
               <span class="font-mono font-bold text-navy-900 sm:w-28 shrink-0">Signal (Rel A_G/A_R)</span>
@@ -140,7 +155,7 @@
           <ul class="space-y-2.5 text-slate-600">
             <li class="flex items-start gap-2.5">
               <span class="w-5 h-5 rounded-full bg-teal-100 text-teal-700 font-bold flex items-center justify-center shrink-0 mt-0.5">1</span>
-              <span><strong>Use a matte white backdrop:</strong> Place the 0.2 mL PCR tubes in a white 3D-printed rack or against clean white paper so the detector can locate the white-balance patch (<strong>W</strong>) and separate pale aggregated tubes cleanly.</span>
+              <span><strong>Keep the Scan Box below the upper plastic lip:</strong> Frame just the liquid tips and the white rack background around them so shadows on the upper tube barrels don't pull the circle upward.</span>
             </li>
             <li class="flex items-start gap-2.5">
               <span class="w-5 h-5 rounded-full bg-teal-100 text-teal-700 font-bold flex items-center justify-center shrink-0 mt-0.5">2</span>
@@ -148,7 +163,7 @@
             </li>
             <li class="flex items-start gap-2.5">
               <span class="w-5 h-5 rounded-full bg-teal-100 text-teal-700 font-bold flex items-center justify-center shrink-0 mt-0.5">3</span>
-              <span><strong>Avoid direct flash or harsh overhead glare:</strong> Even though BoodooScan trims the brightest 15% and darkest 15% of pixels inside each tube, diffused room lighting produces the most repeatable measurements.</span>
+              <span><strong>Avoid direct flash or harsh overhead glare:</strong> Diffused room lighting produces the cleanest, most repeatable measurements.</span>
             </li>
             <li class="flex items-start gap-2.5">
               <span class="w-5 h-5 rounded-full bg-teal-100 text-teal-700 font-bold flex items-center justify-center shrink-0 mt-0.5">4</span>
@@ -259,94 +274,95 @@
                 class="px-2.5 py-1.5 rounded-lg text-xs font-medium border border-slate-300 bg-white text-slate-600 hover:bg-slate-100 disabled:opacity-40 transition">
                 Reset Box
               </button>
+
+              <button type="button" id="clearPhotoBtn" onclick="clearCurrentPhoto()" disabled
+                class="px-2.5 py-1.5 rounded-lg text-xs font-medium border border-slate-300 bg-white text-rose-600 hover:bg-rose-50 hover:border-rose-200 disabled:opacity-40 disabled:text-slate-400 disabled:hover:bg-white disabled:hover:border-slate-300 transition">
+                Clear Photo
+              </button>
             </div>
 
-            <div class="flex items-center gap-2 min-w-0">
-              <span id="currentFileName" class="text-[11px] font-medium text-slate-500 truncate max-w-[120px]">No file</span>
-              <span id="detectionSummaryBadge" class="text-[11px] font-mono px-2 py-0.5 rounded-full bg-white text-slate-600 border border-slate-200 shrink-0">0 tubes</span>
+            <div class="flex items-center gap-2 text-[11px] font-mono text-slate-500">
+              <span id="currentFileName" class="truncate max-w-[130px]" title="Active filename">No file</span>
+              <span id="detectionSummaryBadge" class="px-2 py-0.5 rounded-full bg-slate-200/80 text-slate-700 font-semibold">0 tubes</span>
             </div>
           </div>
 
-          <!-- Canvas Viewport (Click or Drag & Drop Photo Directly Here) -->
-          <div id="canvasWrapper" class="relative bg-slate-900 min-h-[320px] sm:min-h-[400px] flex items-center justify-center overflow-hidden select-none transition-colors">
-            <!-- Empty-State Clickable Dropzone -->
-            <label id="emptyCanvasPrompt" for="fileInput"
-              class="m-5 w-full max-w-md border-2 border-dashed border-slate-700 hover:border-teal-400 hover:bg-slate-800/60 rounded-2xl p-8 text-center cursor-pointer transition-all group flex flex-col items-center justify-center">
-              <div class="w-14 h-14 mb-4 rounded-2xl bg-slate-800 group-hover:bg-teal-500/20 border border-slate-700 group-hover:border-teal-400/50 flex items-center justify-center text-teal-400 transition-all shadow-inner">
-                <svg class="w-7 h-7" fill="none" stroke="currentColor" stroke-width="1.6" viewBox="0 0 24 24">
+          <!-- Canvas Dropzone Viewport -->
+          <div id="canvasWrapper" class="relative bg-navy-900 min-h-[340px] sm:min-h-[390px] flex items-center justify-center overflow-hidden select-none">
+            <!-- Empty Drop/Upload Prompt -->
+            <div id="emptyCanvasPrompt" class="text-center p-6 max-w-sm">
+              <button type="button" onclick="window.triggerPhotoPicker('fileInput')"
+                class="w-14 h-14 mx-auto mb-3 rounded-2xl bg-slate-800 hover:bg-slate-700 border border-slate-700 text-teal-400 flex items-center justify-center transition shadow-md cursor-pointer">
+                <svg class="w-7 h-7" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z" />
                   <path stroke-linecap="round" stroke-linejoin="round" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z" />
                 </svg>
-              </div>
-              <p class="text-base font-semibold text-white">Drop a PCR Tube Photo Here</p>
-              <p class="text-xs text-slate-400 mt-1.5 leading-relaxed">
-                or <span class="text-teal-400 font-semibold underline decoration-teal-400/50 underline-offset-2">click to browse</span> from your device
+              </button>
+              <h2 class="text-sm font-bold text-white mb-1">Drop, Paste, or Choose a Tube Photo</h2>
+              <p class="text-xs text-slate-400 leading-relaxed mb-4">
+                Drag a rack photo here, press <span class="font-mono text-teal-300">Ctrl+V / Cmd+V</span> to paste, or choose a file below.
               </p>
-              <div class="mt-4 inline-flex items-center gap-1.5 text-[11px] text-slate-400 bg-slate-800/80 border border-slate-700/80 px-3 py-1.5 rounded-full">
-                <span class="w-2 h-2 rounded-full bg-cyan-400"></span>
-                Auto-detects tubes inside the 4-sided cyan Scan Box
+              <div class="flex flex-wrap items-center justify-center gap-2">
+                <button type="button" onclick="window.triggerPhotoPicker('cameraInput')"
+                  class="px-3.5 py-2 rounded-lg text-xs font-semibold bg-teal-600 hover:bg-teal-500 text-white transition shadow-sm cursor-pointer">
+                  Take Photo
+                </button>
+                <button type="button" onclick="window.triggerPhotoPicker('fileInput')"
+                  class="px-3.5 py-2 rounded-lg text-xs font-semibold bg-white hover:bg-slate-100 text-navy-900 transition shadow-sm cursor-pointer">
+                  Choose Photo File
+                </button>
               </div>
-            </label>
-
-            <!-- Active Drag-Over Overlay -->
-            <div id="canvasDragOverlay" class="hidden absolute inset-0 z-20 bg-navy-900/80 backdrop-blur-[2px] border-2 border-dashed border-teal-400 m-3 rounded-xl flex flex-col items-center justify-center pointer-events-none">
-              <div class="w-12 h-12 rounded-2xl bg-teal-500/20 border border-teal-400/60 flex items-center justify-center text-teal-300 mb-2.5">
-                <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" d="M4 16v2a2 2 0 002 2h12a2 2 0 002-2v-2M12 12V3m0 0l-4 4m4-4l4 4" />
-                </svg>
-              </div>
-              <p class="text-sm font-bold text-white">Drop Photo to Analyze</p>
-              <p class="text-xs text-teal-300 mt-0.5">Replaces current image &amp; runs auto-detection</p>
             </div>
 
-            <canvas id="imageCanvas" class="hidden max-w-full h-auto"></canvas>
+            <!-- Interactive Image Canvas -->
+            <canvas id="imageCanvas" class="hidden max-w-full max-h-[520px] w-auto h-auto block"></canvas>
+
+            <!-- Drag-Over Highlight Overlay -->
+            <div id="canvasDragOverlay" class="hidden absolute inset-0 bg-teal-900/80 border-2 border-dashed border-teal-300 flex flex-col items-center justify-center pointer-events-none z-20">
+              <svg class="w-10 h-10 text-teal-300 mb-2" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M4 16v2a2 2 0 002 2h12a2 2 0 002-2v-2M12 12V3m0 0l-4 4m4-4l4 4" />
+              </svg>
+              <p class="text-sm font-bold text-white">Drop Photo to Analyze</p>
+            </div>
           </div>
 
-          <!-- Scan Box, Legend & CV Controls Footer -->
-          <div class="px-4 py-3 bg-slate-50 border-t border-slate-200 space-y-2.5">
-            <!-- Ring Color Legend -->
-            <div class="flex flex-wrap items-center gap-x-3.5 gap-y-1 text-[11px] text-slate-600">
-              <span class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full bg-violet-500 inline-block"></span>Water (C)</span>
-              <span class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full bg-amber-500 inline-block"></span>Non-Target / Borderline</span>
-              <span class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full bg-emerald-500 inline-block"></span>Positive</span>
-              <span class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full bg-slate-500 inline-block"></span>Negative</span>
-              <span class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full border border-dashed border-slate-500 inline-block"></span>White Ref (W)</span>
+          <!-- Ring Color Legend & Scan Box Coordinates -->
+          <div class="px-4 py-2 bg-slate-50 border-t border-slate-200 flex flex-wrap items-center justify-between gap-2 text-[11px] text-slate-600">
+            <div class="flex flex-wrap items-center gap-3">
+              <span class="flex items-center gap-1"><span class="w-2.5 h-2.5 rounded-full bg-violet-500 inline-block"></span>Water (C)</span>
+              <span class="flex items-center gap-1"><span class="w-2.5 h-2.5 rounded-full bg-amber-500 inline-block"></span>Non-Target</span>
+              <span class="flex items-center gap-1"><span class="w-2.5 h-2.5 rounded-full bg-emerald-500 inline-block"></span>Positive</span>
+              <span class="flex items-center gap-1"><span class="w-2.5 h-2.5 rounded-full bg-slate-500 inline-block"></span>Negative</span>
+              <span class="flex items-center gap-1"><span class="w-2.5 h-2.5 rounded-full border border-dashed border-slate-400 bg-white inline-block"></span>White Ref (W)</span>
             </div>
+            <span id="boxRangeLabel" class="font-mono text-[10px] text-slate-400">Box: X 8%–92% | Y 28%–52%</span>
+          </div>
 
-            <div class="flex flex-wrap items-center justify-between gap-2 text-[11px] text-slate-500 pt-1.5 border-t border-slate-200/70">
-              <span class="flex items-center gap-1.5">
-                <span class="w-3 h-2 rounded-sm border border-dashed border-cyan-500 bg-cyan-500/20 inline-block"></span>
-                Drag any of the 4 edges to resize Scan Box
-              </span>
-              <span id="boxRangeLabel" class="font-mono text-slate-500">Box: X 8%–92% | Y 25%–55%</span>
+          <!-- Sensitivity & Auto White Balance Bar -->
+          <div class="px-4 py-2.5 bg-white border-t border-slate-200 flex flex-wrap items-center justify-between gap-3 text-xs">
+            <div class="flex items-center gap-2 flex-1 min-w-[180px]">
+              <label for="sensitivitySlider" class="font-semibold text-slate-700 whitespace-nowrap">Sensitivity:</label>
+              <input id="sensitivitySlider" type="range" min="0.05" max="0.28" step="0.01" value="0.12" class="w-full accent-teal-600 cursor-pointer" />
+              <span id="sensitivityVal" class="font-mono text-slate-600 w-9 text-right">0.12</span>
             </div>
-
-            <div class="flex flex-wrap items-center justify-between gap-3 pt-1.5 border-t border-slate-200/70">
-              <div class="flex items-center gap-2 text-xs">
-                <label for="sensitivitySlider" class="font-medium text-slate-600">Sensitivity:</label>
-                <input id="sensitivitySlider" type="range" min="0.06" max="0.28" step="0.01" value="0.12" class="w-24 accent-teal-600 cursor-pointer" />
-                <span id="sensitivityVal" class="font-mono text-slate-700 w-9">0.12</span>
-              </div>
-
-              <label class="flex items-center gap-1.5 text-xs font-medium text-slate-700 cursor-pointer select-none">
-                <input id="wbToggle" type="checkbox" checked class="w-3.5 h-3.5 rounded accent-teal-600 cursor-pointer" />
-                <span>Auto White Balance (W)</span>
-              </label>
-            </div>
+            <label class="inline-flex items-center gap-1.5 cursor-pointer font-medium text-slate-700 select-none">
+              <input id="wbToggle" type="checkbox" checked class="rounded text-teal-600 focus:ring-teal-500" />
+              <span>Auto White Balance (W)</span>
+            </label>
           </div>
         </section>
 
-        <!-- Compact Run / Photo Notes Card -->
+        <!-- Run / Photo Notes Card -->
         <section class="bg-white rounded-xl border border-slate-200 shadow-sm p-3.5">
-          <label for="runNotesInput" class="block text-[11px] font-bold uppercase tracking-wider text-slate-500 mb-1.5">Run / Photo Notes</label>
-          <input id="runNotesInput" type="text" placeholder="e.g., ASFV p72 — 5 min, 7 µL HCl, Batch B"
-            class="w-full px-3 py-2 text-xs bg-slate-50 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-500 focus:bg-white transition" />
+          <label for="runNotesInput" class="block text-[11px] font-bold uppercase tracking-wider text-slate-500 mb-1.5">Photo / Batch Notes (Applies to All Tubes in Photo)</label>
+          <input id="runNotesInput" type="text" placeholder="e.g., SA_8uL_0.1M_2min or Ch8_Milk209_SmallMNP_5min"
+            class="w-full text-xs px-3 py-2 rounded-lg border border-slate-300 focus:outline-none focus:ring-2 focus:ring-teal-500/30 focus:border-teal-600" />
         </section>
 
       </div>
 
       <!-- =================================================================== -->
-      <!-- RIGHT COLUMN (7 cols on xl): QC Gate, Settings, Results, Session    -->
+      <!-- RIGHT COLUMN (7 cols on xl): QC Banner, Settings, Results & Log     -->
       <!-- =================================================================== -->
       <div class="xl:col-span-7 space-y-4">
 
@@ -355,130 +371,113 @@
           <div class="flex items-center gap-3">
             <div id="qcIcon" class="w-9 h-9 rounded-full bg-slate-100 text-slate-500 flex items-center justify-center shrink-0">
               <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
               </svg>
             </div>
             <div>
-              <h2 id="qcTitle" class="text-sm font-bold text-slate-800">Water-Control QC Gate: Waiting for Photo</h2>
-              <p id="qcSubtitle" class="text-xs text-slate-500">Checks that the Water Control (C) aggregated to purple/blue/gray rather than staying red before trusting sample calls.</p>
+              <h2 id="qcTitle" class="text-xs sm:text-sm font-bold text-navy-900">Water-Control QC Gate: Waiting for Photo</h2>
+              <p id="qcSubtitle" class="text-[11px] text-slate-500 leading-snug">Checks that the Water Control (C) aggregated to purple/blue/gray rather than staying red before trusting sample calls.</p>
             </div>
           </div>
           <span id="qcBadge" class="text-xs font-mono font-bold px-2.5 py-1 rounded-full bg-slate-100 text-slate-600 shrink-0">PENDING</span>
         </section>
 
-        <!-- Collapsible Calibration & Cutoff Settings Card -->
+        <!-- Collapsible Calibration & Cutoff Settings -->
         <section class="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
-          <button type="button" onclick="toggleCalibrationSettings()"
-            class="w-full px-4 py-3 flex flex-wrap items-center justify-between gap-2 hover:bg-slate-50 transition text-left">
-            <div class="flex items-center gap-2">
+          <button type="button" onclick="toggleCalibrationSettings()" class="w-full px-4 py-2.5 bg-slate-50 hover:bg-slate-100/80 flex items-center justify-between text-left transition">
+            <span class="text-xs font-bold uppercase tracking-wider text-slate-700 flex items-center gap-2">
               <svg class="w-4 h-4 text-slate-500" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
                 <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
               </svg>
-              <h2 class="text-xs font-bold text-navy-900 uppercase tracking-wider">Calibration &amp; Cutoff Settings</h2>
-            </div>
-
-            <div class="flex items-center gap-2">
-              <div id="ntSummaryPill" class="hidden text-[11px] font-mono px-2.5 py-0.5 rounded-full bg-amber-50 text-amber-900 border border-amber-200 flex items-center gap-1.5">
-                <span class="w-2 h-2 rounded-full bg-amber-500"></span>
-                <span id="ntSummaryText">Max NT: —</span>
-              </div>
-              <svg id="calibrationChevron" class="w-4 h-4 text-slate-400 transition-transform duration-200" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7" />
-              </svg>
-            </div>
+              <span>Calibration &amp; Cutoff Settings</span>
+            </span>
+            <svg id="calibrationChevron" class="w-4 h-4 text-slate-500 transition-transform" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7" />
+            </svg>
           </button>
 
-          <div id="calibrationBody" class="hidden px-4 pb-4 pt-3 border-t border-slate-100 space-y-3">
-            <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 items-end">
+          <div id="calibrationBody" class="hidden p-4 border-t border-slate-200 space-y-3 text-xs">
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
               <div>
-                <label for="cutoffDeltaA" class="block text-[11px] font-semibold text-slate-600 mb-1">Water Cutoff Δa*</label>
-                <input id="cutoffDeltaA" type="number" step="0.5" value="10.0"
-                  class="w-full px-2.5 py-1.5 text-xs font-mono font-semibold bg-slate-50 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-500" />
+                <label for="cutoffRelAbs" class="block font-semibold text-slate-700 mb-1">Min Signal Cutoff (Rel A_G/A_R)</label>
+                <input id="cutoffRelAbs" type="number" step="0.05" value="1.30" class="w-full font-mono px-2.5 py-1.5 rounded-lg border border-slate-300" />
               </div>
               <div>
-                <label for="cutoffRelAbs" class="block text-[11px] font-semibold text-slate-600 mb-1">Water Cutoff Signal (Rel A_G/A_R)</label>
-                <input id="cutoffRelAbs" type="number" step="0.05" value="1.30"
-                  class="w-full px-2.5 py-1.5 text-xs font-mono font-semibold bg-slate-50 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-500" />
-              </div>
-              <div>
-                <label for="ntMarginDeltaA" class="block text-[11px] font-semibold text-slate-600 mb-1">NT Margin (+Δa* / ×Signal)</label>
-                <div class="flex gap-1.5">
-                  <input id="ntMarginDeltaA" type="number" step="0.5" value="5.0" title="Extra Δa* above Max Non-Target"
-                    class="w-1/2 px-2 py-1.5 text-xs font-mono font-semibold bg-slate-50 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-500" />
-                  <input id="ntMarginMult" type="number" step="0.05" value="1.25" title="Multiplier above Max Non-Target Signal"
-                    class="w-1/2 px-2 py-1.5 text-xs font-mono font-semibold bg-slate-50 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-500" />
-                </div>
+                <label for="cutoffDeltaA" class="block font-semibold text-slate-700 mb-1">Min Redness Shift Cutoff (Δa*)</label>
+                <input id="cutoffDeltaA" type="number" step="0.5" value="10.0" class="w-full font-mono px-2.5 py-1.5 rounded-lg border border-slate-300" />
               </div>
             </div>
 
-            <div class="flex flex-wrap items-center justify-between gap-2 pt-1">
-              <label class="flex items-center gap-2 cursor-pointer select-none">
-                <input id="ntCalibrateToggle" type="checkbox" class="w-4 h-4 rounded accent-amber-600 cursor-pointer" />
-                <span class="text-xs font-semibold text-slate-800">Calibrate Cutoff to Non-Target Controls</span>
+            <div class="pt-2 border-t border-slate-100 flex flex-wrap items-center justify-between gap-2">
+              <label class="inline-flex items-center gap-2 font-semibold text-slate-700 cursor-pointer">
+                <input id="ntCalibrateToggle" type="checkbox" class="rounded text-teal-600 focus:ring-teal-500" />
+                <span>Calibrate Cutoff to Non-Target (NT) Controls</span>
               </label>
-              <span class="text-[11px] text-slate-500">Auto-enables when any tube is set to <span class="font-semibold text-amber-700">Non-Target (NT)</span></span>
+              <span id="ntSummaryPill" class="hidden font-mono text-[11px] px-2 py-0.5 rounded bg-amber-100 text-amber-900 font-semibold">
+                <span id="ntSummaryText">Max NT: —</span>
+              </span>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <div>
+                <label for="ntMarginMult" class="block font-medium text-slate-600 mb-1">NT Signal Multiplier (× Max NT)</label>
+                <input id="ntMarginMult" type="number" step="0.05" value="1.25" class="w-full font-mono px-2.5 py-1.5 rounded-lg border border-slate-300" />
+              </div>
+              <div>
+                <label for="ntMarginDeltaA" class="block font-medium text-slate-600 mb-1">NT Δa* Safety Margin (+Δa*)</label>
+                <input id="ntMarginDeltaA" type="number" step="0.5" value="5.0" class="w-full font-mono px-2.5 py-1.5 rounded-lg border border-slate-300" />
+              </div>
             </div>
           </div>
         </section>
 
-        <!-- Live Results Table -->
+        <!-- Detected Tubes & Results Table -->
         <section class="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
           <div class="px-4 py-2.5 bg-slate-50 border-b border-slate-200 flex flex-wrap items-center justify-between gap-2">
             <div>
-              <h2 class="text-xs font-bold text-navy-900 uppercase tracking-wider">Detected Tubes &amp; Results</h2>
-              <p class="text-[11px] text-slate-500">Tag any tube's <strong>Role</strong> (C / NT / S) or rename inline. Hover column headers for definitions.</p>
+              <h2 class="text-xs font-bold uppercase tracking-wider text-slate-800">Detected Tubes &amp; Results</h2>
+              <p class="text-[11px] text-slate-500">Rename tubes, add per-tube notes (e.g., Milk, SA pure, Rep 1), or tag Roles (C / NT / S).</p>
             </div>
-            <div class="flex items-center gap-2.5">
-              <button type="button" onclick="openGuideModal('metrics')" title="What do Research Mode metrics mean?"
-                class="text-[11px] font-semibold text-teal-700 hover:text-teal-800 underline underline-offset-2">
-                Metrics?
-              </button>
-              <label class="flex items-center gap-1.5 cursor-pointer select-none bg-white border border-slate-200 px-2.5 py-1 rounded-lg hover:bg-slate-50 transition">
-                <input id="researchModeToggle" type="checkbox" class="w-3.5 h-3.5 rounded accent-teal-600 cursor-pointer" />
-                <span class="text-[11px] font-semibold text-slate-700">Research Mode</span>
+            <div class="flex items-center gap-3">
+              <button type="button" onclick="openGuideModal('metrics')" class="text-xs font-semibold text-teal-700 hover:underline">Metrics?</button>
+              <label class="inline-flex items-center gap-1.5 cursor-pointer text-xs font-semibold text-slate-700 bg-white border border-slate-200 px-2.5 py-1 rounded-lg shadow-2xs select-none">
+                <input id="researchModeToggle" type="checkbox" class="rounded text-teal-600 focus:ring-teal-500" />
+                <span>Research Mode</span>
               </label>
-              <span id="currentRoiCount" class="text-xs font-mono text-slate-500">0 tubes</span>
+              <span id="currentRoiCount" class="font-mono text-xs font-semibold text-slate-600">0 tubes</span>
             </div>
           </div>
 
           <div class="overflow-x-auto">
             <table class="w-full text-left border-collapse">
-              <thead id="resultsTableHead">
-                <tr class="bg-slate-50/80 border-b border-slate-200 text-[10px] font-semibold uppercase tracking-wider text-slate-500">
-                  <th class="py-2 px-3">Tube</th>
-                  <th class="py-2 px-2">Role</th>
-                  <th class="py-2 px-3 text-right"><span class="th-tip" title="Relative Beer–Lambert pseudo-absorbance (A_G/A_R) normalized to Water Control (= 1.00). Mirrors A520/A620.">Signal</span></th>
-                  <th class="py-2 px-3 text-center">Result</th>
-                  <th class="py-2 px-2 text-center">×</th>
-                </tr>
-              </thead>
+              <thead id="resultsTableHead"></thead>
               <tbody id="resultsTableBody" class="divide-y divide-slate-100 text-xs">
                 <tr>
-                  <td colspan="5" class="py-8 text-center text-slate-400">Take or drop a photo to detect tubes inside the Scan Box.</td>
+                  <td colspan="6" class="py-8 text-center text-slate-400">Upload, drop, or paste a rack photo to auto-detect tubes.</td>
                 </tr>
               </tbody>
             </table>
           </div>
         </section>
 
-        <!-- Single Clean Batch Session Log (Auto-Saved Locally) -->
+        <!-- Batch Session Log -->
         <section class="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
           <div class="px-4 py-2.5 bg-slate-50 border-b border-slate-200 flex flex-wrap items-center justify-between gap-2">
             <div>
-              <h2 class="text-xs font-bold text-navy-900 uppercase tracking-wider flex items-center gap-2">
+              <h2 class="text-xs font-bold uppercase tracking-wider text-slate-800 flex items-center gap-2">
                 <span>Session Log (<span id="sessionRowCount" class="font-mono">0</span> rows)</span>
-                <span class="text-[10px] font-medium normal-case px-1.5 py-0.5 rounded bg-emerald-50 text-emerald-700 border border-emerald-200">Auto-saved</span>
+                <span class="text-[10px] font-semibold px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800">Auto-saved</span>
               </h2>
-              <p class="text-[11px] text-slate-500">Exports all 21 full research metrics (RGB, L*a*b*, Δa*, ΔE, A_G/A_R, NT ratio) to CSV.</p>
+              <p class="text-[11px] text-slate-500">Exports all 22 research metrics (including per-tube notes, RGB, L*a*b*, Δa*, ΔE, A_G/A_R) to CSV.</p>
             </div>
             <div class="flex items-center gap-2">
-              <button id="clearSessionBtn" onclick="clearSessionLog()" disabled
-                class="text-xs font-medium text-slate-600 hover:text-rose-600 disabled:opacity-40 disabled:cursor-not-allowed px-2.5 py-1 rounded-lg border border-slate-200 hover:border-rose-200 hover:bg-rose-50 transition">
+              <button type="button" id="clearSessionBtn" onclick="clearSessionLog()" disabled
+                class="px-2.5 py-1.5 rounded-lg text-xs font-medium border border-slate-300 bg-white text-slate-600 hover:bg-slate-100 disabled:opacity-40 transition">
                 Clear
               </button>
-              <button id="exportCsvBtn" onclick="exportSessionCSV()" disabled
-                class="text-xs font-semibold bg-teal-600 hover:bg-teal-500 disabled:bg-slate-200 disabled:text-slate-400 disabled:cursor-not-allowed text-white px-3 py-1 rounded-lg transition shadow-sm">
+              <button type="button" id="exportCsvBtn" onclick="exportSessionCSV()" disabled
+                class="px-3 py-1.5 rounded-lg text-xs font-semibold bg-teal-600 hover:bg-teal-500 disabled:bg-slate-200 disabled:text-slate-400 text-white transition shadow-sm">
                 Export Session CSV
               </button>
             </div>
@@ -488,10 +487,10 @@
             <table class="w-full text-left border-collapse">
               <thead class="sticky top-0 bg-slate-50 border-b border-slate-200 text-[10px] font-semibold uppercase tracking-wider text-slate-500">
                 <tr>
-                  <th class="py-2 px-2.5">Notes</th>
+                  <th class="py-2 px-2.5">Batch Note</th>
                   <th class="py-2 px-2">Tube</th>
+                  <th class="py-2 px-2">Tube Note</th>
                   <th class="py-2 px-2">Role</th>
-                  <th class="py-2 px-2 text-center">QC</th>
                   <th class="py-2 px-2 text-right">Signal</th>
                   <th class="py-2 px-2 text-center">Result</th>
                 </tr>
@@ -519,14 +518,17 @@
 
   <script>
     // =========================================================================
-    // APPLICATION STATE & STORAGE KEY
+    // APPLICATION STATE & DOM REFERENCES
     // =========================================================================
-    const STORAGE_KEY = 'boodooscan_v3_session_log';
-    const DEFAULT_BOX = { left: 0.08, right: 0.92, top: 0.25, bottom: 0.55 };
+    const STORAGE_KEY = 'boodooscan_auto_session_v1';
+    const DEFAULT_BOX = { left: 0.08, right: 0.92, top: 0.28, bottom: 0.52 };
 
     const state = {
       image: null,
       fileName: '',
+      rois: [],
+      computed: [],
+      sessionLog: [],
       boxLeft: DEFAULT_BOX.left,
       boxRight: DEFAULT_BOX.right,
       boxTop: DEFAULT_BOX.top,
@@ -534,23 +536,24 @@
       sensitivity: 0.12,
       useWhiteBalance: true,
       ntCalibrate: false,
+      researchMode: false,
+      settingsOpen: false,
       cutoffDeltaA: 10.0,
       cutoffRelAbs: 1.30,
       ntMarginDeltaA: 5.0,
       ntMarginMult: 1.25,
-      researchMode: false,
-      settingsOpen: false,
-      manualAddMode: false,
-      dragAction: null,
-      rois: [],
-      computed: [],
       qcStatus: 'PENDING',
-      sessionLog: []
+      manualAddMode: false,
+      dragAction: null
     };
 
     let nextRoiId = 1;
+    let dragCounter = 0;
 
-    // DOM References
+    const fileInput = document.getElementById('fileInput');
+    const cameraInput = document.getElementById('cameraInput');
+    const canvasWrapper = document.getElementById('canvasWrapper');
+    const canvasDragOverlay = document.getElementById('canvasDragOverlay');
     const imageCanvas = document.getElementById('imageCanvas');
     const ctx = imageCanvas.getContext('2d');
     const offscreenCanvas = document.getElementById('offscreenCanvas');
@@ -558,14 +561,8 @@
     const cvCanvas = document.getElementById('cvCanvas');
     const cvCtx = cvCanvas.getContext('2d', { willReadFrequently: true });
 
-    const fileInput = document.getElementById('fileInput');
-    const cameraInput = document.getElementById('cameraInput');
-    const canvasWrapper = document.getElementById('canvasWrapper');
-    const canvasDragOverlay = document.getElementById('canvasDragOverlay');
-    let dragCounter = 0;
-
     // =========================================================================
-    // GUIDE MODAL CONTROLS
+    // GUIDE MODAL & LOCALSTORAGE PERSISTENCE
     // =========================================================================
     function openGuideModal(tab = 'how') {
       document.getElementById('guideModal').classList.remove('hidden');
@@ -577,30 +574,25 @@
     }
 
     function closeGuideOnBackdrop(e) {
-      if (e.target.id === 'guideModal') closeGuideModal();
+      if (e.target && e.target.id === 'guideModal') {
+        closeGuideModal();
+      }
     }
 
     function switchGuideTab(tab) {
-      const tabs = [
-        { key: 'how', btn: 'tabBtnHow', panel: 'guideTabHow' },
-        { key: 'metrics', btn: 'tabBtnMetrics', panel: 'guideTabMetrics' },
-        { key: 'tips', btn: 'tabBtnTips', panel: 'guideTabTips' }
-      ];
+      const tabs = ['how', 'metrics', 'tips'];
       tabs.forEach(t => {
-        const isActive = t.key === tab;
-        document.getElementById(t.panel).classList.toggle('hidden', !isActive);
-        const btn = document.getElementById(t.btn);
-        if (isActive) {
-          btn.className = 'px-3.5 py-2 text-xs font-semibold rounded-t-lg border-b-2 border-teal-600 text-teal-700 bg-white';
-        } else {
-          btn.className = 'px-3.5 py-2 text-xs font-semibold rounded-t-lg border-b-2 border-transparent text-slate-500 hover:text-slate-800';
-        }
+        const panel = document.getElementById('guideTab' + t.charAt(0).toUpperCase() + t.slice(1));
+        const btn = document.getElementById('tabBtn' + t.charAt(0).toUpperCase() + t.slice(1));
+        if (!panel || !btn) return;
+        const active = (t === tab);
+        panel.classList.toggle('hidden', !active);
+        btn.className = active
+          ? 'px-3.5 py-2 text-xs font-semibold rounded-t-lg border-b-2 border-teal-600 text-teal-700 bg-white'
+          : 'px-3.5 py-2 text-xs font-semibold rounded-t-lg border-b-2 border-transparent text-slate-500 hover:text-slate-800';
       });
     }
 
-    // =========================================================================
-    // LOCAL STORAGE PERSISTENCE FOR SESSION LOG
-    // =========================================================================
     function loadSavedSession() {
       try {
         const raw = localStorage.getItem(STORAGE_KEY);
@@ -608,24 +600,20 @@
           const parsed = JSON.parse(raw);
           if (Array.isArray(parsed)) {
             state.sessionLog = parsed;
-            renderSessionLog();
           }
         }
-      } catch (err) {
-        console.warn('Could not read saved session log:', err);
-      }
+      } catch (_) {}
+      renderSessionLog();
     }
 
     function persistSessionLog() {
       try {
         localStorage.setItem(STORAGE_KEY, JSON.stringify(state.sessionLog));
-      } catch (err) {
-        console.warn('Could not save session log to localStorage:', err);
-      }
+      } catch (_) {}
     }
 
     // =========================================================================
-    // EVENT LISTENERS: UPLOAD, CAMERA, DRAG-AND-DROP, SETTINGS
+    // EVENT LISTENERS: UPLOAD, CAMERA, PASTE & DRAG-AND-DROP
     // =========================================================================
     [fileInput, cameraInput].forEach(inputEl => {
       inputEl.addEventListener('change', (e) => {
@@ -634,6 +622,42 @@
           e.target.value = '';
         }
       });
+    });
+
+    window.addEventListener('paste', (e) => {
+      const clipboard = e.clipboardData || window.clipboardData;
+      if (!clipboard || !clipboard.items) return;
+
+      for (let i = 0; i < clipboard.items.length; i++) {
+        const item = clipboard.items[i];
+        if (item.type && item.type.startsWith('image/')) {
+          e.preventDefault();
+          const blob = item.getAsFile();
+          if (blob) {
+            const ext = (item.type.split('/')[1] || 'png').replace('jpeg', 'jpg');
+            const stamp = new Date().toISOString().slice(11, 19).replace(/:/g, '');
+            const namedFile = new File([blob], `pasted_photo_${stamp}.${ext}`, { type: item.type });
+            loadImageFile(namedFile);
+            showToast('Pasted image loaded from clipboard!', 'success');
+          }
+          return;
+        }
+      }
+    });
+
+    window.addEventListener('dragover', (e) => {
+      if (e.dataTransfer && Array.from(e.dataTransfer.types || []).includes('Files')) {
+        e.preventDefault();
+      }
+    });
+
+    window.addEventListener('drop', (e) => {
+      if (e.dataTransfer && e.dataTransfer.files && e.dataTransfer.files[0]) {
+        e.preventDefault();
+        dragCounter = 0;
+        canvasDragOverlay.classList.add('hidden');
+        loadImageFile(e.dataTransfer.files[0]);
+      }
     });
 
     canvasWrapper.addEventListener('dragenter', (e) => {
@@ -651,9 +675,8 @@
     canvasWrapper.addEventListener('dragleave', (e) => {
       e.preventDefault();
       e.stopPropagation();
-      dragCounter--;
-      if (dragCounter <= 0) {
-        dragCounter = 0;
+      dragCounter = Math.max(0, dragCounter - 1);
+      if (dragCounter === 0) {
         canvasDragOverlay.classList.add('hidden');
       }
     });
@@ -672,6 +695,7 @@
       state.sensitivity = parseFloat(e.target.value);
       document.getElementById('sensitivityVal').textContent = state.sensitivity.toFixed(2);
     });
+
     document.getElementById('sensitivitySlider').addEventListener('change', () => {
       if (state.image) runAutoDetection();
     });
@@ -681,13 +705,13 @@
       recalculateAndRender();
     });
 
-    document.getElementById('researchModeToggle').addEventListener('change', (e) => {
-      state.researchMode = e.target.checked;
-      renderResultsTable();
-    });
-
     document.getElementById('ntCalibrateToggle').addEventListener('change', (e) => {
       state.ntCalibrate = e.target.checked;
+      recalculateAndRender();
+    });
+
+    document.getElementById('researchModeToggle').addEventListener('change', (e) => {
+      state.researchMode = e.target.checked;
       recalculateAndRender();
     });
 
@@ -708,86 +732,108 @@
     }
 
     function resetScanBox() {
-      if (!state.image) return;
       state.boxLeft = DEFAULT_BOX.left;
       state.boxRight = DEFAULT_BOX.right;
       state.boxTop = DEFAULT_BOX.top;
       state.boxBottom = DEFAULT_BOX.bottom;
-      runAutoDetection();
-      showToast('Scan Box reset to default bounds.');
-    }
-
-    function toggleManualAddMode() {
-      state.manualAddMode = !state.manualAddMode;
-      const btn = document.getElementById('manualAddBtn');
-      if (state.manualAddMode) {
-        btn.classList.add('bg-teal-50', 'border-teal-500', 'text-teal-800');
-        btn.textContent = 'Click Tube (ESC)';
-        imageCanvas.style.cursor = 'crosshair';
-        showToast('Click directly on any tube tip to add a manual sampling circle.');
-      } else {
-        btn.classList.remove('bg-teal-50', 'border-teal-500', 'text-teal-800');
-        btn.textContent = '+ Manual Tube';
-        imageCanvas.style.cursor = 'default';
+      updateBoxLabel();
+      if (state.image) {
+        runAutoDetection();
+        showToast('Scan Box reset to default framing.', 'info');
       }
     }
 
-    document.addEventListener('keydown', (e) => {
-      if (e.key === 'Escape') {
-        if (state.manualAddMode) toggleManualAddMode();
-        closeGuideModal();
-      }
-    });
+    function clearCurrentPhoto() {
+      state.image = null;
+      state.fileName = '';
+      state.rois = [];
+      state.computed = [];
+      state.qcStatus = 'PENDING';
+      state.manualAddMode = false;
+      state.dragAction = null;
+
+      ctx.clearRect(0, 0, imageCanvas.width, imageCanvas.height);
+      imageCanvas.classList.add('hidden');
+      imageCanvas.style.cursor = 'default';
+      document.getElementById('emptyCanvasPrompt').classList.remove('hidden');
+
+      document.getElementById('currentFileName').textContent = 'No file';
+      document.getElementById('detectionSummaryBadge').textContent = '0 tubes';
+      document.getElementById('currentRoiCount').textContent = '0 tubes';
+      document.getElementById('redetectBtn').disabled = true;
+      document.getElementById('manualAddBtn').disabled = true;
+      document.getElementById('resetBoxBtn').disabled = true;
+      document.getElementById('clearPhotoBtn').disabled = true;
+      document.getElementById('headerSaveBtn').disabled = true;
+      document.getElementById('ntSummaryPill').classList.add('hidden');
+
+      const manualBtn = document.getElementById('manualAddBtn');
+      manualBtn.className = 'px-2.5 py-1.5 rounded-lg text-xs font-semibold border border-slate-300 bg-white text-slate-700 hover:bg-slate-100 disabled:opacity-40 transition';
+      manualBtn.textContent = '+ Manual Tube';
+
+      const banner = document.getElementById('qcBanner');
+      const icon = document.getElementById('qcIcon');
+      const title = document.getElementById('qcTitle');
+      const subtitle = document.getElementById('qcSubtitle');
+      const badge = document.getElementById('qcBadge');
+      banner.className = 'rounded-xl border border-slate-200 bg-white px-4 py-3 shadow-sm flex items-center justify-between gap-3 transition-colors';
+      icon.className = 'w-9 h-9 rounded-full bg-slate-100 text-slate-500 flex items-center justify-center shrink-0';
+      title.textContent = 'Water-Control QC Gate: Waiting for Photo';
+      subtitle.textContent = 'Checks that the Water Control (C) aggregated to purple/blue/gray rather than staying red before trusting sample calls.';
+      badge.className = 'text-xs font-mono font-bold px-2.5 py-1 rounded-full bg-slate-100 text-slate-600 shrink-0';
+      badge.textContent = 'PENDING';
+
+      renderResultsTable();
+      showToast('Photo cleared. Ready to drop, upload, or paste a new image.', 'info');
+    }
+
+    function updateBoxLabel() {
+      const l = Math.round(state.boxLeft * 100);
+      const r = Math.round(state.boxRight * 100);
+      const t = Math.round(state.boxTop * 100);
+      const b = Math.round(state.boxBottom * 100);
+      document.getElementById('boxRangeLabel').textContent = `Box: X ${l}%–${r}% | Y ${t}%–${b}%`;
+    }
 
     // =========================================================================
-    // IMAGE LOADING
+    // IMAGE LOADING & AUTO-DETECTION PIPELINE (LIQUID-TIP WEIGHTED CENTROID)
     // =========================================================================
     function loadImageFile(file) {
       if (!file.type.startsWith('image/')) {
-        showToast('Please select a valid image file (JPG, PNG, etc.).', 'error');
+        showToast('Please select a valid image file.', 'error');
         return;
       }
+
       const reader = new FileReader();
-      reader.onload = (ev) => {
+      reader.onload = (event) => {
         const img = new Image();
         img.onload = () => {
           state.image = img;
-          state.fileName = file.name;
-          state.rois = [];
-          state.computed = [];
+          state.fileName = file.name || 'tube_photo.png';
           state.manualAddMode = false;
-          document.getElementById('manualAddBtn').classList.remove('bg-teal-50', 'border-teal-500', 'text-teal-800');
-          document.getElementById('manualAddBtn').textContent = '+ Manual Tube';
 
-          // Populate full-res offscreen canvas for accurate color sampling
           offscreenCanvas.width = img.naturalWidth;
           offscreenCanvas.height = img.naturalHeight;
           offCtx.drawImage(img, 0, 0);
 
-          // Set display canvas size
-          imageCanvas.width = img.naturalWidth;
-          imageCanvas.height = img.naturalHeight;
-          imageCanvas.classList.remove('hidden');
           document.getElementById('emptyCanvasPrompt').classList.add('hidden');
-          document.getElementById('currentFileName').textContent = file.name;
+          imageCanvas.classList.remove('hidden');
+          document.getElementById('currentFileName').textContent = state.fileName;
           document.getElementById('redetectBtn').disabled = false;
           document.getElementById('manualAddBtn').disabled = false;
           document.getElementById('resetBoxBtn').disabled = false;
+          document.getElementById('clearPhotoBtn').disabled = false;
 
           runAutoDetection();
         };
-        img.src = ev.target.result;
+        img.src = event.target.result;
       };
       reader.readAsDataURL(file);
     }
 
-    // =========================================================================
-    // COLOR SPACE & OPTICAL MATH
-    // =========================================================================
     function rgbToHsv(r, g, b) {
       const rn = r / 255, gn = g / 255, bn = b / 255;
-      const max = Math.max(rn, gn, bn);
-      const min = Math.min(rn, gn, bn);
+      const max = Math.max(rn, gn, bn), min = Math.min(rn, gn, bn);
       const d = max - min;
       let h = 0;
       if (d !== 0) {
@@ -801,254 +847,189 @@
       return { h, s, v: max };
     }
 
-    function rgbToLab(r, g, b) {
-      let rn = r / 255, gn = g / 255, bn = b / 255;
-      rn = rn > 0.04045 ? Math.pow((rn + 0.055) / 1.055, 2.4) : rn / 12.92;
-      gn = gn > 0.04045 ? Math.pow((gn + 0.055) / 1.055, 2.4) : gn / 12.92;
-      bn = bn > 0.04045 ? Math.pow((bn + 0.055) / 1.055, 2.4) : bn / 12.92;
-
-      const x = (rn * 0.4124 + gn * 0.3576 + bn * 0.1805) / 0.95047;
-      const y = (rn * 0.2126 + gn * 0.7152 + bn * 0.0722) / 1.00000;
-      const z = (rn * 0.0193 + gn * 0.1192 + bn * 0.9505) / 1.08883;
-
-      const f = (t) => t > 0.008856 ? Math.cbrt(t) : (7.787 * t) + (16 / 116);
-      const fx = f(x), fy = f(y), fz = f(z);
-      return {
-        L: (116 * fy) - 16,
-        a: 500 * (fx - fy),
-        b: 200 * (fy - fz)
-      };
-    }
-
-    function calcDeltaE(lab1, lab2) {
-      const dL = lab1.L - lab2.L;
-      const da = lab1.a - lab2.a;
-      const db = lab1.b - lab2.b;
-      return Math.sqrt(dL * dL + da * da + db * db);
-    }
-
-    function calcPseudoAbsRatio(r, g, refR, refG) {
-      const safeR = Math.max(1, Math.min(r, refR - 0.5));
-      const safeG = Math.max(1, Math.min(g, refG - 0.5));
-      const Ag = -Math.log10(safeG / Math.max(1, refG));
-      const Ar = -Math.log10(safeR / Math.max(1, refR));
-      return Ar > 0.001 ? Ag / Ar : 0;
-    }
-
-    // Glare/shadow-rejected circular sampling (trims top 15% & bottom 15% luminance)
-    function sampleCircleTrimmed(cx, cy, radius) {
-      const w = offscreenCanvas.width;
-      const h = offscreenCanvas.height;
-      const rInt = Math.max(3, Math.round(radius));
-      const x0 = Math.max(0, Math.round(cx) - rInt);
-      const y0 = Math.max(0, Math.round(cy) - rInt);
-      const x1 = Math.min(w - 1, Math.round(cx) + rInt);
-      const y1 = Math.min(h - 1, Math.round(cy) + rInt);
-      const bw = x1 - x0 + 1;
-      const bh = y1 - y0 + 1;
-      if (bw <= 0 || bh <= 0) return { r: 128, g: 128, b: 128 };
-
-      const imgData = offCtx.getImageData(x0, y0, bw, bh).data;
-      const pixels = [];
-      const rSq = rInt * rInt;
-      for (let py = 0; py < bh; py++) {
-        const dy = (y0 + py) - cy;
-        for (let px = 0; px < bw; px++) {
-          const dx = (x0 + px) - cx;
-          if (dx * dx + dy * dy <= rSq) {
-            const idx = (py * bw + px) * 4;
-            const r = imgData[idx], g = imgData[idx + 1], b = imgData[idx + 2];
-            const lum = 0.299 * r + 0.587 * g + 0.114 * b;
-            pixels.push({ r, g, b, lum });
-          }
-        }
-      }
-      if (pixels.length === 0) return { r: 128, g: 128, b: 128 };
-      pixels.sort((a, b) => a.lum - b.lum);
-      const trim = Math.floor(pixels.length * 0.15);
-      const kept = pixels.slice(trim, pixels.length - trim);
-      const arr = kept.length > 0 ? kept : pixels;
-      let sr = 0, sg = 0, sb = 0;
-      for (const p of arr) { sr += p.r; sg += p.g; sb += p.b; }
-      return { r: sr / arr.length, g: sg / arr.length, b: sb / arr.length };
-    }
-
-    // =========================================================================
-    // COMPUTER VISION: DUAL-MODE LOCAL WHITE-RACK SUBTRACTION AUTO-DETECTOR
-    // =========================================================================
-    function estimateRackLuminance(data, w, h, xStart, xEnd, yStart, yEnd) {
-      const lums = [];
-      for (let y = yStart; y < yEnd; y += 2) {
-        for (let x = xStart; x < xEnd; x += 2) {
-          const idx = (y * w + x) * 4;
-          const r = data[idx], g = data[idx + 1], b = data[idx + 2];
-          const hsv = rgbToHsv(r, g, b);
-          const lum = 0.299 * r + 0.587 * g + 0.114 * b;
-          if (hsv.s < 0.16 && lum > 135 && lum < 252) lums.push(lum);
-        }
-      }
-      if (lums.length < 15) return 210;
-      lums.sort((a, b) => a - b);
-      return lums[Math.floor(lums.length * 0.65)];
-    }
-
-    function hasWhiteRackFlanks(data, w, h, cx, cy, rad) {
-      let whiteCount = 0;
-      let total = 0;
-      const offsets = [-rad * 2.6, -rad * 2.0, rad * 2.0, rad * 2.6];
-      for (const ox of offsets) {
-        const sx = Math.round(cx + ox);
-        const sy = Math.round(cy);
-        if (sx >= 2 && sx < w - 2 && sy >= 2 && sy < h - 2) {
-          total++;
-          const idx = (sy * w + sx) * 4;
-          const r = data[idx], g = data[idx + 1], b = data[idx + 2];
-          const hsv = rgbToHsv(r, g, b);
-          const lum = 0.299 * r + 0.587 * g + 0.114 * b;
-          if (lum > 125 && hsv.s < 0.22) whiteCount++;
-        }
-      }
-      return total >= 2 && (whiteCount / total) >= 0.5;
-    }
-
-    function getLocalFlankLum(data, w, h, x, y, offsetPx) {
-      const lums = [];
-      for (const ox of [-offsetPx, offsetPx]) {
-        const sx = Math.round(x + ox);
-        if (sx >= 1 && sx < w - 1) {
-          const idx = (y * w + sx) * 4;
-          const r = data[idx], g = data[idx + 1], b = data[idx + 2];
-          const hsv = rgbToHsv(r, g, b);
-          const lum = 0.299 * r + 0.587 * g + 0.114 * b;
-          if (hsv.s < 0.18 && lum > 115) lums.push(lum);
-        }
-      }
-      if (lums.length < 2) return null;
-      return (lums[0] + lums[1]) * 0.5;
-    }
-
     function runAutoDetection() {
       if (!state.image) return;
+
       const origW = state.image.naturalWidth;
       const origH = state.image.naturalHeight;
+      const targetW = 420;
+      const scale = targetW / origW;
+      const w = Math.max(80, Math.round(origW * scale));
+      const h = Math.max(60, Math.round(origH * scale));
 
-      const cvW = 400;
-      const scale = cvW / origW;
-      const cvH = Math.round(origH * scale);
-      cvCanvas.width = cvW;
-      cvCanvas.height = cvH;
-      cvCtx.drawImage(state.image, 0, 0, cvW, cvH);
+      cvCanvas.width = w;
+      cvCanvas.height = h;
+      cvCtx.drawImage(state.image, 0, 0, w, h);
+      const imgData = cvCtx.getImageData(0, 0, w, h).data;
 
-      const imgData = cvCtx.getImageData(0, 0, cvW, cvH);
-      const data = imgData.data;
+      const x0 = Math.max(2, Math.floor(w * state.boxLeft));
+      const x1 = Math.min(w - 3, Math.ceil(w * state.boxRight));
+      const y0 = Math.max(2, Math.floor(h * state.boxTop));
+      const y1 = Math.min(h - 3, Math.ceil(h * state.boxBottom));
 
-      const xStart = Math.max(0, Math.floor(state.boxLeft * cvW));
-      const xEnd = Math.min(cvW, Math.ceil(state.boxRight * cvW));
-      const yStart = Math.max(0, Math.floor(state.boxTop * cvH));
-      const yEnd = Math.min(cvH, Math.ceil(state.boxBottom * cvH));
+      const lum = new Float32Array(w * h);
+      const sat = new Float32Array(w * h);
+      const hue = new Float32Array(w * h);
 
-      const rackLum = estimateRackLuminance(data, cvW, cvH, xStart, xEnd, yStart, yEnd);
-      const mask = new Uint8Array(cvW * cvH);
-      const minSat = state.sensitivity;
-      const localOffset = Math.max(10, Math.round(cvW * 0.036));
-      const minLumDrop = Math.max(16, Math.round(14 + minSat * 95));
+      for (let i = 0; i < w * h; i++) {
+        const r = imgData[i * 4];
+        const g = imgData[i * 4 + 1];
+        const b = imgData[i * 4 + 2];
+        lum[i] = 0.2126 * r + 0.7152 * g + 0.0722 * b;
+        const hsv = rgbToHsv(r, g, b);
+        sat[i] = hsv.s;
+        hue[i] = hsv.h;
+      }
 
-      for (let y = yStart; y < yEnd; y++) {
-        for (let x = xStart; x < xEnd; x++) {
-          const idx = (y * cvW + x) * 4;
-          const r = data[idx], g = data[idx + 1], b = data[idx + 2];
-          const hsv = rgbToHsv(r, g, b);
-          const lum = 0.299 * r + 0.587 * g + 0.114 * b;
+      // Dual-mode mask: chromatic red/purple liquid OR pale aggregated gray liquid flanked by bright white rack
+      const mask = new Uint8Array(w * h);
+      const chromFlag = new Uint8Array(w * h);
+      const satThresh = state.sensitivity;
 
-          // Exclude yellow tape, bright glare, and very dark benchtop/shadows
-          const isYellowTape = (hsv.h >= 34 && hsv.h <= 88 && hsv.s > 0.24);
-          if (isYellowTape || lum < 25 || lum > 240) continue;
+      for (let y = y0; y <= y1; y++) {
+        for (let x = x0; x <= x1; x++) {
+          const idx = y * w + x;
+          const L = lum[idx];
+          const S = sat[idx];
+          const H = hue[idx];
 
-          // Mode A: Chromatic GNP liquid (red, pink, magenta, purple, lavender, blue-gray)
-          const isRedPurpleHue = (hsv.h >= 210 || hsv.h <= 25);
-          const isChromatic = isRedPurpleHue && hsv.s >= minSat && hsv.v >= 0.18 && hsv.v <= 0.94;
+          const isYellowTape = (H >= 38 && H <= 78 && S > 0.24);
+          if (isYellowTape || L < 35 || L > 245) continue;
 
-          // Mode B: Heavily aggregated pale gray/lavender liquid detected by LOCAL flank luminance drop
-          let isPaleAggregated = false;
-          if (!isChromatic && hsv.s < 0.20 && lum < rackLum - 12 && (b >= g - 4)) {
-            const flankLum = getLocalFlankLum(data, cvW, cvH, x, y, localOffset);
-            if (flankLum !== null && (flankLum - lum) >= minLumDrop) {
-              isPaleAggregated = true;
+          const isRedOrPurpleHue = (H >= 215 || H <= 22);
+          const isChromatic = isRedOrPurpleHue && S >= satThresh && L >= 45 && L <= 225;
+
+          let isPaleDip = false;
+          if (!isChromatic && S < 0.24 && L >= 75 && L <= 215) {
+            const leftX = x - 15;
+            const rightX = x + 15;
+            if (leftX >= x0 && rightX <= x1) {
+              const idxL = y * w + leftX;
+              const idxR = y * w + rightX;
+              const flankL = lum[idxL];
+              const flankR = lum[idxR];
+              if (
+                sat[idxL] < 0.20 && sat[idxR] < 0.20 &&
+                flankL > 140 && flankR > 140 &&
+                (flankL - L) >= 16 && (flankR - L) >= 16
+              ) {
+                isPaleDip = true;
+              }
             }
           }
 
-          if (isChromatic || isPaleAggregated) {
-            mask[y * cvW + x] = 1;
+          if (isChromatic || isPaleDip) {
+            mask[idx] = 1;
+            if (isChromatic) chromFlag[idx] = 1;
           }
         }
       }
 
-      // Connected-component flood fill
-      const visited = new Uint8Array(cvW * cvH);
+      // Connected components with liquid-tip weighted centroid (prevents empty upper tube barrel from pulling circle upward)
+      const visited = new Uint8Array(w * h);
       const rawBlobs = [];
-      for (let y = yStart; y < yEnd; y++) {
-        for (let x = xStart; x < xEnd; x++) {
-          const startPos = y * cvW + x;
-          if (mask[startPos] === 1 && visited[startPos] === 0) {
-            const stack = [startPos];
-            visited[startPos] = 1;
-            let sumX = 0, sumY = 0, count = 0;
-            let minX = x, maxX = x, minY = y, maxY = y;
+      const minArea = Math.max(10, Math.round(w * h * 0.00018));
+      const maxArea = Math.round(w * h * 0.015);
 
-            while (stack.length > 0) {
-              const p = stack.pop();
-              const px = p % cvW;
-              const py = (p - px) / cvW;
-              sumX += px; sumY += py; count++;
-              if (px < minX) minX = px;
-              if (px > maxX) maxX = px;
-              if (py < minY) minY = py;
-              if (py > maxY) maxY = py;
+      for (let y = y0; y <= y1; y++) {
+        for (let x = x0; x <= x1; x++) {
+          const startIdx = y * w + x;
+          if (!mask[startIdx] || visited[startIdx]) continue;
 
-              const neighbors = [p - 1, p + 1, p - cvW, p + cvW];
-              for (const np of neighbors) {
-                if (np >= 0 && np < cvW * cvH && mask[np] === 1 && visited[np] === 0) {
-                  const nx = np % cvW;
-                  if (Math.abs(nx - px) <= 1) {
-                    visited[np] = 1;
-                    stack.push(np);
-                  }
+          const queue = [startIdx];
+          visited[startIdx] = 1;
+          let count = 0;
+          let minBX = x, maxBX = x, minBY = y, maxBY = y;
+
+          let head = 0;
+          while (head < queue.length) {
+            const curr = queue[head++];
+            const cx = curr % w;
+            const cy = (curr - cx) / w;
+            count++;
+            if (cx < minBX) minBX = cx;
+            if (cx > maxBX) maxBX = cx;
+            if (cy < minBY) minBY = cy;
+            if (cy > maxBY) maxBY = cy;
+
+            const neighbors = [curr - 1, curr + 1, curr - w, curr + w];
+            for (let n = 0; n < 4; n++) {
+              const nIdx = neighbors[n];
+              if (nIdx >= 0 && nIdx < w * h && !visited[nIdx] && mask[nIdx]) {
+                const nx = nIdx % w;
+                const ny = (nIdx - nx) / w;
+                if (nx >= x0 && nx <= x1 && ny >= y0 && ny <= y1) {
+                  visited[nIdx] = 1;
+                  queue.push(nIdx);
                 }
               }
             }
+          }
 
-            const bw = maxX - minX + 1;
-            const bh = maxY - minY + 1;
-            const aspect = bw / Math.max(1, bh);
-            if (count >= 14 && count <= 950 && bw >= 3 && bw <= 42 && bh >= 3 && bh <= 48 && aspect >= 0.28 && aspect <= 2.6) {
-              const cx = sumX / count;
-              const cy = sumY / count;
-              const estR = Math.max(3, Math.min(11, Math.sqrt(count / Math.PI) * 0.72));
-              if (hasWhiteRackFlanks(data, cvW, cvH, cx, cy, estR)) {
-                rawBlobs.push({ cx, cy, r: estR, count });
+          const bw = maxBX - minBX + 1;
+          const bh = maxBY - minBY + 1;
+          const aspect = bw / Math.max(1, bh);
+
+          if (count >= minArea && count <= maxArea && aspect >= 0.30 && aspect <= 2.4) {
+            // Focus on the liquid tip (bottom 60% of the blob or chromatic core) so upper tube barrel shadows don't shift Y upward
+            const cutY = minBY + bh * 0.40;
+            let wSumX = 0, wSumY = 0, wTotal = 0;
+            let tipCount = 0;
+
+            for (let k = 0; k < queue.length; k++) {
+              const pIdx = queue[k];
+              const px = pIdx % w;
+              const py = (pIdx - px) / w;
+              if (py < cutY && bh > 8) continue;
+
+              const weight = (chromFlag[pIdx] ? (1 + sat[pIdx] * 6) : 1.0) * (1 + (py - minBY) / Math.max(1, bh));
+              wSumX += px * weight;
+              wSumY += py * weight;
+              wTotal += weight;
+              tipCount++;
+            }
+
+            if (wTotal === 0) {
+              for (let k = 0; k < queue.length; k++) {
+                const pIdx = queue[k];
+                wSumX += (pIdx % w);
+                wSumY += Math.floor(pIdx / w);
+                wTotal += 1;
               }
+              tipCount = queue.length;
+            }
+
+            const centX = wSumX / wTotal;
+            const centY = wSumY / wTotal;
+
+            const fDist = Math.max(12, Math.round(bw * 1.4));
+            const lx = Math.max(x0, Math.round(centX - fDist));
+            const rx = Math.min(x1, Math.round(centX + fDist));
+            const cyInt = Math.round(centY);
+            const lIdx = cyInt * w + lx;
+            const rIdx = cyInt * w + rx;
+            const hasWhiteFlank =
+              (lum[lIdx] > 130 && sat[lIdx] < 0.25) ||
+              (lum[rIdx] > 130 && sat[rIdx] < 0.25);
+
+            if (hasWhiteFlank) {
+              rawBlobs.push({
+                nx: centX / w,
+                ny: centY / h,
+                nr: Math.min(0.025, Math.max(0.012, (Math.sqrt(tipCount / Math.PI) * 0.80) / w)),
+                area: count
+              });
             }
           }
         }
       }
 
-      // Keep horizontally aligned tube row (±5.5% of image height around median Y)
-      let filtered = rawBlobs;
-      if (rawBlobs.length >= 2) {
-        const sortedByArea = [...rawBlobs].sort((a, b) => b.count - a.count);
-        const topYs = sortedByArea.slice(0, Math.min(6, sortedByArea.length)).map(b => b.cy).sort((a, b) => a - b);
-        const medianY = topYs[Math.floor(topYs.length / 2)];
-        const tolY = cvH * 0.055;
-        filtered = rawBlobs.filter(b => Math.abs(b.cy - medianY) <= tolY);
-      }
-
-      // Merge close horizontal shadows/duplicates (within 6.5% of image width)
-      filtered.sort((a, b) => a.cx - b.cx);
+      rawBlobs.sort((a, b) => a.nx - b.nx);
       const merged = [];
-      const minSpacing = cvW * 0.065;
-      for (const blob of filtered) {
-        if (merged.length > 0 && (blob.cx - merged[merged.length - 1].cx) < minSpacing) {
-          if (blob.count > merged[merged.length - 1].count) {
+      for (const blob of rawBlobs) {
+        const prev = merged[merged.length - 1];
+        if (prev && Math.abs(blob.nx - prev.nx) < 0.065 && Math.abs(blob.ny - prev.ny) < 0.08) {
+          if (blob.area > prev.area) {
             merged[merged.length - 1] = blob;
           }
         } else {
@@ -1056,782 +1037,893 @@
         }
       }
 
-      // Second pass: row-guided faint aggregated tube recovery
-      if (merged.length >= 1) {
-        const rowY = Math.round(merged.reduce((acc, b) => acc + b.cy, 0) / merged.length);
-        recoverFaintTubesAlongRow(data, cvW, cvH, xStart, xEnd, rowY, localOffset, merged);
-        merged.sort((a, b) => a.cx - b.cx);
+      let rowTubes = merged;
+      if (merged.length >= 2) {
+        const ys = merged.map(b => b.ny).sort((a, b) => a - b);
+        const medY = ys[Math.floor(ys.length / 2)];
+        const inRow = merged.filter(b => Math.abs(b.ny - medY) <= 0.065);
+        if (inRow.length >= 1) {
+          rowTubes = inRow;
+        }
       }
 
-      // Convert CV blobs back to full-resolution ROIs
+      // Row-guided recovery for ultra-pale aggregated tubes along the detected liquid Y row
+      if (rowTubes.length >= 1) {
+        const avgY = rowTubes.reduce((acc, b) => acc + b.ny, 0) / rowTubes.length;
+        const scanY = Math.round(avgY * h);
+        if (scanY >= y0 + 2 && scanY <= y1 - 2) {
+          for (let sx = x0 + 16; sx <= x1 - 16; sx += 3) {
+            const nxCand = sx / w;
+            if (rowTubes.some(t => Math.abs(t.nx - nxCand) < 0.075)) continue;
+
+            const cIdx = scanY * w + sx;
+            const lIdx = scanY * w + (sx - 15);
+            const rIdx = scanY * w + (sx + 15);
+            const cLum = lum[cIdx];
+            const lLum = lum[lIdx];
+            const rLum = lum[rIdx];
+
+            if (
+              sat[cIdx] < 0.22 && cLum >= 85 && cLum <= 215 &&
+              sat[lIdx] < 0.18 && sat[rIdx] < 0.18 &&
+              lLum > 145 && rLum > 145 &&
+              (lLum - cLum) >= 14 && (rLum - cLum) >= 14
+            ) {
+              rowTubes.push({
+                nx: nxCand,
+                ny: avgY,
+                nr: 0.015,
+                area: 20
+              });
+            }
+          }
+          rowTubes.sort((a, b) => a.nx - b.nx);
+        }
+      }
+
       const newRois = [];
-      const defaultRadius = Math.max(8, Math.round(origW * 0.0085));
-      merged.forEach((b, idx) => {
-        const isFirst = idx === 0;
+      rowTubes.forEach((t, i) => {
         newRois.push({
           id: nextRoiId++,
-          role: isFirst ? 'control' : 'sample',
-          label: isFirst ? 'Water (C)' : `S${idx}`,
-          x: b.cx / scale,
-          y: b.cy / scale,
-          r: Math.max(defaultRadius, Math.round((b.r / scale) * 0.72))
+          label: i === 0 ? 'Water (C)' : `S${i}`,
+          note: '',
+          role: i === 0 ? 'control' : 'sample',
+          nx: t.nx,
+          ny: t.ny,
+          nr: t.nr
         });
       });
 
-      // Automatically find a clean white-balance patch on the white rack
-      const whitePatch = findCleanWhitePatch(data, cvW, cvH, xStart, xEnd, yStart, yEnd, merged);
-      if (whitePatch) {
-        newRois.unshift({
+      const whiteRef = findCleanWhitePatch(w, h, x0, x1, y0, y1, lum, sat, rowTubes);
+      if (whiteRef) {
+        newRois.push({
           id: nextRoiId++,
-          role: 'white',
           label: 'W',
-          x: whitePatch.cx / scale,
-          y: whitePatch.cy / scale,
-          r: Math.max(10, Math.round(origW * 0.011))
+          note: '',
+          role: 'white',
+          nx: whiteRef.nx,
+          ny: whiteRef.ny,
+          nr: 0.015
         });
       }
 
       state.rois = newRois;
       recalculateAndRender();
-
-      const foundTubes = newRois.filter(r => r.role !== 'white').length;
-      if (foundTubes === 0) {
-        showToast('No tubes found in Scan Box. Drag the cyan edges around the liquid tips and try again.', 'warn');
-      } else {
-        showToast(`Detected ${foundTubes} tube${foundTubes === 1 ? '' : 's'} + white reference.`);
-      }
     }
 
-    function recoverFaintTubesAlongRow(data, w, h, xStart, xEnd, rowY, localOffset, existing) {
-      const minGap = w * 0.08;
-      const candidates = [];
-      for (let x = xStart + localOffset; x < xEnd - localOffset; x += 2) {
-        if (existing.some(b => Math.abs(b.cx - x) < minGap)) continue;
-        let sumDip = 0, nValid = 0, neutralOk = true;
-        for (let dy = -3; dy <= 3; dy += 2) {
-          const sy = rowY + dy;
-          if (sy < 2 || sy >= h - 2) continue;
-          const idx = (sy * w + x) * 4;
-          const r = data[idx], g = data[idx + 1], b = data[idx + 2];
-          const hsv = rgbToHsv(r, g, b);
-          if (hsv.h >= 34 && hsv.h <= 88 && hsv.s > 0.22) { neutralOk = false; break; }
-          const lum = 0.299 * r + 0.587 * g + 0.114 * b;
-          const flank = getLocalFlankLum(data, w, h, x, sy, localOffset);
-          if (flank !== null && b >= g - 5) {
-            sumDip += (flank - lum);
-            nValid++;
-          }
-        }
-        if (neutralOk && nValid >= 3) {
-          const avgDip = sumDip / nValid;
-          if (avgDip >= 18) candidates.push({ cx: x, cy: rowY, dip: avgDip });
-        }
-      }
+    function findCleanWhitePatch(w, h, x0, x1, y0, y1, lum, sat, tubes) {
+      let bestScore = -Infinity;
+      let bestX = null;
+      let bestY = null;
 
-      // Group adjacent x positions into distinct faint tube peaks
-      candidates.sort((a, b) => a.cx - b.cx);
-      let group = [];
-      const flushGroup = () => {
-        if (group.length >= 2) {
-          group.sort((a, b) => b.dip - a.dip);
-          const best = group[0];
-          if (!existing.some(b => Math.abs(b.cx - best.cx) < minGap)) {
-            existing.push({ cx: best.cx, cy: best.cy, r: 5, count: 30 });
-          }
-        }
-        group = [];
-      };
-      for (const c of candidates) {
-        if (group.length === 0 || (c.cx - group[group.length - 1].cx) <= 6) group.push(c);
-        else { flushGroup(); group.push(c); }
-      }
-      flushGroup();
-    }
+      const padX = Math.max(8, Math.round((x1 - x0) * 0.05));
+      const padY = Math.max(6, Math.round((y1 - y0) * 0.10));
 
-    function findCleanWhitePatch(data, w, h, xStart, xEnd, yStart, yEnd, tubes) {
-      const marginX = Math.max(8, Math.round((xEnd - xStart) * 0.05));
-      const marginY = Math.max(6, Math.round((yEnd - yStart) * 0.08));
-      let best = null;
-      let bestScore = -1;
+      for (let y = y0 + padY; y <= y1 - padY; y += 4) {
+        for (let x = x0 + padX; x <= x1 - padX; x += 6) {
+          const nx = x / w;
+          const ny = y / h;
+          if (tubes.some(t => Math.hypot(t.nx - nx, t.ny - ny) < 0.065)) continue;
 
-      for (let y = yStart + marginY; y < yEnd - marginY; y += 6) {
-        for (let x = xStart + marginX; x < xEnd - marginX; x += 6) {
-          if (tubes.some(t => Math.hypot(t.cx - x, t.cy - y) < 20)) continue;
+          const idx = y * w + x;
+          const L = lum[idx];
+          const S = sat[idx];
+          if (L < 165 || S > 0.14) continue;
 
-          let sumLum = 0, sumLumSq = 0, sumSat = 0, n = 0;
-          for (let dy = -3; dy <= 3; dy += 2) {
-            for (let dx = -3; dx <= 3; dx += 2) {
-              const px = x + dx, py = y + dy;
-              if (px >= 0 && px < w && py >= 0 && py < h) {
-                const idx = (py * w + px) * 4;
-                const r = data[idx], g = data[idx + 1], b = data[idx + 2];
-                const hsv = rgbToHsv(r, g, b);
-                const lum = 0.299 * r + 0.587 * g + 0.114 * b;
-                sumLum += lum; sumLumSq += lum * lum; sumSat += hsv.s; n++;
-              }
+          let minN = 255, maxN = 0;
+          for (let dy = -2; dy <= 2; dy += 2) {
+            for (let dx = -2; dx <= 2; dx += 2) {
+              const v = lum[(y + dy) * w + (x + dx)];
+              if (v < minN) minN = v;
+              if (v > maxN) maxN = v;
             }
           }
-          if (n === 0) continue;
-          const meanLum = sumLum / n;
-          const meanSat = sumSat / n;
-          const stdLum = Math.sqrt(Math.max(0, (sumLumSq / n) - meanLum * meanLum));
-          if (meanLum > 165 && meanLum < 248 && meanSat < 0.09 && stdLum < 8) {
-            const score = meanLum - meanSat * 500 - stdLum * 4;
-            if (score > bestScore) {
-              bestScore = score;
-              best = { cx: x, cy: y };
-            }
+          const uniformity = 255 - (maxN - minN);
+          const score = L + uniformity * 0.8 - S * 400;
+          if (score > bestScore) {
+            bestScore = score;
+            bestX = nx;
+            bestY = ny;
           }
         }
       }
-      return best;
+
+      return bestX !== null ? { nx: bestX, ny: bestY } : null;
     }
 
     // =========================================================================
-    // RECALCULATE METRICS, QC GATE, AND RENDER EVERYTHING
+    // GLARE-REJECTED SAMPLING & COLORIMETRIC MATH (CIE L*a*b* + BEER-LAMBERT)
+    // =========================================================================
+    function sampleTubePixels(roi) {
+      const W = offscreenCanvas.width;
+      const H = offscreenCanvas.height;
+      const cx = Math.round(roi.nx * W);
+      const cy = Math.round(roi.ny * H);
+      const rPx = Math.max(4, Math.round(roi.nr * W));
+
+      const xStart = Math.max(0, cx - rPx);
+      const yStart = Math.max(0, cy - rPx);
+      const xEnd = Math.min(W - 1, cx + rPx);
+      const yEnd = Math.min(H - 1, cy + rPx);
+      const boxW = xEnd - xStart + 1;
+      const boxH = yEnd - yStart + 1;
+
+      if (boxW <= 0 || boxH <= 0) return { r: 128, g: 128, b: 128 };
+
+      const data = offCtx.getImageData(xStart, yStart, boxW, boxH).data;
+      const pixels = [];
+      const rSq = rPx * rPx;
+
+      for (let dy = 0; dy < boxH; dy++) {
+        for (let dx = 0; dx < boxW; dx++) {
+          const ox = xStart + dx - cx;
+          const oy = yStart + dy - cy;
+          if (ox * ox + oy * oy <= rSq) {
+            const idx = (dy * boxW + dx) * 4;
+            const r = data[idx];
+            const g = data[idx + 1];
+            const b = data[idx + 2];
+            const luma = 0.2126 * r + 0.7152 * g + 0.0722 * b;
+            pixels.push({ r, g, b, luma });
+          }
+        }
+      }
+
+      if (pixels.length === 0) return { r: 128, g: 128, b: 128 };
+
+      pixels.sort((a, b) => a.luma - b.luma);
+      const trim = Math.floor(pixels.length * 0.15);
+      const kept = pixels.slice(trim, Math.max(trim + 1, pixels.length - trim));
+
+      let sumR = 0, sumG = 0, sumB = 0;
+      for (const p of kept) {
+        sumR += p.r;
+        sumG += p.g;
+        sumB += p.b;
+      }
+      const n = kept.length;
+      return { r: sumR / n, g: sumG / n, b: sumB / n };
+    }
+
+    function rgbToLab(r, g, b) {
+      let rn = r / 255, gn = g / 255, bn = b / 255;
+      rn = rn > 0.04045 ? Math.pow((rn + 0.055) / 1.055, 2.4) : rn / 12.92;
+      gn = gn > 0.04045 ? Math.pow((gn + 0.055) / 1.055, 2.4) : gn / 12.92;
+      bn = bn > 0.04045 ? Math.pow((bn + 0.055) / 1.055, 2.4) : bn / 12.92;
+
+      let x = (rn * 0.4124564 + gn * 0.3575761 + bn * 0.1804375) / 0.95047;
+      let y = (rn * 0.2126729 + gn * 0.7151522 + bn * 0.0721750) / 1.00000;
+      let z = (rn * 0.0193339 + gn * 0.1191920 + bn * 0.9503041) / 1.08883;
+
+      const f = (t) => (t > 0.008856 ? Math.cbrt(t) : (7.787 * t) + (16 / 116));
+      const fx = f(x), fy = f(y), fz = f(z);
+
+      return {
+        L: 116 * fy - 16,
+        a: 500 * (fx - fy),
+        b: 200 * (fy - fz)
+      };
+    }
+
+    // =========================================================================
+    // RECALCULATE METRICS, QC GATE & RENDER TABLE + CANVAS
     // =========================================================================
     function recalculateAndRender() {
       if (!state.image) return;
 
-      const whiteRoi = state.rois.find(r => r.role === 'white');
-      const whiteRaw = whiteRoi ? sampleCircleTrimmed(whiteRoi.x, whiteRoi.y, whiteRoi.r) : null;
+      const hasNT = state.rois.some(r => r.role === 'nontarget');
+      if (hasNT && !state.ntCalibrate) {
+        state.ntCalibrate = true;
+        document.getElementById('ntCalibrateToggle').checked = true;
+      }
 
-      // Step 1: Sample all ROIs, apply optional white balance, compute L*a*b* and pseudo-absorbance
-      const rawItems = state.rois.map(roi => {
-        const raw = sampleCircleTrimmed(roi.x, roi.y, roi.r);
-        let wb = { ...raw };
-        if (state.useWhiteBalance && whiteRaw && roi.role !== 'white') {
-          const targetWhite = 235;
-          wb = {
-            r: Math.min(255, Math.max(1, raw.r * (targetWhite / Math.max(20, whiteRaw.r)))),
-            g: Math.min(255, Math.max(1, raw.g * (targetWhite / Math.max(20, whiteRaw.g)))),
-            b: Math.min(255, Math.max(1, raw.b * (targetWhite / Math.max(20, whiteRaw.b))))
-          };
-        }
-        const lab = rgbToLab(wb.r, wb.g, wb.b);
-        const refR = (state.useWhiteBalance && whiteRaw) ? 235 : 245;
-        const refG = (state.useWhiteBalance && whiteRaw) ? 235 : 245;
-        const absRatio = calcPseudoAbsRatio(wb.r, wb.g, refR, refG);
-        const rbRatio = raw.r / Math.max(1, raw.b);
-        return { roi, raw, wb, lab, absRatio, rbRatio };
+      const sampled = state.rois.map(roi => {
+        const raw = sampleTubePixels(roi);
+        return { ...roi, raw };
       });
 
-      const ctrlItem = rawItems.find(i => i.roi.role === 'control');
+      const whiteRoi = sampled.find(r => r.role === 'white');
+      const refR = whiteRoi ? Math.max(40, whiteRoi.raw.r) : 235;
+      const refG = whiteRoi ? Math.max(40, whiteRoi.raw.g) : 235;
+      const refB = whiteRoi ? Math.max(40, whiteRoi.raw.b) : 235;
 
-      // Step 2: Water-Control QC Gate (purple/violet/gray pass; only truly red/pink unaggregated controls fail)
-      if (!ctrlItem) {
-        state.qcStatus = 'NO_CTRL';
-      } else {
-        const ctrlRB = ctrlItem.wb.r / Math.max(1, ctrlItem.wb.b);
-        const isWaterStillRed = (ctrlItem.lab.a > 24.0 && ctrlItem.lab.b > -6.0 && ctrlRB > 1.20);
-        state.qcStatus = isWaterStillRed ? 'INVALID' : 'PASS';
-      }
+      const enriched = sampled.map(item => {
+        let wbR = item.raw.r;
+        let wbG = item.raw.g;
+        let wbB = item.raw.b;
 
-      // Step 3: Relative metrics vs Water Control
-// ... existing code ... -->
-      if (state.qcStatus === 'PASS') {
-        banner.classList.add('border-emerald-200', 'bg-emerald-50/70');
-        icon.className = 'w-9 h-9 rounded-full bg-emerald-100 text-emerald-700 flex items-center justify-center shrink-0';
-        title.textContent = 'Water-Control QC Gate: PASS';
-        subtitle.textContent = `Water Control aggregated properly (a* = ${ctrlItem.lab.a.toFixed(1)}, b* = ${ctrlItem.lab.b.toFixed(1)}). Sample calls are valid.`;
-        badge.className = 'text-xs font-mono font-bold px-2.5 py-1 rounded-full bg-emerald-600 text-white shrink-0';
-        badge.textContent = 'PASS';
-      } else if (state.qcStatus === 'INVALID') {
-        banner.classList.add('border-rose-300', 'bg-rose-50');
-        icon.className = 'w-9 h-9 rounded-full bg-rose-100 text-rose-700 flex items-center justify-center shrink-0';
-        title.textContent = 'Water-Control QC Gate: RUN INVALID';
-        subtitle.textContent = `Water Control stayed red/pink (a* = ${ctrlItem.lab.a.toFixed(1)}, b* = ${ctrlItem.lab.b.toFixed(1)}). Check HCl volume or GNP batch before trusting calls.`;
-        badge.className = 'text-xs font-mono font-bold px-2.5 py-1 rounded-full bg-rose-600 text-white shrink-0';
-        badge.textContent = 'INVALID';
-      } else {
-// ... existing code ... -->
-            <th class="py-2 px-2 text-right"><span class="th-tip" title="CIE L*a*b* redness axis (independent of brightness). Used with b* and R/B by the Water QC Gate.">a*</span></th>
-      if (ntItems.length > 0) {
-        maxNTDeltaA = Math.max(...ntItems.map(i => i.deltaA));
-        maxNTRelAbs = Math.max(...ntItems.map(i => i.relAbs));
+        if (state.useWhiteBalance && whiteRoi && item.role !== 'white') {
+          wbR = Math.min(255, Math.max(1, (item.raw.r / refR) * 235));
+          wbG = Math.min(255, Math.max(1, (item.raw.g / refG) * 235));
+          wbB = Math.min(255, Math.max(1, (item.raw.b / refB) * 235));
+        }
+
+        const lab = rgbToLab(wbR, wbG, wbB);
+
+        const normG = Math.min(0.99, Math.max(0.01, wbG / 245));
+        const normR = Math.min(0.99, Math.max(0.01, wbR / 245));
+        const absG = -Math.log10(normG);
+        const absR = -Math.log10(normR);
+        const absRatio = absG / Math.max(0.015, absR);
+        const legacyRB = item.raw.r / Math.max(1, item.raw.b);
+
+        return {
+          ...item,
+          wb: { r: wbR, g: wbG, b: wbB },
+          lab,
+          absRatio,
+          legacyRB
+        };
+      });
+
+      const controlItem = enriched.find(r => r.role === 'control');
+      const ctrlAbsRatio = controlItem ? controlItem.absRatio : 1.0;
+      const ctrlLegacyRB = controlItem ? controlItem.legacyRB : 1.0;
+
+      // Water-Control QC Gate: purple/violet/gray controls PASS; unaggregated red/pink controls FAIL
+      let qcStatus = 'NO_CONTROL';
+      if (controlItem) {
+        const cRB = controlItem.wb.r / Math.max(1, controlItem.wb.b);
+        const stayedRed = (controlItem.lab.a > 24.0 && controlItem.lab.b > -6.0 && cRB > 1.20);
+        qcStatus = stayedRed ? 'FAIL' : 'PASS';
       }
+      state.qcStatus = qcStatus;
+
+      const withRel = enriched.map(item => {
+        if (item.role === 'white') {
+          return {
+            ...item,
+            deltaA: 0,
+            deltaE: 0,
+            relAbs: 1.0,
+            relLegacyRB: 1.0
+          };
+        }
+        const deltaA = controlItem ? (item.lab.a - controlItem.lab.a) : 0;
+        const deltaE = controlItem
+          ? Math.sqrt(
+              Math.pow(item.lab.L - controlItem.lab.L, 2) +
+              Math.pow(item.lab.a - controlItem.lab.a, 2) +
+              Math.pow(item.lab.b - controlItem.lab.b, 2)
+            )
+          : 0;
+        const relAbs = controlItem ? (item.absRatio / Math.max(0.05, ctrlAbsRatio)) : item.absRatio;
+        const relLegacyRB = controlItem ? (item.legacyRB / Math.max(0.05, ctrlLegacyRB)) : item.legacyRB;
+
+        return {
+          ...item,
+          deltaA,
+          deltaE,
+          relAbs,
+          relLegacyRB
+        };
+      });
+
+      const ntItems = withRel.filter(r => r.role === 'nontarget');
+      const maxNtRelAbs = ntItems.length > 0 ? Math.max(...ntItems.map(r => r.relAbs)) : null;
+      const maxNtDeltaA = ntItems.length > 0 ? Math.max(...ntItems.map(r => r.deltaA)) : null;
 
       const ntPill = document.getElementById('ntSummaryPill');
-      if (ntItems.length > 0) {
+      if (maxNtRelAbs !== null) {
         ntPill.classList.remove('hidden');
-        document.getElementById('ntSummaryText').textContent = `Max NT: ${maxNTRelAbs.toFixed(2)}× (Δa* ${maxNTDeltaA.toFixed(1)})`;
+        document.getElementById('ntSummaryText').textContent = `Max NT: ${maxNtRelAbs.toFixed(2)}× (Δa* ${maxNtDeltaA >= 0 ? '+' : ''}${maxNtDeltaA.toFixed(1)})`;
       } else {
         ntPill.classList.add('hidden');
       }
 
-      // Effective cutoffs (Water Control vs Non-Target calibrated)
-      const effDeltaA = (state.ntCalibrate && maxNTDeltaA !== null)
-        ? Math.max(state.cutoffDeltaA, maxNTDeltaA + state.ntMarginDeltaA)
-        : state.cutoffDeltaA;
-      const effRelAbs = (state.ntCalibrate && maxNTRelAbs !== null)
-        ? Math.max(state.cutoffRelAbs, maxNTRelAbs * state.ntMarginMult)
-        : state.cutoffRelAbs;
-
-      // Step 5: Final Calls
+      // Strict Binary Call per Tube (POSITIVE or NEGATIVE)
       state.computed = withRel.map(item => {
-        if (item.roi.role === 'white') return item;
-        if (item.roi.role === 'control') return { ...item, call: 'WATER CTRL' };
-
-        const ratioVsMaxNT = (maxNTRelAbs !== null && maxNTRelAbs > 0.001 && item.relAbs !== null)
-          ? item.relAbs / maxNTRelAbs
+        const ratioVsMaxNT = (maxNtRelAbs !== null && item.role !== 'white')
+          ? (item.relAbs / Math.max(0.05, maxNtRelAbs))
           : null;
 
-        if (item.roi.role === 'nontarget') {
-          return { ...item, ratioVsMaxNT, call: 'NON-TARGET' };
-        }
-        if (state.qcStatus === 'INVALID') {
-          return { ...item, ratioVsMaxNT, call: 'INVALID' };
-        }
-        if (!ctrlItem) {
-          return { ...item, ratioVsMaxNT, call: 'NO CTRL' };
+        let call = '—';
+        if (item.role === 'white') {
+          call = 'WHITE REF';
+        } else if (item.role === 'control') {
+          call = qcStatus === 'FAIL' ? 'QC FAIL (RED)' : 'WATER';
+        } else if (item.role === 'nontarget') {
+          call = 'NON-TARGET';
+        } else {
+          if (qcStatus !== 'PASS') {
+            call = 'INVALID';
+          } else {
+            let effCutoffDeltaA = state.cutoffDeltaA;
+            let effCutoffRelAbs = state.cutoffRelAbs;
+
+            if (state.ntCalibrate && maxNtRelAbs !== null) {
+              effCutoffDeltaA = Math.max(effCutoffDeltaA, maxNtDeltaA + state.ntMarginDeltaA);
+              effCutoffRelAbs = Math.max(effCutoffRelAbs, maxNtRelAbs * state.ntMarginMult);
+            }
+
+            const passDeltaA = item.deltaA >= effCutoffDeltaA;
+            const passRelAbs = item.relAbs >= effCutoffRelAbs;
+
+            call = (passDeltaA && passRelAbs) ? 'POSITIVE' : 'NEGATIVE';
+          }
         }
 
-        const passA = item.deltaA >= effDeltaA;
-        const passAbs = item.relAbs >= effRelAbs;
-        let call = 'NEGATIVE';
-        if (passA && passAbs) call = 'POSITIVE';
-        else if (passA || passAbs) call = 'BORDERLINE';
         return { ...item, ratioVsMaxNT, call };
       });
 
+      updateQCBanner(qcStatus, controlItem);
+      renderResultsTable();
+      drawCanvas();
+
       const tubeCount = state.rois.filter(r => r.role !== 'white').length;
       document.getElementById('detectionSummaryBadge').textContent = `${tubeCount} tube${tubeCount === 1 ? '' : 's'}`;
+      document.getElementById('currentRoiCount').textContent = `${tubeCount} tube${tubeCount === 1 ? '' : 's'}`;
       document.getElementById('headerSaveBtn').disabled = tubeCount === 0;
-      document.getElementById('boxRangeLabel').textContent =
-        `Box: X ${Math.round(state.boxLeft * 100)}%–${Math.round(state.boxRight * 100)}% | Y ${Math.round(state.boxTop * 100)}%–${Math.round(state.boxBottom * 100)}%`;
-
-      updateQcBanner(ctrlItem);
-      drawCanvas();
-      renderResultsTable();
     }
 
-    function updateQcBanner(ctrlItem) {
+    function updateQCBanner(qcStatus, controlItem) {
       const banner = document.getElementById('qcBanner');
       const icon = document.getElementById('qcIcon');
       const title = document.getElementById('qcTitle');
       const subtitle = document.getElementById('qcSubtitle');
       const badge = document.getElementById('qcBadge');
 
-      banner.className = 'rounded-xl border px-4 py-3 shadow-sm flex items-center justify-between gap-3 transition-colors';
-      if (state.qcStatus === 'PASS') {
-        banner.classList.add('border-emerald-200', 'bg-emerald-50/70');
+      if (qcStatus === 'PASS') {
+        banner.className = 'rounded-xl border border-emerald-200 bg-emerald-50/70 px-4 py-3 shadow-sm flex items-center justify-between gap-3 transition-colors';
         icon.className = 'w-9 h-9 rounded-full bg-emerald-100 text-emerald-700 flex items-center justify-center shrink-0';
         title.textContent = 'Water-Control QC Gate: PASS';
-        subtitle.textContent = `Water Control aggregated properly (a* = ${ctrlItem.lab.a.toFixed(1)} ≤ 22.0). Sample calls are valid.`;
+        subtitle.textContent = `Control "${controlItem.label}" properly aggregated (a* = ${controlItem.lab.a.toFixed(1)}, b* = ${controlItem.lab.b.toFixed(1)}). Sample calls are valid.`;
         badge.className = 'text-xs font-mono font-bold px-2.5 py-1 rounded-full bg-emerald-600 text-white shrink-0';
         badge.textContent = 'PASS';
-      } else if (state.qcStatus === 'INVALID') {
-        banner.classList.add('border-rose-300', 'bg-rose-50');
+      } else if (qcStatus === 'FAIL') {
+        banner.className = 'rounded-xl border border-rose-300 bg-rose-50 px-4 py-3 shadow-sm flex items-center justify-between gap-3 transition-colors';
         icon.className = 'w-9 h-9 rounded-full bg-rose-100 text-rose-700 flex items-center justify-center shrink-0';
-        title.textContent = 'Water-Control QC Gate: RUN INVALID';
-        subtitle.textContent = `Water Control stayed too red (a* = ${ctrlItem.lab.a.toFixed(1)} > 22.0). Check HCl volume or GNP batch before trusting calls.`;
+        title.textContent = 'Water-Control QC Gate: FAILED (Unaggregated Red Control)';
+        subtitle.textContent = `Control "${controlItem.label}" stayed red (a* = ${controlItem.lab.a.toFixed(1)} > 24). Sample calls are marked INVALID until a purple/gray water control is used.`;
         badge.className = 'text-xs font-mono font-bold px-2.5 py-1 rounded-full bg-rose-600 text-white shrink-0';
-        badge.textContent = 'INVALID';
+        badge.textContent = 'FAIL';
       } else {
-        banner.classList.add('border-amber-200', 'bg-amber-50/70');
+        banner.className = 'rounded-xl border border-amber-200 bg-amber-50/70 px-4 py-3 shadow-sm flex items-center justify-between gap-3 transition-colors';
         icon.className = 'w-9 h-9 rounded-full bg-amber-100 text-amber-700 flex items-center justify-center shrink-0';
-        title.textContent = 'Water-Control QC Gate: No Water Control Tagged';
-        subtitle.textContent = 'Tag one tube as Water Control (C) in the Role column to compute signals and run QC.';
+        title.textContent = 'Water-Control QC Gate: No Water Control Assigned';
+        subtitle.textContent = 'Assign one tube Role to "Water Control (C)" in the table below to normalize sample signals.';
         badge.className = 'text-xs font-mono font-bold px-2.5 py-1 rounded-full bg-amber-500 text-white shrink-0';
         badge.textContent = 'NO CTRL';
       }
     }
 
+    function getCallBadgeClass(call) {
+      switch (call) {
+        case 'POSITIVE': return 'bg-emerald-100 text-emerald-800 border border-emerald-200';
+        case 'NEGATIVE': return 'bg-slate-100 text-slate-700 border border-slate-200';
+        case 'WATER': return 'bg-violet-100 text-violet-800 border border-violet-200';
+        case 'NON-TARGET': return 'bg-amber-50 text-amber-800 border border-amber-200';
+        case 'WHITE REF': return 'bg-slate-100 text-slate-600 border border-slate-200';
+        default: return 'bg-rose-100 text-rose-800 border border-rose-200';
+      }
+    }
+
+    function renderResultsTable() {
+      const thead = document.getElementById('resultsTableHead');
+      const tbody = document.getElementById('resultsTableBody');
+      const showNTCol = state.computed.some(r => r.role === 'nontarget');
+      const isResearch = state.researchMode;
+
+      if (isResearch) {
+        thead.innerHTML = `
+          <tr class="bg-slate-50/80 border-b border-slate-200 text-[10px] font-semibold uppercase tracking-wider text-slate-500">
+            <th class="py-2 px-3">Tube</th>
+            <th class="py-2 px-2">Tube Note</th>
+            <th class="py-2 px-2">Role</th>
+            <th class="py-2 px-2 text-right"><span class="th-tip" title="CIE L*a*b* green-to-red axis. Negative/low = purple/blue; high (> 24) = red.">a*</span></th>
+            <th class="py-2 px-2 text-right"><span class="th-tip" title="Redness shift vs. Water Control (a*_sample - a*_water). Positive targets are >= +10.0.">Δa*</span></th>
+            <th class="py-2 px-2 text-right"><span class="th-tip" title="Total 3D Euclidean color distance from Water Control across L*, a*, and b*.">ΔE</span></th>
+            <th class="py-2 px-2 text-right"><span class="th-tip" title="Relative Beer-Lambert pseudo-absorbance (A_G/A_R) normalized to Water Control (= 1.00).">Rel A_G/A_R</span></th>
+            <th class="py-2 px-2 text-right"><span class="th-tip" title="Legacy linear raw Red/Blue ratio normalized to Water Control (= 1.00).">Legacy R/B</span></th>
+            ${showNTCol ? '<th class="py-2 px-2 text-right"><span class="th-tip" title="Sample Signal divided by the highest Non-Target (NT) tube in the photo.">Sig / Max NT</span></th>' : ''}
+            <th class="py-2 px-2.5 text-center">Result</th>
+            <th class="py-2 px-2 text-center">×</th>
+          </tr>
+        `;
+      } else {
+        thead.innerHTML = `
+          <tr class="bg-slate-50/80 border-b border-slate-200 text-[10px] font-semibold uppercase tracking-wider text-slate-500">
+            <th class="py-2 px-3">Tube</th>
+            <th class="py-2 px-2">Tube Note</th>
+            <th class="py-2 px-2">Role</th>
+            <th class="py-2 px-3 text-right"><span class="th-tip" title="Relative Beer–Lambert pseudo-absorbance (A_G/A_R) normalized to Water Control (= 1.00). Mirrors A520/A620.">Signal</span></th>
+            ${showNTCol ? '<th class="py-2 px-2 text-right"><span class="th-tip" title="Sample Signal divided by the highest Non-Target (NT) tube in the photo.">vs Max NT</span></th>' : ''}
+            <th class="py-2 px-3 text-center">Result</th>
+            <th class="py-2 px-2 text-center">×</th>
+          </tr>
+        `;
+      }
+
+      const visibleRows = isResearch
+        ? state.computed
+        : state.computed.filter(r => r.role !== 'white');
+
+      if (visibleRows.length === 0) {
+        const colSpan = isResearch ? (showNTCol ? 11 : 10) : (showNTCol ? 7 : 6);
+        tbody.innerHTML = `<tr><td colspan="${colSpan}" class="py-8 text-center text-slate-400">No tubes detected inside the Scan Box. Drag the cyan box edges or click "+ Manual Tube".</td></tr>`;
+        return;
+      }
+
+      tbody.innerHTML = visibleRows.map(item => {
+        const swatch = `rgb(${Math.round(item.wb.r)}, ${Math.round(item.wb.g)}, ${Math.round(item.wb.b)})`;
+        const isWhite = item.role === 'white';
+
+        const roleSelect = isWhite
+          ? `<span class="text-[11px] font-mono text-slate-400 px-1.5">White Ref</span>`
+          : `<select onchange="changeRoiRole(${item.id}, this.value)"
+              class="text-[11px] font-medium bg-slate-50 border border-slate-200 rounded-md px-1.5 py-1 text-slate-700 focus:outline-none focus:ring-1 focus:ring-teal-500">
+              <option value="control" ${item.role === 'control' ? 'selected' : ''}>Water Control (C)</option>
+              <option value="nontarget" ${item.role === 'nontarget' ? 'selected' : ''}>Non-Target (NT)</option>
+              <option value="sample" ${item.role === 'sample' ? 'selected' : ''}>Sample (S)</option>
+            </select>`;
+
+        const tubeCell = `
+          <td class="py-2 px-3">
+            <div class="flex items-center gap-2">
+              <span class="w-3.5 h-3.5 rounded-full border border-slate-300 shrink-0 shadow-xs" style="background:${swatch}"></span>
+              <input type="text" value="${escapeHtml(item.label)}" onchange="renameRoi(${item.id}, this.value)"
+                class="w-20 sm:w-24 px-1.5 py-0.5 text-xs font-semibold text-navy-900 bg-transparent hover:bg-slate-100 focus:bg-white border border-transparent focus:border-teal-500 rounded focus:outline-none" />
+            </div>
+          </td>
+        `;
+
+        const noteCell = isWhite
+          ? `<td class="py-2 px-2 text-slate-300 text-[11px]">—</td>`
+          : `<td class="py-2 px-2">
+              <input type="text" value="${escapeHtml(item.note || '')}" oninput="updateRoiNote(${item.id}, this.value)"
+                placeholder="e.g., Milk, Rep 1"
+                class="w-24 sm:w-32 px-2 py-1 text-[11px] text-slate-700 bg-slate-50 hover:bg-white focus:bg-white border border-slate-200 focus:border-teal-500 rounded focus:outline-none" />
+            </td>`;
+
+        if (isResearch) {
+          return `
+            <tr class="hover:bg-slate-50/80 transition">
+              ${tubeCell}
+              ${noteCell}
+              <td class="py-2 px-2">${roleSelect}</td>
+              <td class="py-2 px-2 text-right font-mono text-slate-700">${item.lab.a.toFixed(1)}</td>
+              <td class="py-2 px-2 text-right font-mono font-semibold ${item.deltaA >= state.cutoffDeltaA && !isWhite && item.role !== 'control' ? 'text-teal-700' : 'text-slate-600'}">${isWhite ? '—' : (item.deltaA >= 0 ? '+' : '') + item.deltaA.toFixed(1)}</td>
+              <td class="py-2 px-2 text-right font-mono text-slate-600">${isWhite ? '—' : item.deltaE.toFixed(1)}</td>
+              <td class="py-2 px-2 text-right font-mono font-semibold text-navy-900">${isWhite ? '—' : item.relAbs.toFixed(2)}</td>
+              <td class="py-2 px-2 text-right font-mono text-slate-500">${isWhite ? '—' : item.relLegacyRB.toFixed(2)}</td>
+              ${showNTCol ? `<td class="py-2 px-2 text-right font-mono font-semibold text-amber-800">${item.ratioVsMaxNT != null ? item.ratioVsMaxNT.toFixed(2) + '×' : '—'}</td>` : ''}
+              <td class="py-2 px-2.5 text-center">
+                <span class="inline-block text-[10px] font-mono font-bold px-2 py-0.5 rounded-full ${getCallBadgeClass(item.call)}">${item.call}</span>
+              </td>
+              <td class="py-2 px-2 text-center">
+                <button type="button" onclick="deleteRoi(${item.id})" title="Remove detection" class="text-slate-400 hover:text-rose-600 font-bold px-1.5 py-0.5 rounded hover:bg-rose-50 transition">×</button>
+              </td>
+            </tr>
+          `;
+        }
+
+        return `
+          <tr class="hover:bg-slate-50/80 transition">
+            ${tubeCell}
+            ${noteCell}
+            <td class="py-2 px-2">${roleSelect}</td>
+            <td class="py-2 px-3 text-right font-mono font-semibold text-navy-900">${item.relAbs.toFixed(2)}</td>
+            ${showNTCol ? `<td class="py-2 px-2 text-right font-mono font-semibold text-amber-800">${item.ratioVsMaxNT != null ? item.ratioVsMaxNT.toFixed(2) + '×' : '—'}</td>` : ''}
+            <td class="py-2 px-3 text-center">
+              <span class="inline-block text-[10px] font-mono font-bold px-2.5 py-0.5 rounded-full ${getCallBadgeClass(item.call)}">${item.call}</span>
+            </td>
+            <td class="py-2 px-2 text-center">
+              <button type="button" onclick="deleteRoi(${item.id})" title="Remove detection" class="text-slate-400 hover:text-rose-600 font-bold px-1.5 py-0.5 rounded hover:bg-rose-50 transition">×</button>
+            </td>
+          </tr>
+        `;
+      }).join('');
+    }
+
     // =========================================================================
-    // CANVAS DRAWING (4-SIDED SCAN BOX + COLORED ROI RINGS)
+    // ROI MUTATIONS & MANUAL ADD MODE
+    // =========================================================================
+    function renameRoi(id, newLabel) {
+      const roi = state.rois.find(r => r.id === id);
+      if (roi && newLabel.trim()) {
+        roi.label = newLabel.trim();
+        recalculateAndRender();
+      }
+    }
+
+    function updateRoiNote(id, newNote) {
+      const roi = state.rois.find(r => r.id === id);
+      if (roi) {
+        roi.note = newNote;
+        const comp = state.computed.find(c => c.id === id);
+        if (comp) comp.note = newNote;
+      }
+    }
+
+    function changeRoiRole(id, newRole) {
+      const target = state.rois.find(r => r.id === id);
+      if (!target) return;
+
+      if (newRole === 'control') {
+        state.rois.forEach(r => {
+          if (r.id !== id && r.role === 'control') {
+            r.role = 'sample';
+            if (r.label === 'Water (C)') r.label = `S${r.id}`;
+          }
+        });
+        if (target.label.startsWith('S')) target.label = 'Water (C)';
+      }
+      target.role = newRole;
+      recalculateAndRender();
+    }
+
+    function deleteRoi(id) {
+      state.rois = state.rois.filter(r => r.id !== id);
+      recalculateAndRender();
+    }
+
+    function toggleManualAddMode() {
+      if (!state.image) return;
+      state.manualAddMode = !state.manualAddMode;
+      const btn = document.getElementById('manualAddBtn');
+      if (state.manualAddMode) {
+        btn.className = 'px-2.5 py-1.5 rounded-lg text-xs font-semibold border border-teal-600 bg-teal-600 text-white transition shadow-sm';
+        btn.textContent = 'Click Tube on Photo...';
+        imageCanvas.style.cursor = 'crosshair';
+      } else {
+        btn.className = 'px-2.5 py-1.5 rounded-lg text-xs font-semibold border border-slate-300 bg-white text-slate-700 hover:bg-slate-100 transition';
+        btn.textContent = '+ Manual Tube';
+        imageCanvas.style.cursor = 'default';
+      }
+    }
+
+    // =========================================================================
+    // CANVAS RENDERING & 4-SIDED SCAN BOX + ROI POINTER INTERACTIONS
     // =========================================================================
     function drawCanvas() {
       if (!state.image) return;
-      const w = imageCanvas.width;
-      const h = imageCanvas.height;
-      ctx.clearRect(0, 0, w, h);
-      ctx.drawImage(state.image, 0, 0, w, h);
+      const W = state.image.naturalWidth;
+      const H = state.image.naturalHeight;
+      imageCanvas.width = W;
+      imageCanvas.height = H;
 
-      const bx1 = state.boxLeft * w;
-      const bx2 = state.boxRight * w;
-      const by1 = state.boxTop * h;
-      const by2 = state.boxBottom * h;
-      const bw = bx2 - bx1;
-      const bh = by2 - by1;
+      ctx.clearRect(0, 0, W, H);
+      ctx.drawImage(state.image, 0, 0, W, H);
 
-      // Dim outside Scan Box
-      ctx.fillStyle = 'rgba(15, 23, 42, 0.42)';
-      ctx.fillRect(0, 0, w, by1);
-      ctx.fillRect(0, by2, w, h - by2);
-      ctx.fillRect(0, by1, bx1, bh);
-      ctx.fillRect(bx2, by1, w - bx2, bh);
+      const bx = state.boxLeft * W;
+      const by = state.boxTop * H;
+      const bw = (state.boxRight - state.boxLeft) * W;
+      const bh = (state.boxBottom - state.boxTop) * H;
 
-      // Dashed Cyan Scan Box border
-      const lw = Math.max(2, w * 0.0028);
+      // Dim outside the 4-sided Scan Box
       ctx.save();
-      ctx.strokeStyle = '#06B6D4';
-      ctx.lineWidth = lw;
-      ctx.setLineDash([lw * 3.5, lw * 2.5]);
-      ctx.strokeRect(bx1, by1, bw, bh);
+      ctx.fillStyle = 'rgba(15, 23, 42, 0.42)';
+      ctx.fillRect(0, 0, W, by);
+      ctx.fillRect(0, by + bh, W, H - (by + bh));
+      ctx.fillRect(0, by, bx, bh);
+      ctx.fillRect(bx + bw, by, W - (bx + bw), bh);
       ctx.restore();
 
-      // 4 Edge Drag Handles
-      const handleLen = Math.max(28, w * 0.06);
-      const handleThick = Math.max(6, w * 0.0085);
-      ctx.fillStyle = '#06B6D4';
-      ctx.strokeStyle = '#FFFFFF';
-      ctx.lineWidth = Math.max(1.5, lw * 0.6);
+      // Draw Scan Box border
+      const lw = Math.max(2, Math.round(W * 0.003));
+      ctx.save();
+      ctx.strokeStyle = '#22D3EE';
+      ctx.lineWidth = lw;
+      ctx.setLineDash([lw * 3, lw * 2]);
+      ctx.strokeRect(bx, by, bw, bh);
+      ctx.setLineDash([]);
 
-      const drawHandle = (x, y, rw, rh) => {
-        ctx.beginPath();
-        ctx.roundRect(x, y, rw, rh, Math.min(rw, rh) / 2);
-        ctx.fill();
-        ctx.stroke();
-      };
-      drawHandle(bx1 + bw / 2 - handleLen / 2, by1 - handleThick / 2, handleLen, handleThick);
-      drawHandle(bx1 + bw / 2 - handleLen / 2, by2 - handleThick / 2, handleLen, handleThick);
-      drawHandle(bx1 - handleThick / 2, by1 + bh / 2 - handleLen / 2, handleThick, handleLen);
-      drawHandle(bx2 - handleThick / 2, by1 + bh / 2 - handleLen / 2, handleThick, handleLen);
-
-      // Scan Box label tag
-      const tagFont = Math.max(11, Math.round(w * 0.015));
-      ctx.font = `700 ${tagFont}px Inter, sans-serif`;
-      const tagText = 'SCAN BOX';
-      const tagW = ctx.measureText(tagText).width + tagFont * 1.1;
-      const tagH = tagFont * 1.65;
-      ctx.fillStyle = '#06B6D4';
+      // Draw edge grab pills on all 4 sides
+      const pillLen = Math.max(18, Math.round(W * 0.04));
+      const pillThick = Math.max(5, Math.round(W * 0.008));
+      ctx.fillStyle = '#22D3EE';
       ctx.beginPath();
-      ctx.roundRect(bx1 + 6, by1 + 6, tagW, tagH, 4);
+      ctx.roundRect(bx + bw / 2 - pillLen / 2, by - pillThick / 2, pillLen, pillThick, pillThick / 2);
+      ctx.roundRect(bx + bw / 2 - pillLen / 2, by + bh - pillThick / 2, pillLen, pillThick, pillThick / 2);
+      ctx.roundRect(bx - pillThick / 2, by + bh / 2 - pillLen / 2, pillThick, pillLen, pillThick / 2);
+      ctx.roundRect(bx + bw - pillThick / 2, by + bh / 2 - pillLen / 2, pillThick, pillLen, pillThick / 2);
+      ctx.fill();
+
+      // Scan Box tag
+      const tagFontSize = Math.max(10, Math.round(W * 0.015));
+      ctx.font = `700 ${tagFontSize}px Inter, sans-serif`;
+      const tagText = 'SCAN BOX';
+      const tw = ctx.measureText(tagText).width + 12;
+      const th = tagFontSize + 6;
+      ctx.fillStyle = '#0891B2';
+      ctx.beginPath();
+      ctx.roundRect(bx + 6, by + 6, tw, th, 4);
       ctx.fill();
       ctx.fillStyle = '#FFFFFF';
-      ctx.textAlign = 'left';
       ctx.textBaseline = 'middle';
-      ctx.fillText(tagText, bx1 + 6 + tagFont * 0.55, by1 + 6 + tagH / 2);
+      ctx.fillText(tagText, bx + 12, by + 6 + th / 2);
+      ctx.restore();
 
-      // Draw detected tube circles & labels
-      for (const item of state.computed) {
-        const { roi, call } = item;
+      // Draw detected ROI rings & labels
+      state.computed.forEach(item => {
+        const cx = item.nx * W;
+        const cy = item.ny * H;
+        const r = Math.max(8, item.nr * W);
+
         let ringColor = '#64748B';
-        if (roi.role === 'white') ringColor = '#94A3B8';
-        else if (roi.role === 'control') ringColor = '#8B5CF6';
-        else if (roi.role === 'nontarget') ringColor = '#D97706';
-        else if (call === 'POSITIVE') ringColor = '#10B981';
-        else if (call === 'BORDERLINE') ringColor = '#F59E0B';
-        else if (call === 'INVALID') ringColor = '#E11D48';
+        if (item.role === 'white') ringColor = '#FFFFFF';
+        else if (item.role === 'control') ringColor = '#8B5CF6';
+        else if (item.role === 'nontarget') ringColor = '#F59E0B';
+        else if (item.call === 'POSITIVE') ringColor = '#10B981';
 
         ctx.save();
         ctx.beginPath();
-        ctx.arc(roi.x, roi.y, roi.r, 0, Math.PI * 2);
-        ctx.strokeStyle = '#FFFFFF';
-        ctx.lineWidth = Math.max(4, w * 0.0055);
+        ctx.arc(cx, cy, r + lw, 0, Math.PI * 2);
+        ctx.strokeStyle = 'rgba(15, 23, 42, 0.85)';
+        ctx.lineWidth = lw * 1.4;
         ctx.stroke();
 
         ctx.beginPath();
-        ctx.arc(roi.x, roi.y, roi.r, 0, Math.PI * 2);
+        ctx.arc(cx, cy, r, 0, Math.PI * 2);
         ctx.strokeStyle = ringColor;
-        ctx.lineWidth = Math.max(2.2, w * 0.003);
-        if (roi.role === 'white') ctx.setLineDash([4, 3]);
+        ctx.lineWidth = lw * 1.2;
+        if (item.role === 'white') ctx.setLineDash([3, 3]);
         ctx.stroke();
-        ctx.restore();
+        ctx.setLineDash([]);
 
-        // Pill label above ROI
-        const lFont = Math.max(11, Math.round(w * 0.0155));
-        ctx.font = `700 ${lFont}px Inter, sans-serif`;
-        const textW = ctx.measureText(roi.label).width;
-        const padX = lFont * 0.45;
-        const pillW = textW + padX * 2;
-        const pillH = lFont * 1.5;
-        const pillX = roi.x - pillW / 2;
-        const pillY = roi.y - roi.r - pillH - Math.max(4, w * 0.005);
+        // Label pill above circle
+        const fontSize = Math.max(11, Math.round(W * 0.017));
+        ctx.font = `700 ${fontSize}px Inter, sans-serif`;
+        const labelW = ctx.measureText(item.label).width + 10;
+        const labelH = fontSize + 6;
+        const lx = cx - labelW / 2;
+        const ly = cy - r - labelH - 5;
 
         ctx.fillStyle = 'rgba(15, 23, 42, 0.88)';
         ctx.beginPath();
-        ctx.roundRect(pillX, pillY, pillW, pillH, 5);
+        ctx.roundRect(lx, ly, labelW, labelH, 4);
         ctx.fill();
 
         ctx.fillStyle = '#FFFFFF';
         ctx.textAlign = 'center';
         ctx.textBaseline = 'middle';
-        ctx.fillText(roi.label, roi.x, pillY + pillH / 2);
-      }
+        ctx.fillText(item.label, cx, ly + labelH / 2);
+        ctx.restore();
+      });
     }
 
-    // =========================================================================
-    // POINTER INTERACTIONS: DRAG 4-SIDED SCAN BOX, DRAG ROIs, OR ADD MANUAL ROI
-    // =========================================================================
-    function getCanvasCoords(e) {
+    function getCanvasNormPos(e) {
       const rect = imageCanvas.getBoundingClientRect();
-      const scaleX = imageCanvas.width / rect.width;
-      const scaleY = imageCanvas.height / rect.height;
       return {
-        x: (e.clientX - rect.left) * scaleX,
-        y: (e.clientY - rect.top) * scaleY
+        nx: Math.min(1, Math.max(0, (e.clientX - rect.left) / rect.width)),
+        ny: Math.min(1, Math.max(0, (e.clientY - rect.top) / rect.height))
       };
-    }
-
-    function hitTest(pos) {
-      const w = imageCanvas.width;
-      const h = imageCanvas.height;
-
-      // 1. Check ROI circles first
-      for (let i = state.rois.length - 1; i >= 0; i--) {
-        const roi = state.rois[i];
-        if (Math.hypot(pos.x - roi.x, pos.y - roi.y) <= Math.max(roi.r * 1.6, w * 0.022)) {
-          return { type: 'roi', roi };
-        }
-      }
-
-      // 2. Check 4 edges of the Scan Box
-      const bx1 = state.boxLeft * w, bx2 = state.boxRight * w;
-      const by1 = state.boxTop * h, by2 = state.boxBottom * h;
-      const edgeTol = Math.max(16, w * 0.024);
-
-      if (Math.abs(pos.y - by1) <= edgeTol && pos.x >= bx1 - edgeTol && pos.x <= bx2 + edgeTol) return { type: 'top' };
-      if (Math.abs(pos.y - by2) <= edgeTol && pos.x >= bx1 - edgeTol && pos.x <= bx2 + edgeTol) return { type: 'bottom' };
-      if (Math.abs(pos.x - bx1) <= edgeTol && pos.y >= by1 - edgeTol && pos.y <= by2 + edgeTol) return { type: 'left' };
-      if (Math.abs(pos.x - bx2) <= edgeTol && pos.y >= by1 - edgeTol && pos.y <= by2 + edgeTol) return { type: 'right' };
-
-      // 3. Inside Scan Box -> move box
-      if (pos.x > bx1 && pos.x < bx2 && pos.y > by1 && pos.y < by2) {
-        return {
-          type: 'moveBox',
-          startX: pos.x / w,
-          startY: pos.y / h,
-          origLeft: state.boxLeft,
-          origRight: state.boxRight,
-          origTop: state.boxTop,
-          origBottom: state.boxBottom
-        };
-      }
-      return null;
     }
 
     imageCanvas.addEventListener('pointerdown', (e) => {
       if (!state.image) return;
-      const pos = getCanvasCoords(e);
+      const pos = getCanvasNormPos(e);
 
       if (state.manualAddMode) {
-        const sampleCount = state.rois.filter(r => r.role === 'sample').length;
         const hasCtrl = state.rois.some(r => r.role === 'control');
+        const sampleNum = state.rois.filter(r => r.role !== 'white').length + 1;
         state.rois.push({
           id: nextRoiId++,
+          label: hasCtrl ? `S${sampleNum}` : 'Water (C)',
+          note: '',
           role: hasCtrl ? 'sample' : 'control',
-          label: hasCtrl ? `S${sampleCount + 1}` : 'Water (C)',
-          x: pos.x,
-          y: pos.y,
-          r: Math.max(9, Math.round(imageCanvas.width * 0.009))
+          nx: pos.nx,
+          ny: pos.ny,
+          nr: 0.015
         });
         toggleManualAddMode();
         recalculateAndRender();
         return;
       }
 
-      const hit = hitTest(pos);
-      if (hit) {
-        state.dragAction = hit;
+      for (let i = state.rois.length - 1; i >= 0; i--) {
+        const roi = state.rois[i];
+        if (Math.hypot(pos.nx - roi.nx, pos.ny - roi.ny) <= Math.max(0.025, roi.nr * 1.4)) {
+          state.dragAction = { type: 'roi', id: roi.id };
+          imageCanvas.setPointerCapture(e.pointerId);
+          return;
+        }
+      }
+
+      const edgeTol = 0.03;
+      const inYRange = pos.ny >= state.boxTop - edgeTol && pos.ny <= state.boxBottom + edgeTol;
+      const inXRange = pos.nx >= state.boxLeft - edgeTol && pos.nx <= state.boxRight + edgeTol;
+
+      if (inXRange && Math.abs(pos.ny - state.boxTop) <= edgeTol) {
+        state.dragAction = { type: 'box-top' };
+      } else if (inXRange && Math.abs(pos.ny - state.boxBottom) <= edgeTol) {
+        state.dragAction = { type: 'box-bottom' };
+      } else if (inYRange && Math.abs(pos.nx - state.boxLeft) <= edgeTol) {
+        state.dragAction = { type: 'box-left' };
+      } else if (inYRange && Math.abs(pos.nx - state.boxRight) <= edgeTol) {
+        state.dragAction = { type: 'box-right' };
+      } else if (
+        pos.nx > state.boxLeft && pos.nx < state.boxRight &&
+        pos.ny > state.boxTop && pos.ny < state.boxBottom
+      ) {
+        state.dragAction = {
+          type: 'box-move',
+          startNx: pos.nx,
+          startNy: pos.ny,
+          origLeft: state.boxLeft,
+          origRight: state.boxRight,
+          origTop: state.boxTop,
+          origBottom: state.boxBottom
+        };
+      }
+
+      if (state.dragAction) {
         imageCanvas.setPointerCapture(e.pointerId);
       }
     });
 
     imageCanvas.addEventListener('pointermove', (e) => {
-      if (!state.image) return;
-      const pos = getCanvasCoords(e);
-      const w = imageCanvas.width;
-      const h = imageCanvas.height;
+      if (!state.image || !state.dragAction) return;
+      const pos = getCanvasNormPos(e);
+      const act = state.dragAction;
 
-      if (!state.dragAction) {
-        if (state.manualAddMode) { imageCanvas.style.cursor = 'crosshair'; return; }
-        const hit = hitTest(pos);
-        if (!hit) imageCanvas.style.cursor = 'default';
-        else if (hit.type === 'roi' || hit.type === 'moveBox') imageCanvas.style.cursor = 'move';
-        else if (hit.type === 'top' || hit.type === 'bottom') imageCanvas.style.cursor = 'ns-resize';
-        else imageCanvas.style.cursor = 'ew-resize';
+      if (act.type === 'roi') {
+        const roi = state.rois.find(r => r.id === act.id);
+        if (roi) {
+          roi.nx = pos.nx;
+          roi.ny = pos.ny;
+          recalculateAndRender();
+        }
         return;
       }
 
-      const fx = Math.max(0, Math.min(1, pos.x / w));
-      const fy = Math.max(0, Math.min(1, pos.y / h));
-
-      if (state.dragAction.type === 'roi') {
-        state.dragAction.roi.x = Math.max(0, Math.min(w, pos.x));
-        state.dragAction.roi.y = Math.max(0, Math.min(h, pos.y));
-        recalculateAndRender();
-      } else if (state.dragAction.type === 'top') {
-        state.boxTop = Math.min(state.boxBottom - 0.08, Math.max(0.02, fy));
-        drawCanvas();
-      } else if (state.dragAction.type === 'bottom') {
-        state.boxBottom = Math.max(state.boxTop + 0.08, Math.min(0.98, fy));
-        drawCanvas();
-      } else if (state.dragAction.type === 'left') {
-        state.boxLeft = Math.min(state.boxRight - 0.12, Math.max(0.01, fx));
-        drawCanvas();
-      } else if (state.dragAction.type === 'right') {
-        state.boxRight = Math.max(state.boxLeft + 0.12, Math.min(0.99, fx));
-        drawCanvas();
-      } else if (state.dragAction.type === 'moveBox') {
-        const dx = fx - state.dragAction.startX;
-        const dy = fy - state.dragAction.startY;
-        const bw = state.dragAction.origRight - state.dragAction.origLeft;
-        const bh = state.dragAction.origBottom - state.dragAction.origTop;
-        let nl = Math.max(0.01, Math.min(0.99 - bw, state.dragAction.origLeft + dx));
-        let nt = Math.max(0.01, Math.min(0.99 - bh, state.dragAction.origTop + dy));
-        state.boxLeft = nl; state.boxRight = nl + bw;
-        state.boxTop = nt; state.boxBottom = nt + bh;
-        drawCanvas();
+      const minSpan = 0.08;
+      if (act.type === 'box-top') {
+        state.boxTop = Math.min(state.boxBottom - minSpan, Math.max(0.02, pos.ny));
+      } else if (act.type === 'box-bottom') {
+        state.boxBottom = Math.max(state.boxTop + minSpan, Math.min(0.98, pos.ny));
+      } else if (act.type === 'box-left') {
+        state.boxLeft = Math.min(state.boxRight - minSpan, Math.max(0.02, pos.nx));
+      } else if (act.type === 'box-right') {
+        state.boxRight = Math.max(state.boxLeft + minSpan, Math.min(0.98, pos.nx));
+      } else if (act.type === 'box-move') {
+        const dx = pos.nx - act.startNx;
+        const dy = pos.ny - act.startNy;
+        const wSpan = act.origRight - act.origLeft;
+        const hSpan = act.origBottom - act.origTop;
+        let newL = Math.min(0.98 - wSpan, Math.max(0.02, act.origLeft + dx));
+        let newT = Math.min(0.98 - hSpan, Math.max(0.02, act.origTop + dy));
+        state.boxLeft = newL;
+        state.boxRight = newL + wSpan;
+        state.boxTop = newT;
+        state.boxBottom = newT + hSpan;
       }
+
+      updateBoxLabel();
+      drawCanvas();
     });
 
     imageCanvas.addEventListener('pointerup', (e) => {
       if (!state.dragAction) return;
-      const actionType = state.dragAction.type;
+      const wasBox = state.dragAction.type.startsWith('box');
       state.dragAction = null;
       try { imageCanvas.releasePointerCapture(e.pointerId); } catch (_) {}
-      if (actionType !== 'roi') {
+      if (wasBox) {
         runAutoDetection();
       }
     });
 
     // =========================================================================
-    // TABLE ACTIONS & RENDERING
-    // =========================================================================
-    function changeRole(id, newRole) {
-      const target = state.rois.find(r => r.id === id);
-      if (!target) return;
-
-      if (newRole === 'control') {
-        state.rois.forEach(r => {
-          if (r.role === 'control' && r.id !== id) {
-            r.role = 'sample';
-            if (r.label === 'Water (C)') r.label = 'S';
-          }
-        });
-        target.role = 'control';
-        if (target.label.startsWith('S') || target.label.startsWith('NT')) target.label = 'Water (C)';
-      } else if (newRole === 'nontarget') {
-        target.role = 'nontarget';
-        if (target.label === 'Water (C)' || /^S\d*$/.test(target.label)) {
-          const ntCount = state.rois.filter(r => r.role === 'nontarget').length;
-          target.label = `NT${ntCount}`;
-        }
-        state.ntCalibrate = true;
-        document.getElementById('ntCalibrateToggle').checked = true;
-      } else {
-        target.role = 'sample';
-        if (target.label === 'Water (C)' || /^NT\d*$/.test(target.label)) {
-          const sCount = state.rois.filter(r => r.role === 'sample').length;
-          target.label = `S${sCount}`;
-        }
-      }
-      recalculateAndRender();
-    }
-
-    function renameROI(id, newLabel) {
-      const target = state.rois.find(r => r.id === id);
-      if (!target) return;
-      const trimmed = newLabel.trim();
-      if (trimmed) target.label = trimmed;
-      drawCanvas();
-    }
-
-    function deleteROI(id) {
-      state.rois = state.rois.filter(r => r.id !== id);
-      recalculateAndRender();
-    }
-
-    function renderResultsTable() {
-      const thead = document.getElementById('resultsTableHead');
-      const tbody = document.getElementById('resultsTableBody');
-      const tubeCount = state.computed.filter(c => c.roi.role !== 'white').length;
-      document.getElementById('currentRoiCount').textContent = `${tubeCount} tube${tubeCount === 1 ? '' : 's'}`;
-
-      const hasNT = state.computed.some(c => c.roi.role === 'nontarget');
-      const visibleItems = state.researchMode
-        ? state.computed
-        : state.computed.filter(c => c.roi.role !== 'white');
-
-      if (state.researchMode) {
-        thead.innerHTML = `
-          <tr class="bg-slate-50/80 border-b border-slate-200 text-[10px] font-semibold uppercase tracking-wider text-slate-500">
-            <th class="py-2 px-2.5">Tube</th>
-            <th class="py-2 px-2">Role</th>
-            <th class="py-2 px-2 text-right"><span class="th-tip" title="CIE L*a*b* redness axis (independent of brightness). Higher = redder; Water QC Gate requires ≤ 22.0.">a*</span></th>
-            <th class="py-2 px-2 text-right"><span class="th-tip" title="Redness shift vs. Water Control (a*_tube − a*_water). Primary CIE positive metric (default cutoff ≥ 10.0).">Δa*</span></th>
-            <th class="py-2 px-2 text-right"><span class="th-tip" title="Total 3D CIE color distance from Water Control across L*, a*, and b*.">ΔE</span></th>
-            <th class="py-2 px-2 text-right"><span class="th-tip" title="Beer–Lambert pseudo-absorbance ratio (A_G/A_R) relative to Water Control (= 1.00). Mirrors A520/A620.">Rel A_G/A_R</span></th>
-            <th class="py-2 px-2 text-right"><span class="th-tip" title="Simple linear raw Red/Blue ratio relative to Water Control (benchmark vs. original app).">Legacy R/B</span></th>
-            <th class="py-2 px-2 text-right"><span class="th-tip" title="Sample Signal divided by the strongest Non-Target (NT) control in this photo.">Sig / Max NT</span></th>
-            <th class="py-2 px-2 text-center">Result</th>
-            <th class="py-2 px-2 text-center">×</th>
-          </tr>`;
-      } else {
-        thead.innerHTML = `
-          <tr class="bg-slate-50/80 border-b border-slate-200 text-[10px] font-semibold uppercase tracking-wider text-slate-500">
-            <th class="py-2 px-3">Tube</th>
-            <th class="py-2 px-2">Role</th>
-            <th class="py-2 px-3 text-right"><span class="th-tip" title="Relative Beer–Lambert pseudo-absorbance (A_G/A_R) normalized to Water Control (= 1.00). Mirrors A520/A620.">Signal</span></th>
-            ${hasNT ? '<th class="py-2 px-2 text-right"><span class="th-tip" title="Sample Signal divided by the strongest Non-Target (NT) control in this photo.">vs Max NT</span></th>' : ''}
-            <th class="py-2 px-3 text-center">Result</th>
-            <th class="py-2 px-2 text-center">×</th>
-          </tr>`;
-      }
-
-      const colSpan = state.researchMode ? 10 : (hasNT ? 6 : 5);
-      if (visibleItems.length === 0) {
-        tbody.innerHTML = `<tr><td colspan="${colSpan}" class="py-8 text-center text-slate-400">Take or drop a photo to detect tubes inside the Scan Box.</td></tr>`;
-        return;
-      }
-
-      tbody.innerHTML = visibleItems.map(item => {
-        const swatch = `rgb(${Math.round(item.wb.r)}, ${Math.round(item.wb.g)}, ${Math.round(item.wb.b)})`;
-        const isWhite = item.roi.role === 'white';
-
-        const roleControl = isWhite
-          ? `<span class="px-2 py-0.5 rounded bg-slate-100 text-slate-600 text-[10px] font-semibold uppercase">White Ref</span>`
-          : `<select onchange="changeRole(${item.roi.id}, this.value)"
-              class="text-[11px] font-semibold rounded-md border px-1.5 py-0.5 cursor-pointer focus:outline-none focus:ring-2 focus:ring-teal-500 ${
-                item.roi.role === 'control' ? 'bg-violet-50 text-violet-800 border-violet-200'
-                : item.roi.role === 'nontarget' ? 'bg-amber-50 text-amber-800 border-amber-200'
-                : 'bg-slate-50 text-slate-800 border-slate-300'
-              }">
-              <option value="control" ${item.roi.role === 'control' ? 'selected' : ''}>Water Control (C)</option>
-              <option value="nontarget" ${item.roi.role === 'nontarget' ? 'selected' : ''}>Non-Target (NT)</option>
-              <option value="sample" ${item.roi.role === 'sample' ? 'selected' : ''}>Sample (S)</option>
-            </select>`;
-
-        let callBadge = `<span class="text-slate-400 font-mono">—</span>`;
-        if (item.call === 'POSITIVE') callBadge = `<span class="px-2.5 py-0.5 rounded-full bg-emerald-100 text-emerald-800 border border-emerald-200 text-[10px] font-bold">POSITIVE</span>`;
-        else if (item.call === 'BORDERLINE') callBadge = `<span class="px-2.5 py-0.5 rounded-full bg-amber-100 text-amber-800 border border-amber-200 text-[10px] font-bold">BORDERLINE</span>`;
-        else if (item.call === 'NEGATIVE') callBadge = `<span class="px-2.5 py-0.5 rounded-full bg-slate-100 text-slate-700 border border-slate-200 text-[10px] font-bold">NEGATIVE</span>`;
-        else if (item.call === 'INVALID') callBadge = `<span class="px-2.5 py-0.5 rounded-full bg-rose-200 text-rose-900 text-[10px] font-bold">INVALID</span>`;
-        else if (item.call === 'WATER CTRL') callBadge = `<span class="px-2.5 py-0.5 rounded-full bg-violet-100 text-violet-800 text-[10px] font-semibold">WATER</span>`;
-        else if (item.call === 'NON-TARGET') callBadge = `<span class="px-2.5 py-0.5 rounded-full bg-amber-100 text-amber-800 text-[10px] font-semibold">NT CTRL</span>`;
-        else if (item.call === 'WB REF') callBadge = `<span class="px-2.5 py-0.5 rounded-full bg-slate-100 text-slate-600 text-[10px] font-semibold">WB</span>`;
-
-        const tubeCell = `
-          <td class="py-2 px-3">
-            <div class="flex items-center gap-2">
-              <span class="w-4 h-4 rounded-full border border-slate-300 shrink-0 shadow-inner" style="background-color: ${swatch}"></span>
-              <input type="text" value="${escapeHtml(item.roi.label)}" onchange="renameROI(${item.roi.id}, this.value)"
-                class="w-24 px-1 py-0.5 text-xs font-semibold text-navy-900 bg-transparent hover:bg-white focus:bg-white border border-transparent hover:border-slate-300 focus:border-teal-500 rounded focus:outline-none" />
-            </div>
-          </td>`;
-
-        const delCell = `
-          <td class="py-2 px-2 text-center">
-            <button onclick="deleteROI(${item.roi.id})" title="Delete tube"
-              class="text-slate-400 hover:text-rose-600 p-1 rounded hover:bg-rose-50 transition font-bold">×</button>
-          </td>`;
-
-        if (state.researchMode) {
-          return `
-            <tr class="hover:bg-slate-50/80 transition">
-              ${tubeCell}
-              <td class="py-2 px-2">${roleControl}</td>
-              <td class="py-2 px-2 font-mono text-right text-slate-600">${item.lab.a.toFixed(1)}</td>
-              <td class="py-2 px-2 font-mono text-right font-semibold text-teal-700 bg-teal-50/40">${item.deltaA != null ? item.deltaA.toFixed(1) : '—'}</td>
-              <td class="py-2 px-2 font-mono text-right text-slate-600">${item.deltaE != null ? item.deltaE.toFixed(1) : '—'}</td>
-              <td class="py-2 px-2 font-mono text-right font-semibold">${item.relAbs != null ? item.relAbs.toFixed(2) : '—'}</td>
-              <td class="py-2 px-2 font-mono text-right text-slate-600">${item.legacyRB != null ? item.legacyRB.toFixed(2) : '—'}</td>
-              <td class="py-2 px-2 font-mono text-right ${item.ratioVsMaxNT != null ? 'font-semibold text-amber-800 bg-amber-50/40' : 'text-slate-400'}">${item.ratioVsMaxNT != null ? item.ratioVsMaxNT.toFixed(2) + '×' : '—'}</td>
-              <td class="py-2 px-2 text-center">${callBadge}</td>
-              ${delCell}
-            </tr>`;
-        }
-
-        return `
-          <tr class="hover:bg-slate-50/80 transition">
-            ${tubeCell}
-            <td class="py-2 px-2">${roleControl}</td>
-            <td class="py-2 px-3 font-mono text-right font-semibold text-navy-900">${item.relAbs != null ? item.relAbs.toFixed(2) : '—'}</td>
-            ${hasNT ? `<td class="py-2 px-2 font-mono text-right ${item.ratioVsMaxNT != null ? 'font-semibold text-amber-800' : 'text-slate-400'}">${item.ratioVsMaxNT != null ? item.ratioVsMaxNT.toFixed(2) + '×' : '—'}</td>` : ''}
-            <td class="py-2 px-3 text-center">${callBadge}</td>
-            ${delCell}
-          </tr>`;
-      }).join('');
-    }
-
-    // =========================================================================
-    // BATCH SESSION LOG & 21-COLUMN RESEARCH CSV EXPORT
+    // BATCH SESSION LOG & 22-COLUMN CSV EXPORT (WITH PER-TUBE NOTES)
     // =========================================================================
     function saveCurrentPhotoToSession() {
-      const tubes = state.computed.filter(c => c.roi.role !== 'white');
+      const tubes = state.computed.filter(r => r.role !== 'white');
       if (tubes.length === 0) return;
-      const runNotes = document.getElementById('runNotesInput').value.trim();
+
+      const batchNotes = document.getElementById('runNotesInput').value.trim() || state.fileName || 'Untitled Run';
       const timestamp = new Date().toISOString();
 
-      tubes.forEach(item => {
+      tubes.forEach(t => {
         state.sessionLog.push({
-          Timestamp: timestamp,
-          FileName: state.fileName,
-          RunNotes: runNotes,
-          TubeLabel: item.roi.label,
-          Role: item.roi.role,
-          QC_Status: state.qcStatus,
-          Raw_R: item.raw.r.toFixed(2),
-          Raw_G: item.raw.g.toFixed(2),
-          Raw_B: item.raw.b.toFixed(2),
-          WB_R: item.wb.r.toFixed(2),
-          WB_G: item.wb.g.toFixed(2),
-          WB_B: item.wb.b.toFixed(2),
-          CIE_L: item.lab.L.toFixed(2),
-          CIE_a: item.lab.a.toFixed(2),
-          CIE_b: item.lab.b.toFixed(2),
-          Delta_a: item.deltaA != null ? item.deltaA.toFixed(2) : '',
-          Delta_E: item.deltaE != null ? item.deltaE.toFixed(2) : '',
-          Rel_AG_AR: item.relAbs != null ? item.relAbs.toFixed(4) : '',
-          Legacy_RB: item.legacyRB != null ? item.legacyRB.toFixed(4) : '',
-          Ratio_vs_Max_NT: item.ratioVsMaxNT != null ? item.ratioVsMaxNT.toFixed(4) : '',
-          Call: item.call
+          timestamp,
+          fileName: state.fileName,
+          notes: batchNotes,
+          tubeLabel: t.label,
+          tubeNote: (t.note || '').trim(),
+          role: t.role,
+          qcStatus: state.qcStatus,
+          rawR: t.raw.r.toFixed(1),
+          rawG: t.raw.g.toFixed(1),
+          rawB: t.raw.b.toFixed(1),
+          wbR: t.wb.r.toFixed(1),
+          wbG: t.wb.g.toFixed(1),
+          wbB: t.wb.b.toFixed(1),
+          L_star: t.lab.L.toFixed(2),
+          a_star: t.lab.a.toFixed(2),
+          b_star: t.lab.b.toFixed(2),
+          deltaA: t.deltaA.toFixed(2),
+          deltaE: t.deltaE.toFixed(2),
+          absRatio: t.absRatio.toFixed(3),
+          relAbs: t.relAbs.toFixed(3),
+          relLegacyRB: t.relLegacyRB.toFixed(3),
+          ratioVsMaxNT: t.ratioVsMaxNT != null ? t.ratioVsMaxNT.toFixed(3) : '',
+          call: t.call
         });
       });
 
       persistSessionLog();
       renderSessionLog();
-      showToast(`Saved ${tubes.length} tube${tubes.length === 1 ? '' : 's'} to Session Log.`);
+      showToast(`Saved ${tubes.length} tube${tubes.length === 1 ? '' : 's'} to Session Log.`, 'success');
     }
 
     function renderSessionLog() {
-      const tbody = document.getElementById('sessionLogBody');
       const count = state.sessionLog.length;
-      document.getElementById('headerSessionCount').textContent = count;
       document.getElementById('sessionRowCount').textContent = count;
+      document.getElementById('headerSessionCount').textContent = count;
+      document.getElementById('clearSessionBtn').disabled = count === 0;
+      document.getElementById('exportCsvBtn').disabled = count === 0;
+      document.getElementById('headerExportBtn').disabled = count === 0;
 
-      const hasRows = count > 0;
-      document.getElementById('headerExportBtn').disabled = !hasRows;
-      document.getElementById('exportCsvBtn').disabled = !hasRows;
-      document.getElementById('clearSessionBtn').disabled = !hasRows;
-
-      if (!hasRows) {
+      const tbody = document.getElementById('sessionLogBody');
+      if (count === 0) {
         tbody.innerHTML = `<tr><td colspan="6" class="py-5 text-center text-slate-400">Session log is empty. Click "Save Run" to record a photo.</td></tr>`;
         return;
       }
 
-      tbody.innerHTML = state.sessionLog.map(row => `
+      tbody.innerHTML = state.sessionLog.slice().reverse().map(row => `
         <tr class="hover:bg-slate-50">
-          <td class="py-1.5 px-2.5 text-slate-600 max-w-[130px] truncate" title="${escapeHtml(row.RunNotes)}">${escapeHtml(row.RunNotes || '—')}</td>
-          <td class="py-1.5 px-2 font-semibold text-navy-900">${escapeHtml(row.TubeLabel)}</td>
-          <td class="py-1.5 px-2 uppercase text-[10px] text-slate-500">${row.Role}</td>
+          <td class="py-1.5 px-2.5 font-medium text-slate-700 truncate max-w-[130px]" title="${escapeHtml(row.notes)}">${escapeHtml(row.notes)}</td>
+          <td class="py-1.5 px-2 font-semibold text-navy-900">${escapeHtml(row.tubeLabel)}</td>
+          <td class="py-1.5 px-2 text-slate-600 truncate max-w-[110px]" title="${escapeHtml(row.tubeNote || '')}">${escapeHtml(row.tubeNote || '—')}</td>
+          <td class="py-1.5 px-2 text-slate-500 capitalize">${escapeHtml(row.role)}</td>
+          <td class="py-1.5 px-2 text-right font-mono font-semibold text-navy-900">${row.relAbs}</td>
           <td class="py-1.5 px-2 text-center">
-            <span class="text-[10px] font-mono font-bold px-1.5 py-0.5 rounded ${row.QC_Status === 'PASS' ? 'bg-emerald-100 text-emerald-800' : row.QC_Status === 'INVALID' ? 'bg-rose-100 text-rose-800' : 'bg-slate-100 text-slate-600'}">${row.QC_Status}</span>
+            <span class="inline-block text-[9px] font-mono font-bold px-2 py-0.5 rounded-full ${getCallBadgeClass(row.call)}">${row.call}</span>
           </td>
-          <td class="py-1.5 px-2 font-mono text-right font-semibold">${row.Rel_AG_AR ? Number(row.Rel_AG_AR).toFixed(2) : '—'}</td>
-          <td class="py-1.5 px-2 text-center font-bold ${row.Call === 'POSITIVE' ? 'text-emerald-600' : row.Call === 'BORDERLINE' ? 'text-amber-600' : row.Call === 'NEGATIVE' ? 'text-slate-600' : 'text-slate-500'}">${row.Call}</td>
         </tr>
       `).join('');
     }
 
     function clearSessionLog() {
+      if (state.sessionLog.length === 0) return;
       state.sessionLog = [];
       persistSessionLog();
       renderSessionLog();
-      showToast('Session log cleared.');
+      showToast('Session log cleared.', 'info');
     }
 
     function exportSessionCSV() {
       if (state.sessionLog.length === 0) return;
-      const headers = Object.keys(state.sessionLog[0]);
-      const csvLines = [
-        headers.join(','),
-        ...state.sessionLog.map(row =>
-          headers.map(h => `"${String(row[h] ?? '').replace(/"/g, '""')}"`).join(',')
-        )
+
+      const headers = [
+        'Timestamp', 'File_Name', 'Batch_Notes', 'Tube_Label', 'Tube_Note', 'Role', 'QC_Status',
+        'Raw_R', 'Raw_G', 'Raw_B', 'WB_R', 'WB_G', 'WB_B',
+        'CIE_L', 'CIE_a', 'CIE_b', 'Delta_a', 'Delta_E',
+        'PseudoAbs_AG_AR', 'Rel_AG_AR', 'Rel_Legacy_RB', 'Ratio_vs_Max_NT', 'Call'
       ];
-      const blob = new Blob([csvLines.join('\n')], { type: 'text/csv;charset=utf-8;' });
+
+      const csvRows = [headers.join(',')];
+      state.sessionLog.forEach(r => {
+        const vals = [
+          r.timestamp, r.fileName, r.notes, r.tubeLabel, r.tubeNote || '', r.role, r.qcStatus,
+          r.rawR, r.rawG, r.rawB, r.wbR, r.wbG, r.wbB,
+          r.L_star, r.a_star, r.b_star, r.deltaA, r.deltaE,
+          r.absRatio, r.relAbs, r.relLegacyRB, r.ratioVsMaxNT, r.call
+        ].map(v => `"${String(v ?? '').replace(/"/g, '""')}"`);
+        csvRows.push(vals.join(','));
+      });
+
+      const blob = new Blob([csvRows.join('\n')], { type: 'text/csv;charset=utf-8;' });
       const url = URL.createObjectURL(blob);
       const a = document.createElement('a');
       a.href = url;
@@ -1840,33 +1932,40 @@
       a.click();
       document.body.removeChild(a);
       URL.revokeObjectURL(url);
-      showToast('Exported 21-column research CSV.');
+      showToast('Exported 22-column Session CSV.', 'success');
     }
 
     // =========================================================================
-    // UTILITIES & INITIALIZATION
+    // HELPERS & INITIALIZATION
     // =========================================================================
     function escapeHtml(str) {
-      return String(str).replace(/[&<>"']/g, m => ({
-        '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
-      }[m]));
+      return String(str ?? '')
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;');
     }
 
     function showToast(msg, type = 'info') {
       const container = document.getElementById('toastContainer');
-      const toast = document.createElement('div');
-      const bg = type === 'error' ? 'bg-rose-600' : type === 'warn' ? 'bg-amber-600' : 'bg-navy-900';
-      toast.className = `${bg} text-white text-xs font-medium px-3.5 py-2.5 rounded-lg shadow-lg border border-white/10 transition-opacity duration-300`;
-      toast.textContent = msg;
-      container.appendChild(toast);
+      const el = document.createElement('div');
+      const colors = {
+        success: 'bg-emerald-900 text-white border-emerald-700',
+        error: 'bg-rose-900 text-white border-rose-700',
+        info: 'bg-navy-900 text-white border-slate-700'
+      };
+      el.className = `px-3.5 py-2.5 rounded-xl border shadow-lg text-xs font-medium transition-opacity duration-300 max-w-sm ${colors[type] || colors.info}`;
+      el.textContent = msg;
+      container.appendChild(el);
       setTimeout(() => {
-        toast.classList.add('opacity-0');
-        setTimeout(() => toast.remove(), 300);
-      }, 2800);
+        el.style.opacity = '0';
+        setTimeout(() => el.remove(), 300);
+      }, 3600);
     }
 
-    // Restore any previously saved runs on page load
+    // Initialize on load
     loadSavedSession();
+    updateBoxLabel();
   </script>
 </body>
 </html>
