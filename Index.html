@@ -72,7 +72,7 @@
           <span class="w-7 h-7 rounded-lg bg-teal-600/30 border border-teal-400/40 text-teal-300 flex items-center justify-center font-bold text-sm">?</span>
           <div>
             <h2 class="text-base font-bold leading-tight">BoodooScan Auto Guide</h2>
-            <p class="text-[11px] text-slate-400">Quick workflow, per-tube notes, Research Mode, and photo tips</p>
+            <p class="text-[11px] text-slate-400">Batch queue workflow, per-tube notes, Research Mode, and photo tips</p>
           </div>
         </div>
         <button type="button" onclick="closeGuideModal()" class="text-slate-400 hover:text-white p-1.5 rounded-lg hover:bg-slate-800 transition text-lg leading-none" aria-label="Close guide">×</button>
@@ -92,58 +92,54 @@
           <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <div class="p-3.5 rounded-xl bg-slate-50 border border-slate-200">
               <span class="inline-block text-[10px] font-mono font-bold uppercase px-2 py-0.5 rounded bg-teal-100 text-teal-800 mb-1.5">Step 1</span>
-              <h3 class="font-bold text-navy-900 mb-1">Take, Upload, or Paste a Photo</h3>
-              <p class="text-slate-600">Tap <strong>Take Photo</strong> on Android/iPhone to open your rear camera, click <strong>Upload Photo</strong>, drag &amp; drop a file, or press <strong>Ctrl+V / Cmd+V</strong> anywhere on the page to paste a copied image.</p>
+              <h3 class="font-bold text-navy-900 mb-1">Load One or Multiple Photos</h3>
+              <p class="text-slate-600">Select multiple rack photos at once with <strong>Upload Photo(s)</strong>, drag &amp; drop a folder of photos, tap <strong>Take Photo</strong> on mobile, or press <strong>Ctrl+V / Cmd+V</strong> to paste from your clipboard.</p>
             </div>
             <div class="p-3.5 rounded-xl bg-slate-50 border border-slate-200">
               <span class="inline-block text-[10px] font-mono font-bold uppercase px-2 py-0.5 rounded bg-cyan-100 text-cyan-800 mb-1.5">Step 2</span>
-              <h3 class="font-bold text-navy-900 mb-1">Frame Only the Liquid Tips</h3>
-              <p class="text-slate-600">Keep the cyan <strong>Scan Box</strong> tightly around the conical liquid tips (below the plastic caps/rack lip and above the yellow tape). Auto-detection locks onto the colored liquid core at the bottom of each tube.</p>
+              <h3 class="font-bold text-navy-900 mb-1">Step Through &amp; Frame Liquid Tips</h3>
+              <p class="text-slate-600">Click thumbnails in the <strong>Batch Queue</strong> (or press <strong>← / →</strong> arrow keys) to review each photo. Use <strong>Apply Box to All</strong> if your photos share the same rack framing.</p>
             </div>
             <div class="p-3.5 rounded-xl bg-slate-50 border border-slate-200">
               <span class="inline-block text-[10px] font-mono font-bold uppercase px-2 py-0.5 rounded bg-violet-100 text-violet-800 mb-1.5">Step 3</span>
-              <h3 class="font-bold text-navy-900 mb-1">Tag Roles &amp; Per-Tube Notes</h3>
-              <p class="text-slate-600">The leftmost tube defaults to <strong>Water Control (C)</strong>. Set any tube to <strong>Non-Target (NT)</strong> or <strong>Sample (S)</strong>, rename labels inline, or type sample/replicate details in each tube's <strong>Tube Note</strong> box.</p>
+              <h3 class="font-bold text-navy-900 mb-1">Add Per-Photo &amp; Per-Tube Notes</h3>
+              <p class="text-slate-600">Each photo remembers its own <strong>Photo Notes</strong>, <strong>Roles (C / NT / S)</strong>, tube names, and individual <strong>Tube Notes</strong> (e.g., <em>10^4</em>, <em>Milk</em>, <em>Rep 1</em>) as you click through your batch.</p>
             </div>
             <div class="p-3.5 rounded-xl bg-slate-50 border border-slate-200">
               <span class="inline-block text-[10px] font-mono font-bold uppercase px-2 py-0.5 rounded bg-emerald-100 text-emerald-800 mb-1.5">Step 4</span>
-              <h3 class="font-bold text-navy-900 mb-1">Check QC, Save &amp; Export</h3>
-              <p class="text-slate-600">Verify the <strong>Water-Control QC Gate</strong> shows <strong>PASS</strong>, click <strong>Save Run</strong> (auto-saved in your browser), and click <strong>Export CSV</strong> when finished with your batch.</p>
+              <h3 class="font-bold text-navy-900 mb-1">Save One or Save All → Export CSV</h3>
+              <p class="text-slate-600">Click <strong>Save Run</strong> for the active photo or <strong>Save All</strong> to log every queued photo into the auto-saved <strong>Session Log</strong>, then click <strong>Export CSV</strong>.</p>
             </div>
           </div>
 
           <div class="p-3.5 rounded-xl bg-sky-50 border border-sky-200 text-sky-950 text-[11px] space-y-1">
-            <p class="font-bold text-sky-900">Quick Shortcuts (Android &amp; Computer):</p>
-            <p>• <strong>On Android / iPhone:</strong> Tap <strong>Upload Photo</strong>, open the top-left menu / <strong>Browse</strong> in your phone's picker, and pick from <strong>Google Photos</strong> or Gallery.</p>
-            <p>• <strong>On Laptop / Desktop:</strong> Right-click any photo in your browser or folder → <strong>Copy image</strong>, then click anywhere on BoodooScan and press <strong>Ctrl+V</strong> (or <strong>Cmd+V</strong> on Mac).</p>
+            <p class="font-bold text-sky-900">Quick Shortcuts:</p>
+            <p>• <strong>Navigate Batch:</strong> Press <strong>←</strong> or <strong>→</strong> arrow keys (when not typing in a text box) to jump between photos.</p>
+            <p>• <strong>Paste Image:</strong> Copy any photo from your browser/computer and press <strong>Ctrl+V</strong> (or <strong>Cmd+V</strong> on Mac) to append it to the queue.</p>
           </div>
         </div>
 
         <!-- TAB 2: METRICS & RESEARCH MODE -->
         <div id="guideTabMetrics" class="hidden space-y-3">
-          <p class="text-slate-600">By default, everyday users see only <strong>Tube</strong>, <strong>Tube Note</strong>, <strong>Role</strong>, <strong>Signal</strong>, and <strong>Result</strong> (<strong>POSITIVE</strong> or <strong>NEGATIVE</strong>). Toggle <strong>Research Mode</strong> on to inspect every colorimetric metric below (all 22 columns are always included in the exported CSV).</p>
+          <p class="text-slate-600">By default, users see <strong>Tube</strong>, <strong>Tube Note</strong>, <strong>Role</strong>, <strong>Signal</strong>, and strict binary <strong>Result</strong> (<strong>POSITIVE</strong> or <strong>NEGATIVE</strong>). Toggle <strong>Research Mode</strong> on to inspect all metrics below (all 23 columns are always exported to CSV).</p>
           <div class="divide-y divide-slate-200 border border-slate-200 rounded-xl overflow-hidden">
             <div class="p-3 bg-white flex flex-col sm:flex-row sm:items-start gap-1 sm:gap-4">
+              <span class="font-mono font-bold text-navy-900 sm:w-28 shrink-0">Signal (Rel A_G/A_R)</span>
+              <p class="text-slate-600">Beer–Lambert pseudo-absorbance ratio (A<sub>G</sub>/A<sub>R</sub>) normalized to the Water Control (= 1.00). Mirrors spectrophotometer A<sub>520</sub>/A<sub>620</sub>. Default cutoff: ≥ 1.20 (or calibrated to Non-Target tubes).</p>
+            </div>
+            <div class="p-3 bg-slate-50/60 flex flex-col sm:flex-row sm:items-start gap-1 sm:gap-4">
               <span class="font-mono font-bold text-navy-900 sm:w-28 shrink-0">Orig App (a·eᵃ)</span>
-              <p class="text-slate-600">Exact formula from the original Bio-Analytics Android app: <code>a = R/G</code>, <code>b = a × exp(a)</code>, normalized to the Water Control (<code>b<sub>sample</sub> / b<sub>control</sub></code>). Included so you can compare the original exponential readout directly against Beer–Lambert and CIE L*a*b* on the exact same pixels.</p>
+              <p class="text-slate-600">Exact formula from the original Bio-Analytics Android app: <code>a = R/G</code>, <code>b = a × exp(a)</code>, normalized to the Water Control (<code>b<sub>sample</sub> / b<sub>control</sub></code>) on the exact same pixels.</p>
             </div>
-            <div class="p-3 bg-slate-50/60 flex flex-col sm:flex-row sm:items-start gap-1 sm:gap-4">
+            <div class="p-3 bg-white flex flex-col sm:flex-row sm:items-start gap-1 sm:gap-4">
               <span class="font-mono font-bold text-navy-900 sm:w-28 shrink-0">a* (CIE Redness)</span>
-              <p class="text-slate-600">Green-to-red color axis in CIE L*a*b* space, separated from brightness. Combined with the blue-yellow axis (b*) and R/B ratio for the <strong>QC Gate</strong>: purple/violet/gray controls pass, while unaggregated red/pink controls (a* &gt; 24, b* &gt; -6, R/B &gt; 1.20) are flagged INVALID.</p>
-            </div>
-            <div class="p-3 bg-white flex flex-col sm:flex-row sm:items-start gap-1 sm:gap-4">
-              <span class="font-mono font-bold text-teal-700 sm:w-28 shrink-0">Δa*</span>
-              <p class="text-slate-600">Redness shift compared to the Water Control (a*<sub>sample</sub> − a*<sub>water</sub>). Near 0 means it matches the negative control; ≥ +6.5 indicates target DNA kept the GNPs dispersed.</p>
+              <p class="text-slate-600">Green-to-red color axis in CIE L*a*b* space. Used with b* and R/B for the <strong>QC Gate</strong>: purple/violet/gray controls pass, while unaggregated red/pink controls (a* &gt; 24, b* &gt; -6, R/B &gt; 1.20) flag INVALID.</p>
             </div>
             <div class="p-3 bg-slate-50/60 flex flex-col sm:flex-row sm:items-start gap-1 sm:gap-4">
-              <span class="font-mono font-bold text-navy-900 sm:w-28 shrink-0">ΔE</span>
-              <p class="text-slate-600">Total 3D Euclidean color distance from the Water Control across L*, a*, and b*. Values &lt; 3 look nearly identical to the human eye; values &gt; 10 are clearly distinct.</p>
+              <span class="font-mono font-bold text-teal-700 sm:w-28 shrink-0">Δa* &amp; ΔE</span>
+              <p class="text-slate-600"><strong>Δa*</strong> is redness shift vs. Water Control (a*<sub>sample</sub> − a*<sub>water</sub>). <strong>ΔE</strong> is total 3D Euclidean color distance across L*, a*, and b*.</p>
             </div>
             <div class="p-3 bg-white flex flex-col sm:flex-row sm:items-start gap-1 sm:gap-4">
-              <span class="font-mono font-bold text-navy-900 sm:w-28 shrink-0">Legacy R/B</span>
-              <p class="text-slate-600">Simple linear raw Red/Blue ratio normalized to the Water Control, included so you can benchmark the new CIE L*a*b* and Beer–Lambert metrics against the original app formula.</p>
-            </div>
-            <div class="p-3 bg-slate-50/60 flex flex-col sm:flex-row sm:items-start gap-1 sm:gap-4">
               <span class="font-mono font-bold text-amber-800 sm:w-28 shrink-0">Sig / Max NT</span>
               <p class="text-slate-600">Sample Signal divided by the highest Non-Target (NT) tube in the same photo. Automatically activates when any tube is tagged <strong>Non-Target (NT)</strong>.</p>
             </div>
@@ -155,7 +151,7 @@
           <ul class="space-y-2.5 text-slate-600">
             <li class="flex items-start gap-2.5">
               <span class="w-5 h-5 rounded-full bg-teal-100 text-teal-700 font-bold flex items-center justify-center shrink-0 mt-0.5">1</span>
-              <span><strong>Keep the Scan Box below the upper plastic lip:</strong> Frame just the liquid tips and the white rack background around them so shadows on the upper tube barrels don't pull the circle upward.</span>
+              <span><strong>Keep the Scan Box below the upper plastic lip:</strong> Frame just the liquid tips and the white rack background around them so shadows on the upper tube barrels don't pull the rings upward.</span>
             </li>
             <li class="flex items-start gap-2.5">
               <span class="w-5 h-5 rounded-full bg-teal-100 text-teal-700 font-bold flex items-center justify-center shrink-0 mt-0.5">2</span>
@@ -195,7 +191,7 @@
           <h1 class="text-lg sm:text-xl font-bold tracking-tight leading-tight flex items-center gap-2">
             BoodooScan Auto
           </h1>
-          <p class="text-xs text-slate-400">GNP Colorimetric Biosensor Analyzer • Auto-Detection &amp; QC Gate</p>
+          <p class="text-xs text-slate-400">GNP Colorimetric Biosensor Analyzer • Batch Queue &amp; QC Gate</p>
         </div>
       </div>
 
@@ -220,9 +216,9 @@
           <svg class="w-4 h-4 text-teal-600" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" d="M4 16v2a2 2 0 002 2h12a2 2 0 002-2v-2M12 12V3m0 0l-4 4m4-4l4 4" />
           </svg>
-          <span>Upload Photo</span>
+          <span>Upload Photo(s)</span>
         </label>
-        <input id="fileInput" type="file" accept="image/*" class="hidden" />
+        <input id="fileInput" type="file" accept="image/*" multiple class="hidden" />
 
         <button id="headerSaveBtn" onclick="saveCurrentPhotoToSession()" disabled
           class="text-xs sm:text-sm font-medium bg-slate-700 hover:bg-slate-600 disabled:bg-slate-800 disabled:text-slate-500 disabled:cursor-not-allowed text-white px-3 py-1.5 rounded-lg transition flex items-center gap-1.5">
@@ -230,6 +226,11 @@
             <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4" />
           </svg>
           <span>Save Run</span>
+        </button>
+
+        <button id="headerSaveAllBtn" onclick="saveAllBatchToSession()" disabled
+          class="hidden text-xs sm:text-sm font-semibold bg-indigo-600 hover:bg-indigo-500 disabled:bg-slate-800 disabled:text-slate-500 disabled:cursor-not-allowed text-white px-3 py-1.5 rounded-lg transition flex items-center gap-1.5 shadow-sm">
+          <span>Save All (<span id="headerBatchCount" class="font-mono">0</span>)</span>
         </button>
 
         <button id="headerExportBtn" onclick="exportSessionCSV()" disabled
@@ -243,8 +244,51 @@
     </div>
   </header>
 
-  <!-- Main Workspace: Responsive Two-Column Layout -->
-  <main class="flex-1 max-w-[1440px] w-full mx-auto px-4 sm:px-6 py-5">
+  <!-- Main Workspace -->
+  <main class="flex-1 max-w-[1440px] w-full mx-auto px-4 sm:px-6 py-5 space-y-4">
+
+    <!-- =================================================================== -->
+    <!-- MULTI-PHOTO BATCH QUEUE / FILMSTRIP BAR (Visible when ≥ 1 photo)    -->
+    <!-- =================================================================== -->
+    <section id="batchQueueBar" class="hidden bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
+      <div class="px-4 py-2 bg-slate-50 border-b border-slate-200 flex flex-wrap items-center justify-between gap-2">
+        <div class="flex items-center gap-2">
+          <span class="text-xs font-bold uppercase tracking-wider text-slate-700">Batch Queue</span>
+          <span id="batchProgressLabel" class="font-mono text-xs font-semibold px-2 py-0.5 rounded-full bg-teal-100 text-teal-800">Photo 1 of 1</span>
+          <div class="flex items-center gap-1 ml-1">
+            <button type="button" id="prevPhotoBtn" onclick="stepBatch(-1)" disabled
+              class="px-2.5 py-1 rounded-md text-xs font-semibold border border-slate-300 bg-white text-slate-700 hover:bg-slate-100 disabled:opacity-40 transition">
+              ← Prev
+            </button>
+            <button type="button" id="nextPhotoBtn" onclick="stepBatch(1)" disabled
+              class="px-2.5 py-1 rounded-md text-xs font-semibold border border-slate-300 bg-white text-slate-700 hover:bg-slate-100 disabled:opacity-40 transition">
+              Next →
+            </button>
+          </div>
+        </div>
+
+        <div class="flex flex-wrap items-center gap-2">
+          <button type="button" id="applyBoxAllBtn" onclick="applyBoxToAllBatch()" disabled
+            class="px-2.5 py-1 rounded-lg text-xs font-semibold border border-cyan-300 bg-cyan-50 text-cyan-800 hover:bg-cyan-100 disabled:opacity-40 transition"
+            title="Apply the current Scan Box framing & sensitivity to all photos in the queue">
+            Apply Box to All
+          </button>
+          <button type="button" id="saveAllQueueBtn" onclick="saveAllBatchToSession()" disabled
+            class="px-2.5 py-1 rounded-lg text-xs font-semibold bg-indigo-600 hover:bg-indigo-500 text-white disabled:opacity-40 transition shadow-2xs">
+            Save All to Log
+          </button>
+          <button type="button" onclick="clearBatchQueue()"
+            class="px-2.5 py-1 rounded-lg text-xs font-medium border border-slate-300 bg-white text-rose-600 hover:bg-rose-50 hover:border-rose-200 transition">
+            Clear Queue
+          </button>
+        </div>
+      </div>
+
+      <!-- Scrollable Thumbnail Filmstrip -->
+      <div id="batchFilmstrip" class="p-2.5 flex items-center gap-2.5 overflow-x-auto bg-slate-50/40"></div>
+    </section>
+
+    <!-- Responsive Two-Column Workspace -->
     <div class="grid grid-cols-1 xl:grid-cols-12 gap-5 items-start">
 
       <!-- =================================================================== -->
@@ -275,7 +319,7 @@
                 Reset Box
               </button>
 
-              <button type="button" id="clearPhotoBtn" onclick="clearCurrentPhoto()" disabled
+              <button type="button" id="clearPhotoBtn" onclick="removeActivePhoto()" disabled
                 class="px-2.5 py-1.5 rounded-lg text-xs font-medium border border-slate-300 bg-white text-rose-600 hover:bg-rose-50 hover:border-rose-200 disabled:opacity-40 disabled:text-slate-400 disabled:hover:bg-white disabled:hover:border-slate-300 transition">
                 Clear Photo
               </button>
@@ -298,9 +342,9 @@
                   <path stroke-linecap="round" stroke-linejoin="round" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z" />
                 </svg>
               </button>
-              <h2 class="text-sm font-bold text-white mb-1">Drop, Paste, or Choose a Tube Photo</h2>
+              <h2 class="text-sm font-bold text-white mb-1">Drop, Paste, or Choose Tube Photo(s)</h2>
               <p class="text-xs text-slate-400 leading-relaxed mb-4">
-                Drag a rack photo here, press <span class="font-mono text-teal-300">Ctrl+V / Cmd+V</span> to paste, or choose a file below.
+                Drag one or multiple rack photos here, press <span class="font-mono text-teal-300">Ctrl+V / Cmd+V</span> to paste, or select files below.
               </p>
               <div class="flex flex-wrap items-center justify-center gap-2">
                 <button type="button" onclick="window.triggerPhotoPicker('cameraInput')"
@@ -309,7 +353,7 @@
                 </button>
                 <button type="button" onclick="window.triggerPhotoPicker('fileInput')"
                   class="px-3.5 py-2 rounded-lg text-xs font-semibold bg-white hover:bg-slate-100 text-navy-900 transition shadow-sm cursor-pointer">
-                  Choose Photo File
+                  Choose Photo(s)
                 </button>
               </div>
             </div>
@@ -322,7 +366,7 @@
               <svg class="w-10 h-10 text-teal-300 mb-2" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" d="M4 16v2a2 2 0 002 2h12a2 2 0 002-2v-2M12 12V3m0 0l-4 4m4-4l4 4" />
               </svg>
-              <p class="text-sm font-bold text-white">Drop Photo to Analyze</p>
+              <p class="text-sm font-bold text-white">Drop Photo(s) to Add to Batch Queue</p>
             </div>
           </div>
 
@@ -352,10 +396,10 @@
           </div>
         </section>
 
-        <!-- Run / Photo Notes Card -->
+        <!-- Run / Photo Notes Card (Per-Photo) -->
         <section class="bg-white rounded-xl border border-slate-200 shadow-sm p-3.5">
-          <label for="runNotesInput" class="block text-[11px] font-bold uppercase tracking-wider text-slate-500 mb-1.5">Photo / Batch Notes (Applies to All Tubes in Photo)</label>
-          <input id="runNotesInput" type="text" placeholder="e.g., SA_8uL_0.1M_2min or Ch8_Milk209_SmallMNP_5min"
+          <label for="runNotesInput" class="block text-[11px] font-bold uppercase tracking-wider text-slate-500 mb-1.5">Photo / Batch Notes (Saved Per Photo in Queue)</label>
+          <input id="runNotesInput" type="text" placeholder="e.g., Ch5_p72_Trial2_5min or Ch8_Milk209_SmallMNP_5min"
             class="w-full text-xs px-3 py-2 rounded-lg border border-slate-300 focus:outline-none focus:ring-2 focus:ring-teal-500/30 focus:border-teal-600" />
         </section>
 
@@ -437,7 +481,7 @@
           <div class="px-4 py-2.5 bg-slate-50 border-b border-slate-200 flex flex-wrap items-center justify-between gap-2">
             <div>
               <h2 class="text-xs font-bold uppercase tracking-wider text-slate-800">Detected Tubes &amp; Results</h2>
-              <p class="text-[11px] text-slate-500">Rename tubes, add per-tube notes (e.g., Milk, SA pure, Rep 1), or tag Roles (C / NT / S).</p>
+              <p class="text-[11px] text-slate-500">Rename tubes, add per-tube notes (e.g., 10^4, Milk, Rep 1), or tag Roles (C / NT / S).</p>
             </div>
             <div class="flex items-center gap-3">
               <button type="button" onclick="openGuideModal('metrics')" class="text-xs font-semibold text-teal-700 hover:underline">Metrics?</button>
@@ -454,7 +498,7 @@
               <thead id="resultsTableHead"></thead>
               <tbody id="resultsTableBody" class="divide-y divide-slate-100 text-xs">
                 <tr>
-                  <td colspan="6" class="py-8 text-center text-slate-400">Upload, drop, or paste a rack photo to auto-detect tubes.</td>
+                  <td colspan="6" class="py-8 text-center text-slate-400">Upload, drop, or paste one or more rack photos to auto-detect tubes.</td>
                 </tr>
               </tbody>
             </table>
@@ -469,7 +513,7 @@
                 <span>Session Log (<span id="sessionRowCount" class="font-mono">0</span> rows)</span>
                 <span class="text-[10px] font-semibold px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800">Auto-saved</span>
               </h2>
-              <p class="text-[11px] text-slate-500">Exports all 22 research metrics (including per-tube notes, RGB, L*a*b*, Δa*, ΔE, A_G/A_R) to CSV.</p>
+              <p class="text-[11px] text-slate-500">Exports all 23 research metrics (including per-tube notes, RGB, L*a*b*, Δa*, ΔE, A_G/A_R, Orig App) to CSV.</p>
             </div>
             <div class="flex items-center gap-2">
               <button type="button" id="clearSessionBtn" onclick="clearSessionLog()" disabled
@@ -497,7 +541,7 @@
               </thead>
               <tbody id="sessionLogBody" class="divide-y divide-slate-100 text-[11px]">
                 <tr>
-                  <td colspan="6" class="py-5 text-center text-slate-400">Session log is empty. Click "Save Run" to record a photo.</td>
+                  <td colspan="6" class="py-5 text-center text-slate-400">Session log is empty. Click "Save Run" or "Save All" to record photos.</td>
                 </tr>
               </tbody>
             </table>
@@ -509,7 +553,7 @@
   </main>
 
   <footer class="text-center py-3 text-xs text-slate-400 border-t border-slate-200 bg-white mt-4">
-    BoodooScan Auto • Client-Side 4-Sided Scan-Box &amp; White-Rack Colorimetry • Runs 100% locally in your browser
+    BoodooScan Auto • Multi-Photo Batch Queue &amp; White-Rack Colorimetry • Runs 100% locally in your browser
   </footer>
 
   <!-- Hidden Offscreen Canvases -->
@@ -524,6 +568,8 @@
     const DEFAULT_BOX = { left: 0.08, right: 0.92, top: 0.28, bottom: 0.52 };
 
     const state = {
+      batch: [],          // Array of { id, fileName, img, thumbUrl, notes, box, sensitivity, rois, computed, qcStatus, saved }
+      activeBatchIdx: -1, // Index into state.batch
       image: null,
       fileName: '',
       rois: [],
@@ -548,10 +594,12 @@
     };
 
     let nextRoiId = 1;
+    let nextBatchId = 1;
     let dragCounter = 0;
 
     const fileInput = document.getElementById('fileInput');
     const cameraInput = document.getElementById('cameraInput');
+    const runNotesInput = document.getElementById('runNotesInput');
     const canvasWrapper = document.getElementById('canvasWrapper');
     const canvasDragOverlay = document.getElementById('canvasDragOverlay');
     const imageCanvas = document.getElementById('imageCanvas');
@@ -574,14 +622,11 @@
     }
 
     function closeGuideOnBackdrop(e) {
-      if (e.target && e.target.id === 'guideModal') {
-        closeGuideModal();
-      }
+      if (e.target && e.target.id === 'guideModal') closeGuideModal();
     }
 
     function switchGuideTab(tab) {
-      const tabs = ['how', 'metrics', 'tips'];
-      tabs.forEach(t => {
+      ['how', 'metrics', 'tips'].forEach(t => {
         const panel = document.getElementById('guideTab' + t.charAt(0).toUpperCase() + t.slice(1));
         const btn = document.getElementById('tabBtn' + t.charAt(0).toUpperCase() + t.slice(1));
         if (!panel || !btn) return;
@@ -598,9 +643,7 @@
         const raw = localStorage.getItem(STORAGE_KEY);
         if (raw) {
           const parsed = JSON.parse(raw);
-          if (Array.isArray(parsed)) {
-            state.sessionLog = parsed;
-          }
+          if (Array.isArray(parsed)) state.sessionLog = parsed;
         }
       } catch (_) {}
       renderSessionLog();
@@ -613,12 +656,12 @@
     }
 
     // =========================================================================
-    // EVENT LISTENERS: UPLOAD, CAMERA, PASTE & DRAG-AND-DROP
+    // EVENT LISTENERS: MULTI-UPLOAD, CAMERA, PASTE, DRAG-DROP & KEYBOARD
     // =========================================================================
     [fileInput, cameraInput].forEach(inputEl => {
       inputEl.addEventListener('change', (e) => {
-        if (e.target.files && e.target.files[0]) {
-          loadImageFile(e.target.files[0]);
+        if (e.target.files && e.target.files.length > 0) {
+          addFilesToBatch(Array.from(e.target.files));
           e.target.value = '';
         }
       });
@@ -627,36 +670,49 @@
     window.addEventListener('paste', (e) => {
       const clipboard = e.clipboardData || window.clipboardData;
       if (!clipboard || !clipboard.items) return;
-
+      const pastedFiles = [];
       for (let i = 0; i < clipboard.items.length; i++) {
         const item = clipboard.items[i];
         if (item.type && item.type.startsWith('image/')) {
-          e.preventDefault();
           const blob = item.getAsFile();
           if (blob) {
             const ext = (item.type.split('/')[1] || 'png').replace('jpeg', 'jpg');
             const stamp = new Date().toISOString().slice(11, 19).replace(/:/g, '');
-            const namedFile = new File([blob], `pasted_photo_${stamp}.${ext}`, { type: item.type });
-            loadImageFile(namedFile);
-            showToast('Pasted image loaded from clipboard!', 'success');
+            pastedFiles.push(new File([blob], `pasted_photo_${stamp}.${ext}`, { type: item.type }));
           }
-          return;
         }
+      }
+      if (pastedFiles.length > 0) {
+        e.preventDefault();
+        addFilesToBatch(pastedFiles);
+        showToast('Pasted image added to queue!', 'success');
+      }
+    });
+
+    // Left / Right arrow keys to step through Batch Queue when not typing
+    window.addEventListener('keydown', (e) => {
+      if (state.batch.length <= 1) return;
+      const tag = (document.activeElement && document.activeElement.tagName || '').toLowerCase();
+      if (tag === 'input' || tag === 'textarea' || tag === 'select') return;
+      if (e.key === 'ArrowLeft') {
+        e.preventDefault();
+        stepBatch(-1);
+      } else if (e.key === 'ArrowRight') {
+        e.preventDefault();
+        stepBatch(1);
       }
     });
 
     window.addEventListener('dragover', (e) => {
-      if (e.dataTransfer && Array.from(e.dataTransfer.types || []).includes('Files')) {
-        e.preventDefault();
-      }
+      if (e.dataTransfer && Array.from(e.dataTransfer.types || []).includes('Files')) e.preventDefault();
     });
 
     window.addEventListener('drop', (e) => {
-      if (e.dataTransfer && e.dataTransfer.files && e.dataTransfer.files[0]) {
+      if (e.dataTransfer && e.dataTransfer.files && e.dataTransfer.files.length > 0) {
         e.preventDefault();
         dragCounter = 0;
         canvasDragOverlay.classList.add('hidden');
-        loadImageFile(e.dataTransfer.files[0]);
+        addFilesToBatch(Array.from(e.dataTransfer.files));
       }
     });
 
@@ -676,9 +732,7 @@
       e.preventDefault();
       e.stopPropagation();
       dragCounter = Math.max(0, dragCounter - 1);
-      if (dragCounter === 0) {
-        canvasDragOverlay.classList.add('hidden');
-      }
+      if (dragCounter === 0) canvasDragOverlay.classList.add('hidden');
     });
 
     canvasWrapper.addEventListener('drop', (e) => {
@@ -686,9 +740,13 @@
       e.stopPropagation();
       dragCounter = 0;
       canvasDragOverlay.classList.add('hidden');
-      if (e.dataTransfer && e.dataTransfer.files && e.dataTransfer.files[0]) {
-        loadImageFile(e.dataTransfer.files[0]);
+      if (e.dataTransfer && e.dataTransfer.files && e.dataTransfer.files.length > 0) {
+        addFilesToBatch(Array.from(e.dataTransfer.files));
       }
+    });
+
+    runNotesInput.addEventListener('input', () => {
+      syncActiveToBatch();
     });
 
     document.getElementById('sensitivitySlider').addEventListener('input', (e) => {
@@ -743,7 +801,184 @@
       }
     }
 
-    function clearCurrentPhoto() {
+    function updateBoxLabel() {
+      const l = Math.round(state.boxLeft * 100);
+      const r = Math.round(state.boxRight * 100);
+      const t = Math.round(state.boxTop * 100);
+      const b = Math.round(state.boxBottom * 100);
+      document.getElementById('boxRangeLabel').textContent = `Box: X ${l}%–${r}% | Y ${t}%–${b}%`;
+    }
+
+    // =========================================================================
+    // MULTI-PHOTO BATCH QUEUE MANAGEMENT
+    // =========================================================================
+    function syncActiveToBatch() {
+      if (state.activeBatchIdx < 0 || state.activeBatchIdx >= state.batch.length) return;
+      const item = state.batch[state.activeBatchIdx];
+      item.notes = runNotesInput.value;
+      item.box = { left: state.boxLeft, right: state.boxRight, top: state.boxTop, bottom: state.boxBottom };
+      item.sensitivity = state.sensitivity;
+      item.rois = state.rois;
+      item.computed = state.computed;
+      item.qcStatus = state.qcStatus;
+    }
+
+    function addFilesToBatch(files) {
+      const validFiles = files.filter(f => f.type && f.type.startsWith('image/'));
+      if (validFiles.length === 0) {
+        showToast('Please select valid image file(s).', 'error');
+        return;
+      }
+
+      syncActiveToBatch();
+      const firstNewIdx = state.batch.length;
+
+      const loadPromises = validFiles.map(file => new Promise((resolve) => {
+        const reader = new FileReader();
+        reader.onload = (ev) => {
+          const img = new Image();
+          img.onload = () => {
+            // Create a lightweight thumbnail for the filmstrip
+            const thumbCanvas = document.createElement('canvas');
+            const thW = 120;
+            const thH = Math.max(60, Math.round((img.naturalHeight / img.naturalWidth) * thW));
+            thumbCanvas.width = thW;
+            thumbCanvas.height = thH;
+            thumbCanvas.getContext('2d').drawImage(img, 0, 0, thW, thH);
+            const thumbUrl = thumbCanvas.toDataURL('image/jpeg', 0.72);
+
+            resolve({
+              id: nextBatchId++,
+              fileName: file.name || 'tube_photo.png',
+              img,
+              thumbUrl,
+              notes: '',
+              box: { ...DEFAULT_BOX },
+              sensitivity: state.sensitivity,
+              rois: [],
+              computed: [],
+              qcStatus: 'PENDING',
+              saved: false
+            });
+          };
+          img.onerror = () => resolve(null);
+          img.src = ev.target.result;
+        };
+        reader.onerror = () => resolve(null);
+        reader.readAsDataURL(file);
+      }));
+
+      Promise.all(loadPromises).then(items => {
+        const loaded = items.filter(Boolean);
+        if (loaded.length === 0) return;
+
+        loaded.forEach(item => {
+          state.batch.push(item);
+          // Pre-detect tubes in background so QC dot & tube count appear immediately
+          const detectedRois = detectTubesInImage(item.img, item.box, item.sensitivity);
+          item.rois = detectedRois;
+          const res = computeMetricsForImage(item.img, item.rois);
+          item.computed = res.computed;
+          item.qcStatus = res.qcStatus;
+        });
+
+        selectBatchPhoto(firstNewIdx);
+        if (loaded.length > 1) {
+          showToast(`Added ${loaded.length} photos to Batch Queue. Use ← / → or click thumbnails to review & add tube notes.`, 'success');
+        }
+      });
+    }
+
+    function selectBatchPhoto(idx) {
+      if (idx < 0 || idx >= state.batch.length) return;
+      if (state.activeBatchIdx !== idx) {
+        syncActiveToBatch();
+      }
+
+      state.activeBatchIdx = idx;
+      const item = state.batch[idx];
+
+      state.image = item.img;
+      state.fileName = item.fileName;
+      state.boxLeft = item.box.left;
+      state.boxRight = item.box.right;
+      state.boxTop = item.box.top;
+      state.boxBottom = item.box.bottom;
+      state.sensitivity = item.sensitivity;
+      state.rois = item.rois;
+      state.manualAddMode = false;
+
+      // Sync UI inputs to this photo's saved state
+      runNotesInput.value = item.notes || '';
+      document.getElementById('sensitivitySlider').value = state.sensitivity;
+      document.getElementById('sensitivityVal').textContent = state.sensitivity.toFixed(2);
+      updateBoxLabel();
+
+      offscreenCanvas.width = item.img.naturalWidth;
+      offscreenCanvas.height = item.img.naturalHeight;
+      offCtx.drawImage(item.img, 0, 0);
+
+      document.getElementById('emptyCanvasPrompt').classList.add('hidden');
+      imageCanvas.classList.remove('hidden');
+      document.getElementById('currentFileName').textContent = state.fileName;
+      document.getElementById('redetectBtn').disabled = false;
+      document.getElementById('manualAddBtn').disabled = false;
+      document.getElementById('resetBoxBtn').disabled = false;
+      document.getElementById('clearPhotoBtn').disabled = false;
+
+      const manualBtn = document.getElementById('manualAddBtn');
+      manualBtn.className = 'px-2.5 py-1.5 rounded-lg text-xs font-semibold border border-slate-300 bg-white text-slate-700 hover:bg-slate-100 disabled:opacity-40 transition';
+      manualBtn.textContent = '+ Manual Tube';
+      imageCanvas.style.cursor = 'default';
+
+      recalculateAndRender();
+      renderBatchBar();
+    }
+
+    function stepBatch(delta) {
+      if (state.batch.length <= 1) return;
+      const next = state.activeBatchIdx + delta;
+      if (next >= 0 && next < state.batch.length) {
+        selectBatchPhoto(next);
+      }
+    }
+
+    function removeBatchPhoto(idx, ev) {
+      if (ev) ev.stopPropagation();
+      if (idx < 0 || idx >= state.batch.length) return;
+      state.batch.splice(idx, 1);
+
+      if (state.batch.length === 0) {
+        state.activeBatchIdx = -1;
+        resetWorkspaceToEmpty();
+        renderBatchBar();
+        showToast('Photo removed.', 'info');
+        return;
+      }
+
+      const nextIdx = Math.min(idx, state.batch.length - 1);
+      state.activeBatchIdx = -1; // Force reload of nextIdx
+      selectBatchPhoto(nextIdx);
+      showToast('Photo removed from queue.', 'info');
+    }
+
+    function removeActivePhoto() {
+      if (state.activeBatchIdx >= 0) {
+        removeBatchPhoto(state.activeBatchIdx);
+      } else {
+        resetWorkspaceToEmpty();
+      }
+    }
+
+    function clearBatchQueue() {
+      state.batch = [];
+      state.activeBatchIdx = -1;
+      resetWorkspaceToEmpty();
+      renderBatchBar();
+      showToast('Batch queue cleared.', 'info');
+    }
+
+    function resetWorkspaceToEmpty() {
       state.image = null;
       state.fileName = '';
       state.rois = [];
@@ -751,6 +986,7 @@
       state.qcStatus = 'PENDING';
       state.manualAddMode = false;
       state.dragAction = null;
+      runNotesInput.value = '';
 
       ctx.clearRect(0, 0, imageCanvas.width, imageCanvas.height);
       imageCanvas.classList.add('hidden');
@@ -767,10 +1003,6 @@
       document.getElementById('headerSaveBtn').disabled = true;
       document.getElementById('ntSummaryPill').classList.add('hidden');
 
-      const manualBtn = document.getElementById('manualAddBtn');
-      manualBtn.className = 'px-2.5 py-1.5 rounded-lg text-xs font-semibold border border-slate-300 bg-white text-slate-700 hover:bg-slate-100 disabled:opacity-40 transition';
-      manualBtn.textContent = '+ Manual Tube';
-
       const banner = document.getElementById('qcBanner');
       const icon = document.getElementById('qcIcon');
       const title = document.getElementById('qcTitle');
@@ -784,53 +1016,103 @@
       badge.textContent = 'PENDING';
 
       renderResultsTable();
-      showToast('Photo cleared. Ready to drop, upload, or paste a new image.', 'info');
     }
 
-    function updateBoxLabel() {
-      const l = Math.round(state.boxLeft * 100);
-      const r = Math.round(state.boxRight * 100);
-      const t = Math.round(state.boxTop * 100);
-      const b = Math.round(state.boxBottom * 100);
-      document.getElementById('boxRangeLabel').textContent = `Box: X ${l}%–${r}% | Y ${t}%–${b}%`;
+    function applyBoxToAllBatch() {
+      if (state.batch.length <= 1 || state.activeBatchIdx < 0) return;
+      syncActiveToBatch();
+
+      const sharedBox = { left: state.boxLeft, right: state.boxRight, top: state.boxTop, bottom: state.boxBottom };
+      const sharedSens = state.sensitivity;
+
+      state.batch.forEach((item, idx) => {
+        item.box = { ...sharedBox };
+        item.sensitivity = sharedSens;
+        if (idx === state.activeBatchIdx) return;
+
+        const prevTubes = item.rois.filter(r => r.role !== 'white');
+        const newRois = detectTubesInImage(item.img, item.box, item.sensitivity);
+        const newTubes = newRois.filter(r => r.role !== 'white');
+
+        // Preserve any per-tube notes, labels, and roles already typed if tube count matches
+        if (prevTubes.length === newTubes.length) {
+          newTubes.forEach((t, i) => {
+            t.label = prevTubes[i].label;
+            t.note = prevTubes[i].note || '';
+            t.role = prevTubes[i].role;
+          });
+        }
+
+        item.rois = newRois;
+        const res = computeMetricsForImage(item.img, item.rois);
+        item.computed = res.computed;
+        item.qcStatus = res.qcStatus;
+      });
+
+      renderBatchBar();
+      showToast(`Applied current Scan Box to all ${state.batch.length} photos in queue.`, 'success');
     }
 
-    // =========================================================================
-    // IMAGE LOADING & AUTO-DETECTION PIPELINE (LIQUID-TIP WEIGHTED CENTROID)
-    // =========================================================================
-    function loadImageFile(file) {
-      if (!file.type.startsWith('image/')) {
-        showToast('Please select a valid image file.', 'error');
+    function renderBatchBar() {
+      const bar = document.getElementById('batchQueueBar');
+      const strip = document.getElementById('batchFilmstrip');
+      const headerSaveAll = document.getElementById('headerSaveAllBtn');
+      const total = state.batch.length;
+
+      if (total === 0) {
+        bar.classList.add('hidden');
+        headerSaveAll.classList.add('hidden');
+        headerSaveAll.disabled = true;
         return;
       }
 
-      const reader = new FileReader();
-      reader.onload = (event) => {
-        const img = new Image();
-        img.onload = () => {
-          state.image = img;
-          state.fileName = file.name || 'tube_photo.png';
-          state.manualAddMode = false;
+      bar.classList.remove('hidden');
+      document.getElementById('batchProgressLabel').textContent = `Photo ${state.activeBatchIdx + 1} of ${total}`;
+      document.getElementById('prevPhotoBtn').disabled = state.activeBatchIdx <= 0;
+      document.getElementById('nextPhotoBtn').disabled = state.activeBatchIdx >= total - 1;
+      document.getElementById('applyBoxAllBtn').disabled = total <= 1;
+      document.getElementById('saveAllQueueBtn').disabled = total === 0;
 
-          offscreenCanvas.width = img.naturalWidth;
-          offscreenCanvas.height = img.naturalHeight;
-          offCtx.drawImage(img, 0, 0);
+      if (total > 1) {
+        headerSaveAll.classList.remove('hidden');
+        headerSaveAll.disabled = false;
+        document.getElementById('headerBatchCount').textContent = total;
+      } else {
+        headerSaveAll.classList.add('hidden');
+        headerSaveAll.disabled = true;
+      }
 
-          document.getElementById('emptyCanvasPrompt').classList.add('hidden');
-          imageCanvas.classList.remove('hidden');
-          document.getElementById('currentFileName').textContent = state.fileName;
-          document.getElementById('redetectBtn').disabled = false;
-          document.getElementById('manualAddBtn').disabled = false;
-          document.getElementById('resetBoxBtn').disabled = false;
-          document.getElementById('clearPhotoBtn').disabled = false;
+      strip.innerHTML = state.batch.map((item, idx) => {
+        const isActive = idx === state.activeBatchIdx;
+        const tubeCount = item.rois.filter(r => r.role !== 'white').length;
+        const qcDot = item.qcStatus === 'PASS'
+          ? 'bg-emerald-500'
+          : item.qcStatus === 'FAIL'
+            ? 'bg-rose-500'
+            : 'bg-amber-400';
 
-          runAutoDetection();
-        };
-        img.src = event.target.result;
-      };
-      reader.readAsDataURL(file);
+        return `
+          <div onclick="selectBatchPhoto(${idx})"
+            class="group relative shrink-0 w-28 rounded-lg border-2 cursor-pointer overflow-hidden transition bg-white ${isActive ? 'border-teal-600 ring-2 ring-teal-500/25 shadow-sm' : 'border-slate-200 hover:border-slate-400'}">
+            <div class="relative h-14 bg-slate-900 overflow-hidden">
+              <img src="${item.thumbUrl}" alt="${escapeHtml(item.fileName)}" class="w-full h-full object-cover" />
+              <span class="absolute top-1 left-1 w-2.5 h-2.5 rounded-full ring-2 ring-white ${qcDot}" title="QC: ${item.qcStatus}"></span>
+              ${item.saved ? '<span class="absolute bottom-1 left-1 text-[9px] font-bold px-1.5 py-0.2 rounded bg-emerald-600/90 text-white">Saved</span>' : ''}
+              <button type="button" onclick="removeBatchPhoto(${idx}, event)" title="Remove photo"
+                class="absolute top-0.5 right-0.5 w-4 h-4 rounded-full bg-slate-900/75 text-white hover:bg-rose-600 text-[10px] leading-none flex items-center justify-center opacity-0 group-hover:opacity-100 transition">×</button>
+            </div>
+            <div class="px-1.5 py-1 flex items-center justify-between gap-1 text-[10px]">
+              <span class="truncate font-medium text-slate-700" title="${escapeHtml(item.fileName)}">${escapeHtml(item.fileName)}</span>
+              <span class="font-mono text-slate-400 shrink-0">${tubeCount}t</span>
+            </div>
+          </div>
+        `;
+      }).join('');
     }
 
+    // =========================================================================
+    // AUTO-DETECTION PIPELINE (LIQUID-TIP WEIGHTED CENTROID)
+    // =========================================================================
     function rgbToHsv(r, g, b) {
       const rn = r / 255, gn = g / 255, bn = b / 255;
       const max = Math.max(rn, gn, bn), min = Math.min(rn, gn, bn);
@@ -847,11 +1129,9 @@
       return { h, s, v: max };
     }
 
-    function runAutoDetection() {
-      if (!state.image) return;
-
-      const origW = state.image.naturalWidth;
-      const origH = state.image.naturalHeight;
+    function detectTubesInImage(img, box, sensitivity) {
+      const origW = img.naturalWidth;
+      const origH = img.naturalHeight;
       const targetW = 420;
       const scale = targetW / origW;
       const w = Math.max(80, Math.round(origW * scale));
@@ -859,13 +1139,13 @@
 
       cvCanvas.width = w;
       cvCanvas.height = h;
-      cvCtx.drawImage(state.image, 0, 0, w, h);
+      cvCtx.drawImage(img, 0, 0, w, h);
       const imgData = cvCtx.getImageData(0, 0, w, h).data;
 
-      const x0 = Math.max(2, Math.floor(w * state.boxLeft));
-      const x1 = Math.min(w - 3, Math.ceil(w * state.boxRight));
-      const y0 = Math.max(2, Math.floor(h * state.boxTop));
-      const y1 = Math.min(h - 3, Math.ceil(h * state.boxBottom));
+      const x0 = Math.max(2, Math.floor(w * box.left));
+      const x1 = Math.min(w - 3, Math.ceil(w * box.right));
+      const y0 = Math.max(2, Math.floor(h * box.top));
+      const y1 = Math.min(h - 3, Math.ceil(h * box.bottom));
 
       const lum = new Float32Array(w * h);
       const sat = new Float32Array(w * h);
@@ -883,7 +1163,6 @@
 
       const mask = new Uint8Array(w * h);
       const chromFlag = new Uint8Array(w * h);
-      const satThresh = state.sensitivity;
 
       for (let y = y0; y <= y1; y++) {
         for (let x = x0; x <= x1; x++) {
@@ -896,7 +1175,7 @@
           if (isYellowTape || L < 35 || L > 245) continue;
 
           const isRedOrPurpleHue = (H >= 215 || H <= 22);
-          const isChromatic = isRedOrPurpleHue && S >= satThresh && L >= 45 && L <= 225;
+          const isChromatic = isRedOrPurpleHue && S >= sensitivity && L >= 45 && L <= 225;
 
           let isPaleDip = false;
           if (!isChromatic && S < 0.24 && L >= 75 && L <= 215) {
@@ -1026,9 +1305,7 @@
       for (const blob of rawBlobs) {
         const prev = merged[merged.length - 1];
         if (prev && Math.abs(blob.nx - prev.nx) < 0.065 && Math.abs(blob.ny - prev.ny) < 0.08) {
-          if (blob.area > prev.area) {
-            merged[merged.length - 1] = blob;
-          }
+          if (blob.area > prev.area) merged[merged.length - 1] = blob;
         } else {
           merged.push(blob);
         }
@@ -1039,9 +1316,7 @@
         const ys = merged.map(b => b.ny).sort((a, b) => a - b);
         const medY = ys[Math.floor(ys.length / 2)];
         const inRow = merged.filter(b => Math.abs(b.ny - medY) <= 0.065);
-        if (inRow.length >= 1) {
-          rowTubes = inRow;
-        }
+        if (inRow.length >= 1) rowTubes = inRow;
       }
 
       if (rowTubes.length >= 1) {
@@ -1065,12 +1340,7 @@
               lLum > 145 && rLum > 145 &&
               (lLum - cLum) >= 14 && (rLum - cLum) >= 14
             ) {
-              rowTubes.push({
-                nx: nxCand,
-                ny: avgY,
-                nr: 0.013,
-                area: 20
-              });
+              rowTubes.push({ nx: nxCand, ny: avgY, nr: 0.013, area: 20 });
             }
           }
           rowTubes.sort((a, b) => a.nx - b.nx);
@@ -1100,6 +1370,25 @@
           nx: whiteRef.nx,
           ny: whiteRef.ny,
           nr: 0.014
+        });
+      }
+
+      return newRois;
+    }
+
+    function runAutoDetection() {
+      if (!state.image) return;
+      const box = { left: state.boxLeft, right: state.boxRight, top: state.boxTop, bottom: state.boxBottom };
+      const prevTubes = state.rois.filter(r => r.role !== 'white');
+      const newRois = detectTubesInImage(state.image, box, state.sensitivity);
+      const newTubes = newRois.filter(r => r.role !== 'white');
+
+      // Preserve tube notes/labels if re-detecting the same number of tubes
+      if (prevTubes.length === newTubes.length && prevTubes.length > 0) {
+        newTubes.forEach((t, i) => {
+          t.label = prevTubes[i].label;
+          t.note = prevTubes[i].note || '';
+          t.role = prevTubes[i].role;
         });
       }
 
@@ -1150,9 +1439,7 @@
     // =========================================================================
     // GLARE-REJECTED SAMPLING & COLORIMETRIC MATH (CIE L*a*b* + BEER-LAMBERT)
     // =========================================================================
-    function sampleTubePixels(roi) {
-      const W = offscreenCanvas.width;
-      const H = offscreenCanvas.height;
+    function sampleTubePixelsFromCtx(targetCtx, W, H, roi) {
       const cx = Math.round(roi.nx * W);
       const cy = Math.round(roi.ny * H);
       const rPx = Math.max(4, Math.round(roi.nr * W));
@@ -1166,7 +1453,7 @@
 
       if (boxW <= 0 || boxH <= 0) return { r: 128, g: 128, b: 128 };
 
-      const data = offCtx.getImageData(xStart, yStart, boxW, boxH).data;
+      const data = targetCtx.getImageData(xStart, yStart, boxW, boxH).data;
       const pixels = [];
       const rSq = rPx * rPx;
 
@@ -1221,22 +1508,18 @@
       };
     }
 
-    // =========================================================================
-    // RECALCULATE METRICS, QC GATE & RENDER TABLE + CANVAS
-    // =========================================================================
-    function recalculateAndRender() {
-      if (!state.image) return;
+    function computeMetricsForImage(img, rois) {
+      offscreenCanvas.width = img.naturalWidth;
+      offscreenCanvas.height = img.naturalHeight;
+      offCtx.drawImage(img, 0, 0);
 
-      const hasNT = state.rois.some(r => r.role === 'nontarget');
-      if (hasNT && !state.ntCalibrate) {
-        state.ntCalibrate = true;
-        document.getElementById('ntCalibrateToggle').checked = true;
-      }
+      const W = offscreenCanvas.width;
+      const H = offscreenCanvas.height;
 
-      const sampled = state.rois.map(roi => {
-        const raw = sampleTubePixels(roi);
-        return { ...roi, raw };
-      });
+      const sampled = rois.map(roi => ({
+        ...roi,
+        raw: sampleTubePixelsFromCtx(offCtx, W, H, roi)
+      }));
 
       const whiteRoi = sampled.find(r => r.role === 'white');
       const refR = whiteRoi ? Math.max(40, whiteRoi.raw.r) : 235;
@@ -1261,41 +1544,28 @@
         const absG = -Math.log10(normG);
         const absR = -Math.log10(normR);
         const absRatio = absG / Math.max(0.015, absR);
+
         // Exact original Bio-Analytics formula: a = R / G, b = a * exp(a)
         const origA = item.raw.r / Math.max(1, item.raw.g);
         const origB = origA * Math.exp(origA);
 
-        return {
-          ...item,
-          wb: { r: wbR, g: wbG, b: wbB },
-          lab,
-          absRatio,
-          origB
-        };
+        return { ...item, wb: { r: wbR, g: wbG, b: wbB }, lab, absRatio, origB };
       });
 
       const controlItem = enriched.find(r => r.role === 'control');
       const ctrlAbsRatio = controlItem ? controlItem.absRatio : 1.0;
       const ctrlOrigB = controlItem ? controlItem.origB : 1.0;
 
-      // Water-Control QC Gate: purple/violet/gray controls PASS; unaggregated red/pink controls FAIL
       let qcStatus = 'NO_CONTROL';
       if (controlItem) {
         const cRB = controlItem.wb.r / Math.max(1, controlItem.wb.b);
         const stayedRed = (controlItem.lab.a > 24.0 && controlItem.lab.b > -6.0 && cRB > 1.20);
         qcStatus = stayedRed ? 'FAIL' : 'PASS';
       }
-      state.qcStatus = qcStatus;
 
       const withRel = enriched.map(item => {
         if (item.role === 'white') {
-          return {
-            ...item,
-            deltaA: 0,
-            deltaE: 0,
-            relAbs: 1.0,
-            relOrigApp: 1.0
-          };
+          return { ...item, deltaA: 0, deltaE: 0, relAbs: 1.0, relOrigApp: 1.0 };
         }
         const deltaA = controlItem ? (item.lab.a - controlItem.lab.a) : 0;
         const deltaE = controlItem
@@ -1307,30 +1577,14 @@
           : 0;
         const relAbs = controlItem ? (item.absRatio / Math.max(0.05, ctrlAbsRatio)) : item.absRatio;
         const relOrigApp = controlItem ? (item.origB / Math.max(0.0001, ctrlOrigB)) : item.origB;
-
-        return {
-          ...item,
-          deltaA,
-          deltaE,
-          relAbs,
-          relOrigApp
-        };
+        return { ...item, deltaA, deltaE, relAbs, relOrigApp };
       });
 
       const ntItems = withRel.filter(r => r.role === 'nontarget');
       const maxNtRelAbs = ntItems.length > 0 ? Math.max(...ntItems.map(r => r.relAbs)) : null;
       const maxNtDeltaA = ntItems.length > 0 ? Math.max(...ntItems.map(r => r.deltaA)) : null;
 
-      const ntPill = document.getElementById('ntSummaryPill');
-      if (maxNtRelAbs !== null) {
-        ntPill.classList.remove('hidden');
-        document.getElementById('ntSummaryText').textContent = `Max NT: ${maxNtRelAbs.toFixed(2)}× (Δa* ${maxNtDeltaA >= 0 ? '+' : ''}${maxNtDeltaA.toFixed(1)})`;
-      } else {
-        ntPill.classList.add('hidden');
-      }
-
-      // Strict Binary Call per Tube (POSITIVE or NEGATIVE)
-      state.computed = withRel.map(item => {
+      const computed = withRel.map(item => {
         const ratioVsMaxNT = (maxNtRelAbs !== null && item.role !== 'white')
           ? (item.relAbs / Math.max(0.05, maxNtRelAbs))
           : null;
@@ -1347,21 +1601,47 @@
             call = 'INVALID';
           } else {
             let effCutoffRelAbs = state.cutoffRelAbs;
-
-            if (state.ntCalibrate && maxNtRelAbs !== null) {
+            if ((state.ntCalibrate || ntItems.length > 0) && maxNtRelAbs !== null) {
               effCutoffRelAbs = Math.max(effCutoffRelAbs, maxNtRelAbs * state.ntMarginMult);
             }
-
             call = (item.relAbs >= effCutoffRelAbs) ? 'POSITIVE' : 'NEGATIVE';
           }
         }
-
         return { ...item, ratioVsMaxNT, call };
       });
 
-      updateQCBanner(qcStatus, controlItem);
+      return { computed, qcStatus, controlItem, maxNtRelAbs, maxNtDeltaA };
+    }
+
+    // =========================================================================
+    // RECALCULATE ACTIVE PHOTO & RENDER UI
+    // =========================================================================
+    function recalculateAndRender() {
+      if (!state.image) return;
+
+      const hasNT = state.rois.some(r => r.role === 'nontarget');
+      if (hasNT && !state.ntCalibrate) {
+        state.ntCalibrate = true;
+        document.getElementById('ntCalibrateToggle').checked = true;
+      }
+
+      const res = computeMetricsForImage(state.image, state.rois);
+      state.computed = res.computed;
+      state.qcStatus = res.qcStatus;
+
+      const ntPill = document.getElementById('ntSummaryPill');
+      if (res.maxNtRelAbs !== null) {
+        ntPill.classList.remove('hidden');
+        document.getElementById('ntSummaryText').textContent = `Max NT: ${res.maxNtRelAbs.toFixed(2)}× (Δa* ${res.maxNtDeltaA >= 0 ? '+' : ''}${res.maxNtDeltaA.toFixed(1)})`;
+      } else {
+        ntPill.classList.add('hidden');
+      }
+
+      syncActiveToBatch();
+      updateQCBanner(res.qcStatus, res.controlItem);
       renderResultsTable();
       drawCanvas();
+      renderBatchBar();
 
       const tubeCount = state.rois.filter(r => r.role !== 'white').length;
       document.getElementById('detectionSummaryBadge').textContent = `${tubeCount} tube${tubeCount === 1 ? '' : 's'}`;
@@ -1453,7 +1733,7 @@
 
       if (visibleRows.length === 0) {
         const colSpan = isResearch ? (showNTCol ? 11 : 10) : (showNTCol ? 7 : 6);
-        tbody.innerHTML = `<tr><td colspan="${colSpan}" class="py-8 text-center text-slate-400">No tubes detected inside the Scan Box. Drag the cyan box edges or click "+ Manual Tube".</td></tr>`;
+        tbody.innerHTML = `<tr><td colspan="${colSpan}" class="py-8 text-center text-slate-400">Upload, drop, or paste one or more rack photos to auto-detect tubes.</td></tr>`;
         return;
       }
 
@@ -1484,7 +1764,7 @@
           ? `<td class="py-2 px-2 text-slate-300 text-[11px]">—</td>`
           : `<td class="py-2 px-2">
               <input type="text" value="${escapeHtml(item.note || '')}" oninput="updateRoiNote(${item.id}, this.value)"
-                placeholder="e.g., Milk, Rep 1"
+                placeholder="e.g., 10^4, Milk, Rep 1"
                 class="w-24 sm:w-32 px-2 py-1 text-[11px] text-slate-700 bg-slate-50 hover:bg-white focus:bg-white border border-slate-200 focus:border-teal-500 rounded focus:outline-none" />
             </td>`;
 
@@ -1545,6 +1825,7 @@
         roi.note = newNote;
         const comp = state.computed.find(c => c.id === id);
         if (comp) comp.note = newNote;
+        syncActiveToBatch();
       }
     }
 
@@ -1754,9 +2035,7 @@
         };
       }
 
-      if (state.dragAction) {
-        imageCanvas.setPointerCapture(e.pointerId);
-      }
+      if (state.dragAction) imageCanvas.setPointerCapture(e.pointerId);
     });
 
     imageCanvas.addEventListener('pointermove', (e) => {
@@ -1788,8 +2067,8 @@
         const dy = pos.ny - act.startNy;
         const wSpan = act.origRight - act.origLeft;
         const hSpan = act.origBottom - act.origTop;
-        let newL = Math.min(0.98 - wSpan, Math.max(0.02, act.origLeft + dx));
-        let newT = Math.min(0.98 - hSpan, Math.max(0.02, act.origTop + dy));
+        const newL = Math.min(0.98 - wSpan, Math.max(0.02, act.origLeft + dx));
+        const newT = Math.min(0.98 - hSpan, Math.max(0.02, act.origTop + dy));
         state.boxLeft = newL;
         state.boxRight = newL + wSpan;
         state.boxTop = newT;
@@ -1805,30 +2084,26 @@
       const wasBox = state.dragAction.type.startsWith('box');
       state.dragAction = null;
       try { imageCanvas.releasePointerCapture(e.pointerId); } catch (_) {}
-      if (wasBox) {
-        runAutoDetection();
-      }
+      if (wasBox) runAutoDetection();
     });
 
     // =========================================================================
-    // BATCH SESSION LOG & 22-COLUMN CSV EXPORT (WITH PER-TUBE NOTES)
+    // BATCH SESSION LOG & 23-COLUMN CSV EXPORT
     // =========================================================================
-    function saveCurrentPhotoToSession() {
-      const tubes = state.computed.filter(r => r.role !== 'white');
-      if (tubes.length === 0) return;
+    function appendBatchItemToSession(item, timestamp) {
+      const tubes = (item.computed || []).filter(r => r.role !== 'white');
+      if (tubes.length === 0) return 0;
 
-      const batchNotes = document.getElementById('runNotesInput').value.trim() || state.fileName || 'Untitled Run';
-      const timestamp = new Date().toISOString();
-
+      const batchNotes = (item.notes || '').trim() || item.fileName || 'Untitled Run';
       tubes.forEach(t => {
         state.sessionLog.push({
           timestamp,
-          fileName: state.fileName,
+          fileName: item.fileName,
           notes: batchNotes,
           tubeLabel: t.label,
           tubeNote: (t.note || '').trim(),
           role: t.role,
-          qcStatus: state.qcStatus,
+          qcStatus: item.qcStatus,
           rawR: t.raw.r.toFixed(1),
           rawG: t.raw.g.toFixed(1),
           rawB: t.raw.b.toFixed(1),
@@ -1848,9 +2123,54 @@
         });
       });
 
+      item.saved = true;
+      return tubes.length;
+    }
+
+    function saveCurrentPhotoToSession() {
+      if (state.activeBatchIdx < 0 || state.activeBatchIdx >= state.batch.length) return;
+      syncActiveToBatch();
+      const item = state.batch[state.activeBatchIdx];
+      const added = appendBatchItemToSession(item, new Date().toISOString());
+      if (added === 0) return;
+
       persistSessionLog();
       renderSessionLog();
-      showToast(`Saved ${tubes.length} tube${tubes.length === 1 ? '' : 's'} to Session Log.`, 'success');
+      renderBatchBar();
+      showToast(`Saved ${added} tube${added === 1 ? '' : 's'} from "${item.fileName}".`, 'success');
+    }
+
+    function saveAllBatchToSession() {
+      if (state.batch.length === 0) return;
+      syncActiveToBatch();
+
+      const timestamp = new Date().toISOString();
+      let totalTubes = 0;
+      let totalPhotos = 0;
+
+      state.batch.forEach(item => {
+        // Recompute with current calibration settings before saving
+        const res = computeMetricsForImage(item.img, item.rois);
+        item.computed = res.computed;
+        item.qcStatus = res.qcStatus;
+        const added = appendBatchItemToSession(item, timestamp);
+        if (added > 0) {
+          totalTubes += added;
+          totalPhotos++;
+        }
+      });
+
+      // Restore offscreenCanvas to active photo
+      if (state.image) {
+        offscreenCanvas.width = state.image.naturalWidth;
+        offscreenCanvas.height = state.image.naturalHeight;
+        offCtx.drawImage(state.image, 0, 0);
+      }
+
+      persistSessionLog();
+      renderSessionLog();
+      renderBatchBar();
+      showToast(`Saved ${totalTubes} tubes across ${totalPhotos} photo${totalPhotos === 1 ? '' : 's'} to Session Log.`, 'success');
     }
 
     function renderSessionLog() {
@@ -1863,7 +2183,7 @@
 
       const tbody = document.getElementById('sessionLogBody');
       if (count === 0) {
-        tbody.innerHTML = `<tr><td colspan="6" class="py-5 text-center text-slate-400">Session log is empty. Click "Save Run" to record a photo.</td></tr>`;
+        tbody.innerHTML = `<tr><td colspan="6" class="py-5 text-center text-slate-400">Session log is empty. Click "Save Run" or "Save All" to record photos.</td></tr>`;
         return;
       }
 
@@ -1919,7 +2239,7 @@
       a.click();
       document.body.removeChild(a);
       URL.revokeObjectURL(url);
-      showToast('Exported 22-column Session CSV.', 'success');
+      showToast('Exported 23-column Session CSV.', 'success');
     }
 
     // =========================================================================
