@@ -124,8 +124,8 @@
           <p class="text-slate-600">By default, everyday users see only <strong>Tube</strong>, <strong>Tube Note</strong>, <strong>Role</strong>, <strong>Signal</strong>, and <strong>Result</strong> (<strong>POSITIVE</strong> or <strong>NEGATIVE</strong>). Toggle <strong>Research Mode</strong> on to inspect every colorimetric metric below (all 22 columns are always included in the exported CSV).</p>
           <div class="divide-y divide-slate-200 border border-slate-200 rounded-xl overflow-hidden">
             <div class="p-3 bg-white flex flex-col sm:flex-row sm:items-start gap-1 sm:gap-4">
-              <span class="font-mono font-bold text-navy-900 sm:w-28 shrink-0">Signal (Rel A_G/A_R)</span>
-              <p class="text-slate-600">Beer–Lambert pseudo-absorbance ratio (green channel optical density divided by red channel optical density), normalized to the Water Control (= 1.00). Mirrors a spectrophotometer's A520/A620 ratio; positive red tubes are typically ≥ 1.30.</p>
+              <span class="font-mono font-bold text-navy-900 sm:w-28 shrink-0">Orig App (a·eᵃ)</span>
+              <p class="text-slate-600">Exact formula from the original Bio-Analytics Android app: <code>a = R/G</code>, <code>b = a × exp(a)</code>, normalized to the Water Control (<code>b<sub>sample</sub> / b<sub>control</sub></code>). Included so you can compare the original exponential readout directly against Beer–Lambert and CIE L*a*b* on the exact same pixels.</p>
             </div>
             <div class="p-3 bg-slate-50/60 flex flex-col sm:flex-row sm:items-start gap-1 sm:gap-4">
               <span class="font-mono font-bold text-navy-900 sm:w-28 shrink-0">a* (CIE Redness)</span>
@@ -133,7 +133,7 @@
             </div>
             <div class="p-3 bg-white flex flex-col sm:flex-row sm:items-start gap-1 sm:gap-4">
               <span class="font-mono font-bold text-teal-700 sm:w-28 shrink-0">Δa*</span>
-              <p class="text-slate-600">Redness shift compared to the Water Control (a*<sub>sample</sub> − a*<sub>water</sub>). Near 0 means it matches the negative control; ≥ 10.0 indicates target DNA kept the GNPs red.</p>
+              <p class="text-slate-600">Redness shift compared to the Water Control (a*<sub>sample</sub> − a*<sub>water</sub>). Near 0 means it matches the negative control; ≥ +6.5 indicates target DNA kept the GNPs dispersed.</p>
             </div>
             <div class="p-3 bg-slate-50/60 flex flex-col sm:flex-row sm:items-start gap-1 sm:gap-4">
               <span class="font-mono font-bold text-navy-900 sm:w-28 shrink-0">ΔE</span>
@@ -401,11 +401,11 @@
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
               <div>
                 <label for="cutoffRelAbs" class="block font-semibold text-slate-700 mb-1">Min Signal Cutoff (Rel A_G/A_R)</label>
-                <input id="cutoffRelAbs" type="number" step="0.05" value="1.30" class="w-full font-mono px-2.5 py-1.5 rounded-lg border border-slate-300" />
+                <input id="cutoffRelAbs" type="number" step="0.05" value="1.20" class="w-full font-mono px-2.5 py-1.5 rounded-lg border border-slate-300" />
               </div>
               <div>
-                <label for="cutoffDeltaA" class="block font-semibold text-slate-700 mb-1">Min Redness Shift Cutoff (Δa*)</label>
-                <input id="cutoffDeltaA" type="number" step="0.5" value="10.0" class="w-full font-mono px-2.5 py-1.5 rounded-lg border border-slate-300" />
+                <label for="cutoffDeltaA" class="block font-semibold text-slate-700 mb-1">Research Redness Reference (Δa*)</label>
+                <input id="cutoffDeltaA" type="number" step="0.5" value="6.5" class="w-full font-mono px-2.5 py-1.5 rounded-lg border border-slate-300" />
               </div>
             </div>
 
@@ -538,8 +538,8 @@
       ntCalibrate: false,
       researchMode: false,
       settingsOpen: false,
-      cutoffDeltaA: 10.0,
-      cutoffRelAbs: 1.30,
+      cutoffDeltaA: 6.5,
+      cutoffRelAbs: 1.20,
       ntMarginDeltaA: 5.0,
       ntMarginMult: 1.25,
       qcStatus: 'PENDING',
@@ -881,7 +881,6 @@
         hue[i] = hsv.h;
       }
 
-      // Dual-mode mask: chromatic red/purple liquid OR pale aggregated gray liquid flanked by bright white rack
       const mask = new Uint8Array(w * h);
       const chromFlag = new Uint8Array(w * h);
       const satThresh = state.sensitivity;
@@ -925,7 +924,6 @@
         }
       }
 
-      // Connected components with liquid-tip weighted centroid (prevents empty upper tube barrel from pulling circle upward)
       const visited = new Uint8Array(w * h);
       const rawBlobs = [];
       const minArea = Math.max(10, Math.round(w * h * 0.00018));
@@ -971,7 +969,6 @@
           const aspect = bw / Math.max(1, bh);
 
           if (count >= minArea && count <= maxArea && aspect >= 0.30 && aspect <= 2.4) {
-            // Focus on the liquid tip (bottom 60% of the blob or chromatic core) so upper tube barrel shadows don't shift Y upward
             const cutY = minBY + bh * 0.40;
             let wSumX = 0, wSumY = 0, wTotal = 0;
             let tipCount = 0;
@@ -1016,7 +1013,7 @@
               rawBlobs.push({
                 nx: centX / w,
                 ny: centY / h,
-                nr: Math.min(0.025, Math.max(0.012, (Math.sqrt(tipCount / Math.PI) * 0.80) / w)),
+                nr: Math.min(0.022, Math.max(0.011, (Math.sqrt(tipCount / Math.PI) * 0.72) / w)),
                 area: count
               });
             }
@@ -1047,7 +1044,6 @@
         }
       }
 
-      // Row-guided recovery for ultra-pale aggregated tubes along the detected liquid Y row
       if (rowTubes.length >= 1) {
         const avgY = rowTubes.reduce((acc, b) => acc + b.ny, 0) / rowTubes.length;
         const scanY = Math.round(avgY * h);
@@ -1072,7 +1068,7 @@
               rowTubes.push({
                 nx: nxCand,
                 ny: avgY,
-                nr: 0.015,
+                nr: 0.013,
                 area: 20
               });
             }
@@ -1103,7 +1099,7 @@
           role: 'white',
           nx: whiteRef.nx,
           ny: whiteRef.ny,
-          nr: 0.015
+          nr: 0.014
         });
       }
 
@@ -1265,20 +1261,22 @@
         const absG = -Math.log10(normG);
         const absR = -Math.log10(normR);
         const absRatio = absG / Math.max(0.015, absR);
-        const legacyRB = item.raw.r / Math.max(1, item.raw.b);
+        // Exact original Bio-Analytics formula: a = R / G, b = a * exp(a)
+        const origA = item.raw.r / Math.max(1, item.raw.g);
+        const origB = origA * Math.exp(origA);
 
         return {
           ...item,
           wb: { r: wbR, g: wbG, b: wbB },
           lab,
           absRatio,
-          legacyRB
+          origB
         };
       });
 
       const controlItem = enriched.find(r => r.role === 'control');
       const ctrlAbsRatio = controlItem ? controlItem.absRatio : 1.0;
-      const ctrlLegacyRB = controlItem ? controlItem.legacyRB : 1.0;
+      const ctrlOrigB = controlItem ? controlItem.origB : 1.0;
 
       // Water-Control QC Gate: purple/violet/gray controls PASS; unaggregated red/pink controls FAIL
       let qcStatus = 'NO_CONTROL';
@@ -1296,7 +1294,7 @@
             deltaA: 0,
             deltaE: 0,
             relAbs: 1.0,
-            relLegacyRB: 1.0
+            relOrigApp: 1.0
           };
         }
         const deltaA = controlItem ? (item.lab.a - controlItem.lab.a) : 0;
@@ -1308,14 +1306,14 @@
             )
           : 0;
         const relAbs = controlItem ? (item.absRatio / Math.max(0.05, ctrlAbsRatio)) : item.absRatio;
-        const relLegacyRB = controlItem ? (item.legacyRB / Math.max(0.05, ctrlLegacyRB)) : item.legacyRB;
+        const relOrigApp = controlItem ? (item.origB / Math.max(0.0001, ctrlOrigB)) : item.origB;
 
         return {
           ...item,
           deltaA,
           deltaE,
           relAbs,
-          relLegacyRB
+          relOrigApp
         };
       });
 
@@ -1348,18 +1346,13 @@
           if (qcStatus !== 'PASS') {
             call = 'INVALID';
           } else {
-            let effCutoffDeltaA = state.cutoffDeltaA;
             let effCutoffRelAbs = state.cutoffRelAbs;
 
             if (state.ntCalibrate && maxNtRelAbs !== null) {
-              effCutoffDeltaA = Math.max(effCutoffDeltaA, maxNtDeltaA + state.ntMarginDeltaA);
               effCutoffRelAbs = Math.max(effCutoffRelAbs, maxNtRelAbs * state.ntMarginMult);
             }
 
-            const passDeltaA = item.deltaA >= effCutoffDeltaA;
-            const passRelAbs = item.relAbs >= effCutoffRelAbs;
-
-            call = (passDeltaA && passRelAbs) ? 'POSITIVE' : 'NEGATIVE';
+            call = (item.relAbs >= effCutoffRelAbs) ? 'POSITIVE' : 'NEGATIVE';
           }
         }
 
@@ -1426,15 +1419,15 @@
 
       if (isResearch) {
         thead.innerHTML = `
-          <tr class="bg-slate-50/80 border-b border-slate-200 text-[10px] font-semibold uppercase tracking-wider text-slate-500">
-            <th class="py-2 px-3">Tube</th>
+          <tr class="bg-slate-50 border-b border-slate-200 text-[10px] font-semibold uppercase tracking-wider text-slate-500">
+            <th class="sticky left-0 z-10 bg-slate-50 py-2 px-3 shadow-[2px_0_4px_-2px_rgba(15,23,42,0.08)]">Tube</th>
             <th class="py-2 px-2">Tube Note</th>
             <th class="py-2 px-2">Role</th>
             <th class="py-2 px-2 text-right"><span class="th-tip" title="CIE L*a*b* green-to-red axis. Negative/low = purple/blue; high (> 24) = red.">a*</span></th>
-            <th class="py-2 px-2 text-right"><span class="th-tip" title="Redness shift vs. Water Control (a*_sample - a*_water). Positive targets are >= +10.0.">Δa*</span></th>
+            <th class="py-2 px-2 text-right"><span class="th-tip" title="Redness shift vs. Water Control (a*_sample - a*_water).">Δa*</span></th>
             <th class="py-2 px-2 text-right"><span class="th-tip" title="Total 3D Euclidean color distance from Water Control across L*, a*, and b*.">ΔE</span></th>
             <th class="py-2 px-2 text-right"><span class="th-tip" title="Relative Beer-Lambert pseudo-absorbance (A_G/A_R) normalized to Water Control (= 1.00).">Rel A_G/A_R</span></th>
-            <th class="py-2 px-2 text-right"><span class="th-tip" title="Legacy linear raw Red/Blue ratio normalized to Water Control (= 1.00).">Legacy R/B</span></th>
+            <th class="py-2 px-2 text-right"><span class="th-tip" title="Exact original Bio-Analytics app value: a = R/G, b = a * exp(a), S/N = b_sample / b_control.">Orig App</span></th>
             ${showNTCol ? '<th class="py-2 px-2 text-right"><span class="th-tip" title="Sample Signal divided by the highest Non-Target (NT) tube in the photo.">Sig / Max NT</span></th>' : ''}
             <th class="py-2 px-2.5 text-center">Result</th>
             <th class="py-2 px-2 text-center">×</th>
@@ -1442,8 +1435,8 @@
         `;
       } else {
         thead.innerHTML = `
-          <tr class="bg-slate-50/80 border-b border-slate-200 text-[10px] font-semibold uppercase tracking-wider text-slate-500">
-            <th class="py-2 px-3">Tube</th>
+          <tr class="bg-slate-50 border-b border-slate-200 text-[10px] font-semibold uppercase tracking-wider text-slate-500">
+            <th class="sticky left-0 z-10 bg-slate-50 py-2 px-3 shadow-[2px_0_4px_-2px_rgba(15,23,42,0.08)]">Tube</th>
             <th class="py-2 px-2">Tube Note</th>
             <th class="py-2 px-2">Role</th>
             <th class="py-2 px-3 text-right"><span class="th-tip" title="Relative Beer–Lambert pseudo-absorbance (A_G/A_R) normalized to Water Control (= 1.00). Mirrors A520/A620.">Signal</span></th>
@@ -1478,7 +1471,7 @@
             </select>`;
 
         const tubeCell = `
-          <td class="py-2 px-3">
+          <td class="sticky left-0 z-10 bg-white group-hover:bg-slate-50 py-2 px-3 shadow-[2px_0_4px_-2px_rgba(15,23,42,0.08)]">
             <div class="flex items-center gap-2">
               <span class="w-3.5 h-3.5 rounded-full border border-slate-300 shrink-0 shadow-xs" style="background:${swatch}"></span>
               <input type="text" value="${escapeHtml(item.label)}" onchange="renameRoi(${item.id}, this.value)"
@@ -1497,7 +1490,7 @@
 
         if (isResearch) {
           return `
-            <tr class="hover:bg-slate-50/80 transition">
+            <tr class="group hover:bg-slate-50/80 transition">
               ${tubeCell}
               ${noteCell}
               <td class="py-2 px-2">${roleSelect}</td>
@@ -1505,7 +1498,7 @@
               <td class="py-2 px-2 text-right font-mono font-semibold ${item.deltaA >= state.cutoffDeltaA && !isWhite && item.role !== 'control' ? 'text-teal-700' : 'text-slate-600'}">${isWhite ? '—' : (item.deltaA >= 0 ? '+' : '') + item.deltaA.toFixed(1)}</td>
               <td class="py-2 px-2 text-right font-mono text-slate-600">${isWhite ? '—' : item.deltaE.toFixed(1)}</td>
               <td class="py-2 px-2 text-right font-mono font-semibold text-navy-900">${isWhite ? '—' : item.relAbs.toFixed(2)}</td>
-              <td class="py-2 px-2 text-right font-mono text-slate-500">${isWhite ? '—' : item.relLegacyRB.toFixed(2)}</td>
+              <td class="py-2 px-2 text-right font-mono text-slate-500">${isWhite ? '—' : item.relOrigApp.toFixed(2)}</td>
               ${showNTCol ? `<td class="py-2 px-2 text-right font-mono font-semibold text-amber-800">${item.ratioVsMaxNT != null ? item.ratioVsMaxNT.toFixed(2) + '×' : '—'}</td>` : ''}
               <td class="py-2 px-2.5 text-center">
                 <span class="inline-block text-[10px] font-mono font-bold px-2 py-0.5 rounded-full ${getCallBadgeClass(item.call)}">${item.call}</span>
@@ -1518,7 +1511,7 @@
         }
 
         return `
-          <tr class="hover:bg-slate-50/80 transition">
+          <tr class="group hover:bg-slate-50/80 transition">
             ${tubeCell}
             ${noteCell}
             <td class="py-2 px-2">${roleSelect}</td>
@@ -1610,7 +1603,6 @@
       const bw = (state.boxRight - state.boxLeft) * W;
       const bh = (state.boxBottom - state.boxTop) * H;
 
-      // Dim outside the 4-sided Scan Box
       ctx.save();
       ctx.fillStyle = 'rgba(15, 23, 42, 0.42)';
       ctx.fillRect(0, 0, W, by);
@@ -1619,7 +1611,6 @@
       ctx.fillRect(bx + bw, by, W - (bx + bw), bh);
       ctx.restore();
 
-      // Draw Scan Box border
       const lw = Math.max(2, Math.round(W * 0.003));
       ctx.save();
       ctx.strokeStyle = '#22D3EE';
@@ -1628,7 +1619,6 @@
       ctx.strokeRect(bx, by, bw, bh);
       ctx.setLineDash([]);
 
-      // Draw edge grab pills on all 4 sides
       const pillLen = Math.max(18, Math.round(W * 0.04));
       const pillThick = Math.max(5, Math.round(W * 0.008));
       ctx.fillStyle = '#22D3EE';
@@ -1639,7 +1629,6 @@
       ctx.roundRect(bx + bw - pillThick / 2, by + bh / 2 - pillLen / 2, pillThick, pillLen, pillThick / 2);
       ctx.fill();
 
-      // Scan Box tag
       const tagFontSize = Math.max(10, Math.round(W * 0.015));
       ctx.font = `700 ${tagFontSize}px Inter, sans-serif`;
       const tagText = 'SCAN BOX';
@@ -1654,11 +1643,10 @@
       ctx.fillText(tagText, bx + 12, by + 6 + th / 2);
       ctx.restore();
 
-      // Draw detected ROI rings & labels
       state.computed.forEach(item => {
         const cx = item.nx * W;
         const cy = item.ny * H;
-        const r = Math.max(8, item.nr * W);
+        const r = Math.max(7, item.nr * W);
 
         let ringColor = '#64748B';
         if (item.role === 'white') ringColor = '#FFFFFF';
@@ -1681,7 +1669,6 @@
         ctx.stroke();
         ctx.setLineDash([]);
 
-        // Label pill above circle
         const fontSize = Math.max(11, Math.round(W * 0.017));
         ctx.font = `700 ${fontSize}px Inter, sans-serif`;
         const labelW = ctx.measureText(item.label).width + 10;
@@ -1724,7 +1711,7 @@
           role: hasCtrl ? 'sample' : 'control',
           nx: pos.nx,
           ny: pos.ny,
-          nr: 0.015
+          nr: 0.013
         });
         toggleManualAddMode();
         recalculateAndRender();
@@ -1855,7 +1842,7 @@
           deltaE: t.deltaE.toFixed(2),
           absRatio: t.absRatio.toFixed(3),
           relAbs: t.relAbs.toFixed(3),
-          relLegacyRB: t.relLegacyRB.toFixed(3),
+          relOrigApp: t.relOrigApp.toFixed(3),
           ratioVsMaxNT: t.ratioVsMaxNT != null ? t.ratioVsMaxNT.toFixed(3) : '',
           call: t.call
         });
@@ -1909,7 +1896,7 @@
         'Timestamp', 'File_Name', 'Batch_Notes', 'Tube_Label', 'Tube_Note', 'Role', 'QC_Status',
         'Raw_R', 'Raw_G', 'Raw_B', 'WB_R', 'WB_G', 'WB_B',
         'CIE_L', 'CIE_a', 'CIE_b', 'Delta_a', 'Delta_E',
-        'PseudoAbs_AG_AR', 'Rel_AG_AR', 'Rel_Legacy_RB', 'Ratio_vs_Max_NT', 'Call'
+        'PseudoAbs_AG_AR', 'Rel_AG_AR', 'Orig_BioAnalytics_SN', 'Ratio_vs_Max_NT', 'Call'
       ];
 
       const csvRows = [headers.join(',')];
@@ -1918,7 +1905,7 @@
           r.timestamp, r.fileName, r.notes, r.tubeLabel, r.tubeNote || '', r.role, r.qcStatus,
           r.rawR, r.rawG, r.rawB, r.wbR, r.wbG, r.wbB,
           r.L_star, r.a_star, r.b_star, r.deltaA, r.deltaE,
-          r.absRatio, r.relAbs, r.relLegacyRB, r.ratioVsMaxNT, r.call
+          r.absRatio, r.relAbs, r.relOrigApp ?? r.relLegacyRB ?? '', r.ratioVsMaxNT, r.call
         ].map(v => `"${String(v ?? '').replace(/"/g, '""')}"`);
         csvRows.push(vals.join(','));
       });
