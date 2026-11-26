@@ -97,8 +97,8 @@
             </div>
             <div class="p-3.5 rounded-xl bg-slate-50 border border-slate-200">
               <span class="inline-block text-[10px] font-mono font-bold uppercase px-2 py-0.5 rounded bg-cyan-100 text-cyan-800 mb-1.5">Step 2</span>
-              <h3 class="font-bold text-navy-900 mb-1">Step Through &amp; Frame Liquid Tips</h3>
-              <p class="text-slate-600">Click thumbnails in the <strong>Batch Queue</strong> (or press <strong>← / →</strong> arrow keys) to review each photo. Use <strong>Apply Box to All</strong> if your photos share the same rack framing.</p>
+              <h3 class="font-bold text-navy-900 mb-1">Step Through, Rotate &amp; Frame</h3>
+              <p class="text-slate-600">Click thumbnails in the <strong>Batch Queue</strong> (or press <strong>← / →</strong> arrow keys) to review each photo. Use <strong>Rotate 90°</strong> for sideways shots and <strong>Apply Box to All</strong> for matching rack framing.</p>
             </div>
             <div class="p-3.5 rounded-xl bg-slate-50 border border-slate-200">
               <span class="inline-block text-[10px] font-mono font-bold uppercase px-2 py-0.5 rounded bg-violet-100 text-violet-800 mb-1.5">Step 3</span>
@@ -114,14 +114,14 @@
 
           <div class="p-3.5 rounded-xl bg-sky-50 border border-sky-200 text-sky-950 text-[11px] space-y-1">
             <p class="font-bold text-sky-900">Quick Shortcuts:</p>
-            <p>• <strong>Navigate Batch:</strong> Press <strong>←</strong> or <strong>→</strong> arrow keys (when not typing in a text box) to jump between photos.</p>
+            <p>• <strong>Navigate Batch:</strong> Press <strong>←</strong> or <strong>→</strong> arrow keys (when not typing in a text box) to jump between photos—the filmstrip auto-scrolls to follow you.</p>
             <p>• <strong>Paste Image:</strong> Copy any photo from your browser/computer and press <strong>Ctrl+V</strong> (or <strong>Cmd+V</strong> on Mac) to append it to the queue.</p>
           </div>
         </div>
 
         <!-- TAB 2: METRICS & RESEARCH MODE -->
         <div id="guideTabMetrics" class="hidden space-y-3">
-          <p class="text-slate-600">By default, users see <strong>Tube</strong>, <strong>Tube Note</strong>, <strong>Role</strong>, <strong>Signal</strong>, and strict binary <strong>Result</strong> (<strong>POSITIVE</strong> or <strong>NEGATIVE</strong>). Toggle <strong>Research Mode</strong> on to inspect all metrics below (all 24 columns are always exported to CSV).</p>
+          <p class="text-slate-600">By default, users see <strong>Tube</strong>, <strong>Tube Note</strong>, <strong>Role</strong>, <strong>Signal</strong>, and strict binary <strong>Result</strong> (<strong>POSITIVE</strong> or <strong>NEGATIVE</strong>). Toggle <strong>Research Mode</strong> on to inspect all metrics below (all 26 columns are always exported to CSV).</p>
           <div class="divide-y divide-slate-200 border border-slate-200 rounded-xl overflow-hidden">
             <div class="p-3 bg-white flex flex-col sm:flex-row sm:items-start gap-1 sm:gap-4">
               <span class="font-mono font-bold text-navy-900 sm:w-28 shrink-0">Signal (Rel A_G/A_R)</span>
@@ -133,17 +133,21 @@
             </div>
             <div class="p-3 bg-white flex flex-col sm:flex-row sm:items-start gap-1 sm:gap-4">
               <span class="font-mono font-bold text-navy-900 sm:w-28 shrink-0">Orig App (a·eᵃ)</span>
-              <p class="text-slate-600">Formula used for the Bio-Analytics values in the dissertation, calculated from RGB averages: <code>a = R/G</code>, <code>b = a × exp(a)</code>, normalized to the Water Control (<code>b<sub>sample</sub> / b<sub>control</sub></code>) on the exact same pixels.</p>
+              <p class="text-slate-600">Formula used for the Bio-Analytics values in the dissertation, calculated from RGB averages: <code>a = R/G</code>, <code>b = a × exp(a)</code>, normalized to the Water Control (<code>b<sub>sample</sub> / b<sub>control</sub></code>) on BoodooScan's trimmed pixels.</p>
             </div>
             <div class="p-3 bg-slate-50/60 flex flex-col sm:flex-row sm:items-start gap-1 sm:gap-4">
+              <span class="font-mono font-bold text-indigo-700 sm:w-28 shrink-0">App 5px vs. App Area</span>
+              <p class="text-slate-600">Thinh's Bio-Analytics Android export formula: <code>rPoint = (R+G+B)/R</code>, <code>S/N = e<sup>-rPoint</sup> / e<sup>-rPoint<sub>ctrl</sub></sup></code>. <strong>App 5px</strong> simulates the real Android app by sampling <strong>5 random unfiltered pixels</strong> inside the tube; <strong>App Area</strong> runs the exact same formula on BoodooScan's glare-trimmed tube area for direct comparison.</p>
+            </div>
+            <div class="p-3 bg-white flex flex-col sm:flex-row sm:items-start gap-1 sm:gap-4">
               <span class="font-mono font-bold text-navy-900 sm:w-28 shrink-0">a* (CIE Redness)</span>
               <p class="text-slate-600">Green-to-red color axis in CIE L*a*b* space. Used for the <strong>QC Gate</strong>: fully aggregated controls (a* ≤ 4.5) pass, partly aggregated controls (a* 4.5 to 24) show WARN, and red/pink controls (a* &gt; 24) flag INVALID.</p>
             </div>
-            <div class="p-3 bg-white flex flex-col sm:flex-row sm:items-start gap-1 sm:gap-4">
+            <div class="p-3 bg-slate-50/60 flex flex-col sm:flex-row sm:items-start gap-1 sm:gap-4">
               <span class="font-mono font-bold text-teal-700 sm:w-28 shrink-0">Δa* &amp; ΔE</span>
               <p class="text-slate-600"><strong>Δa*</strong> is redness shift vs. Water Control (a*<sub>sample</sub> − a*<sub>water</sub>). <strong>ΔE</strong> is total 3D Euclidean color distance across L*, a*, and b*.</p>
             </div>
-            <div class="p-3 bg-slate-50/60 flex flex-col sm:flex-row sm:items-start gap-1 sm:gap-4">
+            <div class="p-3 bg-white flex flex-col sm:flex-row sm:items-start gap-1 sm:gap-4">
               <span class="font-mono font-bold text-amber-800 sm:w-28 shrink-0">Sig / Max NT</span>
               <p class="text-slate-600">Sample Signal divided by the highest Non-Target (NT) tube in the same photo. Automatically activates when any tube is tagged <strong>Non-Target (NT)</strong>.</p>
             </div>
@@ -289,7 +293,7 @@
       </div>
 
       <!-- Scrollable Thumbnail Filmstrip -->
-      <div id="batchFilmstrip" class="p-2.5 flex items-center gap-2.5 overflow-x-auto bg-slate-50/40"></div>
+      <div id="batchFilmstrip" class="p-2.5 flex items-center gap-2.5 overflow-x-auto bg-slate-50/40 scroll-smooth"></div>
     </section>
 
     <!-- Responsive Two-Column Workspace -->
@@ -316,6 +320,15 @@
               <button type="button" id="manualAddBtn" onclick="toggleManualAddMode()" disabled
                 class="px-2.5 py-1.5 rounded-lg text-xs font-semibold border border-slate-300 bg-white text-slate-700 hover:bg-slate-100 disabled:opacity-40 transition">
                 + Manual Tube
+              </button>
+
+              <button type="button" id="rotatePhotoBtn" onclick="rotateActivePhoto()" disabled
+                class="px-2.5 py-1.5 rounded-lg text-xs font-medium border border-slate-300 bg-white text-slate-700 hover:bg-slate-100 disabled:opacity-40 transition flex items-center gap-1"
+                title="Rotate active photo 90° clockwise">
+                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M4 4v5h5M20 12a8 8 0 11-2.343-5.657L20 9" />
+                </svg>
+                <span>Rotate 90°</span>
               </button>
 
               <button type="button" id="resetBoxBtn" onclick="resetScanBox()" disabled
@@ -517,7 +530,7 @@
                 <span>Session Log (<span id="sessionRowCount" class="font-mono">0</span> rows)</span>
                 <span class="text-[10px] font-semibold px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800">Auto-saved</span>
               </h2>
-              <p class="text-[11px] text-slate-500">Exports all 24 research metrics (including per-tube notes, RGB, L*a*b*, Δa*, ΔE, A_G/A_R, Rel R/G, Orig App) to CSV.</p>
+              <p class="text-[11px] text-slate-500">Exports all 26 metrics (per-tube notes, RGB, L*a*b*, Δa*, ΔE, A_G/A_R, Rel R/G, Orig App, App 5px, App Area) to CSV.</p>
             </div>
             <div class="flex items-center gap-2">
               <button type="button" id="clearSessionBtn" onclick="clearSessionLog()" disabled
@@ -814,8 +827,18 @@
     }
 
     // =========================================================================
-    // MULTI-PHOTO BATCH QUEUE MANAGEMENT
+    // MULTI-PHOTO BATCH QUEUE MANAGEMENT & ROTATION
     // =========================================================================
+    function createThumbDataUrl(img) {
+      const thumbCanvas = document.createElement('canvas');
+      const thW = 120;
+      const thH = Math.max(60, Math.round((img.naturalHeight / img.naturalWidth) * thW));
+      thumbCanvas.width = thW;
+      thumbCanvas.height = thH;
+      thumbCanvas.getContext('2d').drawImage(img, 0, 0, thW, thH);
+      return thumbCanvas.toDataURL('image/jpeg', 0.72);
+    }
+
     function syncActiveToBatch() {
       if (state.activeBatchIdx < 0 || state.activeBatchIdx >= state.batch.length) return;
       const item = state.batch[state.activeBatchIdx];
@@ -842,20 +865,11 @@
         reader.onload = (ev) => {
           const img = new Image();
           img.onload = () => {
-            // Create a lightweight thumbnail for the filmstrip
-            const thumbCanvas = document.createElement('canvas');
-            const thW = 120;
-            const thH = Math.max(60, Math.round((img.naturalHeight / img.naturalWidth) * thW));
-            thumbCanvas.width = thW;
-            thumbCanvas.height = thH;
-            thumbCanvas.getContext('2d').drawImage(img, 0, 0, thW, thH);
-            const thumbUrl = thumbCanvas.toDataURL('image/jpeg', 0.72);
-
             resolve({
               id: nextBatchId++,
               fileName: file.name || 'tube_photo.png',
               img,
-              thumbUrl,
+              thumbUrl: createThumbDataUrl(img),
               notes: '',
               box: { ...DEFAULT_BOX },
               sensitivity: state.sensitivity,
@@ -878,7 +892,6 @@
 
         loaded.forEach(item => {
           state.batch.push(item);
-          // Pre-detect tubes in background so QC dot & tube count appear immediately
           const detectedRois = detectTubesInImage(item.img, item.box, item.sensitivity);
           item.rois = detectedRois;
           const res = computeMetricsForImage(item.img, item.rois);
@@ -912,7 +925,6 @@
       state.rois = item.rois;
       state.manualAddMode = false;
 
-      // Sync UI inputs to this photo's saved state
       runNotesInput.value = item.notes || '';
       document.getElementById('sensitivitySlider').value = state.sensitivity;
       document.getElementById('sensitivityVal').textContent = state.sensitivity.toFixed(2);
@@ -927,6 +939,7 @@
       document.getElementById('currentFileName').textContent = state.fileName;
       document.getElementById('redetectBtn').disabled = false;
       document.getElementById('manualAddBtn').disabled = false;
+      document.getElementById('rotatePhotoBtn').disabled = false;
       document.getElementById('resetBoxBtn').disabled = false;
       document.getElementById('clearPhotoBtn').disabled = false;
 
@@ -937,6 +950,35 @@
 
       recalculateAndRender();
       renderBatchBar();
+    }
+
+    function rotateActivePhoto() {
+      if (!state.image || state.activeBatchIdx < 0) return;
+      const srcImg = state.image;
+      const rotCanvas = document.createElement('canvas');
+      rotCanvas.width = srcImg.naturalHeight;
+      rotCanvas.height = srcImg.naturalWidth;
+      const rCtx = rotCanvas.getContext('2d');
+      rCtx.translate(rotCanvas.width / 2, rotCanvas.height / 2);
+      rCtx.rotate(Math.PI / 2);
+      rCtx.drawImage(srcImg, -srcImg.naturalWidth / 2, -srcImg.naturalHeight / 2);
+
+      const rotatedImg = new Image();
+      rotatedImg.onload = () => {
+        const item = state.batch[state.activeBatchIdx];
+        if (!item) return;
+        item.img = rotatedImg;
+        item.thumbUrl = createThumbDataUrl(rotatedImg);
+        state.image = rotatedImg;
+
+        offscreenCanvas.width = rotatedImg.naturalWidth;
+        offscreenCanvas.height = rotatedImg.naturalHeight;
+        offCtx.drawImage(rotatedImg, 0, 0);
+
+        runAutoDetection();
+        showToast('Rotated photo 90° clockwise.', 'info');
+      };
+      rotatedImg.src = rotCanvas.toDataURL('image/jpeg', 0.94);
     }
 
     function stepBatch(delta) {
@@ -961,7 +1003,7 @@
       }
 
       const nextIdx = Math.min(idx, state.batch.length - 1);
-      state.activeBatchIdx = -1; // Force reload of nextIdx
+      state.activeBatchIdx = -1;
       selectBatchPhoto(nextIdx);
       showToast('Photo removed from queue.', 'info');
     }
@@ -1002,6 +1044,7 @@
       document.getElementById('currentRoiCount').textContent = '0 tubes';
       document.getElementById('redetectBtn').disabled = true;
       document.getElementById('manualAddBtn').disabled = true;
+      document.getElementById('rotatePhotoBtn').disabled = true;
       document.getElementById('resetBoxBtn').disabled = true;
       document.getElementById('clearPhotoBtn').disabled = true;
       document.getElementById('headerSaveBtn').disabled = true;
@@ -1038,7 +1081,6 @@
         const newRois = detectTubesInImage(item.img, item.box, item.sensitivity);
         const newTubes = newRois.filter(r => r.role !== 'white');
 
-        // Preserve any per-tube notes, labels, and roles already typed if tube count matches
         if (prevTubes.length === newTubes.length) {
           newTubes.forEach((t, i) => {
             t.label = prevTubes[i].label;
@@ -1096,7 +1138,7 @@
             : 'bg-amber-400';
 
         return `
-          <div onclick="selectBatchPhoto(${idx})"
+          <div data-batch-idx="${idx}" onclick="selectBatchPhoto(${idx})"
             class="group relative shrink-0 w-28 rounded-lg border-2 cursor-pointer overflow-hidden transition bg-white ${isActive ? 'border-teal-600 ring-2 ring-teal-500/25 shadow-sm' : 'border-slate-200 hover:border-slate-400'}">
             <div class="relative h-14 bg-slate-900 overflow-hidden">
               <img src="${item.thumbUrl}" alt="${escapeHtml(item.fileName)}" class="w-full h-full object-cover" />
@@ -1112,6 +1154,12 @@
           </div>
         `;
       }).join('');
+
+      // Auto-scroll active thumbnail into view inside the filmstrip
+      const activeCard = strip.querySelector(`[data-batch-idx="${state.activeBatchIdx}"]`);
+      if (activeCard && typeof activeCard.scrollIntoView === 'function') {
+        activeCard.scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' });
+      }
     }
 
     // =========================================================================
@@ -1387,7 +1435,6 @@
       const newRois = detectTubesInImage(state.image, box, state.sensitivity);
       const newTubes = newRois.filter(r => r.role !== 'white');
 
-      // Preserve tube notes/labels if re-detecting the same number of tubes
       if (prevTubes.length === newTubes.length && prevTubes.length > 0) {
         newTubes.forEach((t, i) => {
           t.label = prevTubes[i].label;
@@ -1441,8 +1488,16 @@
     }
 
     // =========================================================================
-    // GLARE-REJECTED SAMPLING & COLORIMETRIC MATH (CIE L*a*b* + BEER-LAMBERT)
+    // GLARE-REJECTED SAMPLING + REALISTIC 5-PIXEL RANDOM SAMPLING
     // =========================================================================
+    function seededRand(seed) {
+      // Deterministic Mulberry32 PRNG so 5-pixel sampling stays reproducible per tube position
+      let t = (seed >>> 0) + 0x6D2B79F5;
+      t = Math.imul(t ^ (t >>> 15), t | 1);
+      t ^= t + Math.imul(t ^ (t >>> 7), t | 61);
+      return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+    }
+
     function sampleTubePixelsFromCtx(targetCtx, W, H, roi) {
       const cx = Math.round(roi.nx * W);
       const cy = Math.round(roi.ny * H);
@@ -1455,7 +1510,9 @@
       const boxW = xEnd - xStart + 1;
       const boxH = yEnd - yStart + 1;
 
-      if (boxW <= 0 || boxH <= 0) return { r: 128, g: 128, b: 128 };
+      if (boxW <= 0 || boxH <= 0) {
+        return { r: 128, g: 128, b: 128, rPoint5px: 3.0 };
+      }
 
       const data = targetCtx.getImageData(xStart, yStart, boxW, boxH).data;
       const pixels = [];
@@ -1476,8 +1533,22 @@
         }
       }
 
-      if (pixels.length === 0) return { r: 128, g: 128, b: 128 };
+      if (pixels.length === 0) {
+        return { r: 128, g: 128, b: 128, rPoint5px: 3.0 };
+      }
 
+      // 1. Realistic 5-pixel random sampling (no glare/shadow trimming, simulating Thinh's Android app)
+      const kCount = Math.min(5, pixels.length);
+      let rPoint5Sum = 0;
+      const baseSeed = ((cx * 73856093) ^ (cy * 19349663) ^ (rPx * 83492791) ^ W) >>> 0;
+      for (let k = 0; k < kCount; k++) {
+        const pickIdx = Math.floor(seededRand(baseSeed + k * 1013904223) * pixels.length);
+        const p = pixels[pickIdx];
+        rPoint5Sum += (p.r + p.g + p.b) / Math.max(1, p.r);
+      }
+      const rPoint5px = rPoint5Sum / kCount;
+
+      // 2. BoodooScan glare/shadow-trimmed area average (middle 70% by luminance)
       pixels.sort((a, b) => a.luma - b.luma);
       const trim = Math.floor(pixels.length * 0.15);
       const kept = pixels.slice(trim, Math.max(trim + 1, pixels.length - trim));
@@ -1489,7 +1560,7 @@
         sumB += p.b;
       }
       const n = kept.length;
-      return { r: sumR / n, g: sumG / n, b: sumB / n };
+      return { r: sumR / n, g: sumG / n, b: sumB / n, rPoint5px };
     }
 
     function rgbToLab(r, g, b) {
@@ -1549,17 +1620,33 @@
         const absR = -Math.log10(normR);
         const absRatio = absG / Math.max(0.015, absR);
 
-        // R/G x e^(R/G): formula used for the Bio-Analytics values in the dissertation (the app's own S/N export uses e^(-(R+G+B)/R))
+        // R/G x e^(R/G): formula used for the Bio-Analytics values in the dissertation
         const origA = item.raw.r / Math.max(1, item.raw.g);
         const origB = origA * Math.exp(origA);
 
-        return { ...item, wb: { r: wbR, g: wbG, b: wbB }, lab, absRatio, rgRatio: origA, origB };
+        // Thinh's Android app export formula: TransformedValue = e^(-rPoint), where rPoint = (R+G+B)/R
+        const rPointArea = (item.raw.r + item.raw.g + item.raw.b) / Math.max(1, item.raw.r);
+        const appTransArea = Math.exp(-rPointArea);
+        const appTrans5px = Math.exp(-(item.raw.rPoint5px || rPointArea));
+
+        return {
+          ...item,
+          wb: { r: wbR, g: wbG, b: wbB },
+          lab,
+          absRatio,
+          rgRatio: origA,
+          origB,
+          appTrans5px,
+          appTransArea
+        };
       });
 
       const controlItem = enriched.find(r => r.role === 'control');
       const ctrlAbsRatio = controlItem ? controlItem.absRatio : 1.0;
       const ctrlRG = controlItem ? controlItem.rgRatio : 1.0;
       const ctrlOrigB = controlItem ? controlItem.origB : 1.0;
+      const ctrlAppTrans5px = controlItem ? controlItem.appTrans5px : 1.0;
+      const ctrlAppTransArea = controlItem ? controlItem.appTransArea : 1.0;
 
       let qcStatus = 'NO_CONTROL';
       if (controlItem) {
@@ -1570,7 +1657,7 @@
 
       const withRel = enriched.map(item => {
         if (item.role === 'white') {
-          return { ...item, deltaA: 0, deltaE: 0, relAbs: 1.0, relRG: 1.0, relOrigApp: 1.0 };
+          return { ...item, deltaA: 0, deltaE: 0, relAbs: 1.0, relRG: 1.0, relOrigApp: 1.0, relAppSN5px: 1.0, relAppSNArea: 1.0 };
         }
         const deltaA = controlItem ? (item.lab.a - controlItem.lab.a) : 0;
         const deltaE = controlItem
@@ -1583,7 +1670,9 @@
         const relAbs = controlItem ? (item.absRatio / Math.max(0.05, ctrlAbsRatio)) : item.absRatio;
         const relRG = controlItem ? (item.rgRatio / Math.max(0.0001, ctrlRG)) : item.rgRatio;
         const relOrigApp = controlItem ? (item.origB / Math.max(0.0001, ctrlOrigB)) : item.origB;
-        return { ...item, deltaA, deltaE, relAbs, relRG, relOrigApp };
+        const relAppSN5px = controlItem ? (item.appTrans5px / Math.max(1e-9, ctrlAppTrans5px)) : item.appTrans5px;
+        const relAppSNArea = controlItem ? (item.appTransArea / Math.max(1e-9, ctrlAppTransArea)) : item.appTransArea;
+        return { ...item, deltaA, deltaE, relAbs, relRG, relOrigApp, relAppSN5px, relAppSNArea };
       });
 
       const ntItems = withRel.filter(r => r.role === 'nontarget');
@@ -1721,7 +1810,9 @@
             <th class="py-2 px-2 text-right"><span class="th-tip" title="Total 3D Euclidean color distance from Water Control across L*, a*, and b*.">ΔE</span></th>
             <th class="py-2 px-2 text-right"><span class="th-tip" title="Relative Beer-Lambert pseudo-absorbance (A_G/A_R) normalized to Water Control (= 1.00).">Rel A_G/A_R</span></th>
             <th class="py-2 px-2 text-right"><span class="th-tip" title="Direct red-to-green ratio (R/G) normalized to the Water Control's R/G (= 1.00).">Rel R/G</span></th>
-            <th class="py-2 px-2 text-right"><span class="th-tip" title="Bio-Analytics value as calculated in the dissertation: a = R/G, b = a * exp(a), S/N = b_sample / b_control.">Orig App</span></th>
+            <th class="py-2 px-2 text-right"><span class="th-tip" title="Bio-Analytics value as calculated in the dissertation: a = R/G, b = a * exp(a), S/N = b_sample / b_control (on BoodooScan trimmed pixels).">Orig App</span></th>
+            <th class="py-2 px-2 text-right"><span class="th-tip" title="Realistic simulation of Thinh's Android app: 5 random unfiltered pixels inside the tube, rPoint = (R+G+B)/R, S/N = exp(-rPoint) / exp(-rPoint_ctrl).">App 5px</span></th>
+            <th class="py-2 px-2 text-right"><span class="th-tip" title="Thinh's Android app export formula exp(-(R+G+B)/R) / ctrl applied to BoodooScan's glare-trimmed tube area for direct comparison.">App Area</span></th>
             ${showNTCol ? '<th class="py-2 px-2 text-right"><span class="th-tip" title="Sample Signal divided by the highest Non-Target (NT) tube in the photo.">Sig / Max NT</span></th>' : ''}
             <th class="py-2 px-2.5 text-center">Result</th>
             <th class="py-2 px-2 text-center">×</th>
@@ -1746,7 +1837,7 @@
         : state.computed.filter(r => r.role !== 'white');
 
       if (visibleRows.length === 0) {
-        const colSpan = isResearch ? (showNTCol ? 12 : 11) : (showNTCol ? 7 : 6);
+        const colSpan = isResearch ? (showNTCol ? 14 : 13) : (showNTCol ? 7 : 6);
         tbody.innerHTML = `<tr><td colspan="${colSpan}" class="py-8 text-center text-slate-400">Upload, drop, or paste one or more rack photos to auto-detect tubes.</td></tr>`;
         return;
       }
@@ -1794,6 +1885,8 @@
               <td class="py-2 px-2 text-right font-mono font-semibold text-navy-900">${isWhite ? '—' : item.relAbs.toFixed(2)}</td>
               <td class="py-2 px-2 text-right font-mono font-semibold text-teal-800">${isWhite ? '—' : item.relRG.toFixed(2)}</td>
               <td class="py-2 px-2 text-right font-mono text-slate-500">${isWhite ? '—' : item.relOrigApp.toFixed(2)}</td>
+              <td class="py-2 px-2 text-right font-mono text-indigo-700">${isWhite ? '—' : item.relAppSN5px.toFixed(2)}</td>
+              <td class="py-2 px-2 text-right font-mono text-indigo-900 font-semibold">${isWhite ? '—' : item.relAppSNArea.toFixed(2)}</td>
               ${showNTCol ? `<td class="py-2 px-2 text-right font-mono font-semibold text-amber-800">${item.ratioVsMaxNT != null ? item.ratioVsMaxNT.toFixed(2) + '×' : '—'}</td>` : ''}
               <td class="py-2 px-2.5 text-center">
                 <span class="inline-block text-[10px] font-mono font-bold px-2 py-0.5 rounded-full ${getCallBadgeClass(item.call)}">${item.call}</span>
@@ -2103,7 +2196,7 @@
     });
 
     // =========================================================================
-    // BATCH SESSION LOG & 23-COLUMN CSV EXPORT
+    // BATCH SESSION LOG & 26-COLUMN CSV EXPORT
     // =========================================================================
     function appendBatchItemToSession(item, timestamp) {
       const tubes = (item.computed || []).filter(r => r.role !== 'white');
@@ -2134,6 +2227,8 @@
           relAbs: t.relAbs.toFixed(3),
           relRG: t.relRG.toFixed(3),
           relOrigApp: t.relOrigApp.toFixed(3),
+          relAppSN5px: t.relAppSN5px.toFixed(3),
+          relAppSNArea: t.relAppSNArea.toFixed(3),
           ratioVsMaxNT: t.ratioVsMaxNT != null ? t.ratioVsMaxNT.toFixed(3) : '',
           call: t.call
         });
@@ -2165,7 +2260,6 @@
       let totalPhotos = 0;
 
       state.batch.forEach(item => {
-        // Recompute with current calibration settings before saving
         const res = computeMetricsForImage(item.img, item.rois);
         item.computed = res.computed;
         item.qcStatus = res.qcStatus;
@@ -2176,7 +2270,6 @@
         }
       });
 
-      // Restore offscreenCanvas to active photo
       if (state.image) {
         offscreenCanvas.width = state.image.naturalWidth;
         offscreenCanvas.height = state.image.naturalHeight;
@@ -2232,7 +2325,8 @@
         'Timestamp', 'File_Name', 'Batch_Notes', 'Tube_Label', 'Tube_Note', 'Role', 'QC_Status',
         'Raw_R', 'Raw_G', 'Raw_B', 'WB_R', 'WB_G', 'WB_B',
         'CIE_L', 'CIE_a', 'CIE_b', 'Delta_a', 'Delta_E',
-        'PseudoAbs_AG_AR', 'Rel_AG_AR', 'Rel_RG', 'Orig_BioAnalytics_SN', 'Ratio_vs_Max_NT', 'Call'
+        'PseudoAbs_AG_AR', 'Rel_AG_AR', 'Rel_RG', 'Orig_BioAnalytics_SN',
+        'App_Export_SN_5px', 'App_Export_SN_Area', 'Ratio_vs_Max_NT', 'Call'
       ];
 
       const csvRows = [headers.join(',')];
@@ -2241,7 +2335,8 @@
           r.timestamp, r.fileName, r.notes, r.tubeLabel, r.tubeNote || '', r.role, r.qcStatus,
           r.rawR, r.rawG, r.rawB, r.wbR, r.wbG, r.wbB,
           r.L_star, r.a_star, r.b_star, r.deltaA, r.deltaE,
-          r.absRatio, r.relAbs, r.relRG ?? '', r.relOrigApp ?? r.relLegacyRB ?? '', r.ratioVsMaxNT, r.call
+          r.absRatio, r.relAbs, r.relRG ?? '', r.relOrigApp ?? r.relLegacyRB ?? '',
+          r.relAppSN5px ?? '', r.relAppSNArea ?? '', r.ratioVsMaxNT, r.call
         ].map(v => `"${String(v ?? '').replace(/"/g, '""')}"`);
         csvRows.push(vals.join(','));
       });
@@ -2255,7 +2350,7 @@
       a.click();
       document.body.removeChild(a);
       URL.revokeObjectURL(url);
-      showToast('Exported 24-column Session CSV.', 'success');
+      showToast('Exported 26-column Session CSV.', 'success');
     }
 
     // =========================================================================
