@@ -121,25 +121,29 @@
 
         <!-- TAB 2: METRICS & RESEARCH MODE -->
         <div id="guideTabMetrics" class="hidden space-y-3">
-          <p class="text-slate-600">By default, users see <strong>Tube</strong>, <strong>Tube Note</strong>, <strong>Role</strong>, <strong>Signal</strong>, and strict binary <strong>Result</strong> (<strong>POSITIVE</strong> or <strong>NEGATIVE</strong>). Toggle <strong>Research Mode</strong> on to inspect all metrics below (all 23 columns are always exported to CSV).</p>
+          <p class="text-slate-600">By default, users see <strong>Tube</strong>, <strong>Tube Note</strong>, <strong>Role</strong>, <strong>Signal</strong>, and strict binary <strong>Result</strong> (<strong>POSITIVE</strong> or <strong>NEGATIVE</strong>). Toggle <strong>Research Mode</strong> on to inspect all metrics below (all 24 columns are always exported to CSV).</p>
           <div class="divide-y divide-slate-200 border border-slate-200 rounded-xl overflow-hidden">
             <div class="p-3 bg-white flex flex-col sm:flex-row sm:items-start gap-1 sm:gap-4">
               <span class="font-mono font-bold text-navy-900 sm:w-28 shrink-0">Signal (Rel A_G/A_R)</span>
-              <p class="text-slate-600">Beer–Lambert pseudo-absorbance ratio (A<sub>G</sub>/A<sub>R</sub>) normalized to the Water Control (= 1.00). Mirrors spectrophotometer A<sub>520</sub>/A<sub>620</sub>. Default cutoff: ≥ 1.20 (or calibrated to Non-Target tubes).</p>
+              <p class="text-slate-600">Beer–Lambert pseudo-absorbance ratio (A<sub>G</sub>/A<sub>R</sub>) normalized to the Water Control (= 1.00). Mirrors spectrophotometer A<sub>520</sub>/A<sub>620</sub>. Default cutoff: ≥ 1.125 for 10-minute photos, the mean CSFV value relative to water in the specificity photos (or calibrated to Non-Target tubes).</p>
             </div>
             <div class="p-3 bg-slate-50/60 flex flex-col sm:flex-row sm:items-start gap-1 sm:gap-4">
-              <span class="font-mono font-bold text-navy-900 sm:w-28 shrink-0">Orig App (a·eᵃ)</span>
-              <p class="text-slate-600">Exact formula from the original Bio-Analytics Android app: <code>a = R/G</code>, <code>b = a × exp(a)</code>, normalized to the Water Control (<code>b<sub>sample</sub> / b<sub>control</sub></code>) on the exact same pixels.</p>
+              <span class="font-mono font-bold text-teal-800 sm:w-28 shrink-0">Rel R/G</span>
+              <p class="text-slate-600">Direct red-to-green ratio (<code>R/G</code>) normalized to the Water Control's <code>R/G</code> (= 1.00) on BoodooScan's glare-trimmed pixels—no exponential stretching and independent of white-card placement.</p>
             </div>
             <div class="p-3 bg-white flex flex-col sm:flex-row sm:items-start gap-1 sm:gap-4">
-              <span class="font-mono font-bold text-navy-900 sm:w-28 shrink-0">a* (CIE Redness)</span>
-              <p class="text-slate-600">Green-to-red color axis in CIE L*a*b* space. Used with b* and R/B for the <strong>QC Gate</strong>: purple/violet/gray controls pass, while unaggregated red/pink controls (a* &gt; 24, b* &gt; -6, R/B &gt; 1.20) flag INVALID.</p>
+              <span class="font-mono font-bold text-navy-900 sm:w-28 shrink-0">Orig App (a·eᵃ)</span>
+              <p class="text-slate-600">Formula used for the Bio-Analytics values in the dissertation, calculated from RGB averages: <code>a = R/G</code>, <code>b = a × exp(a)</code>, normalized to the Water Control (<code>b<sub>sample</sub> / b<sub>control</sub></code>) on the exact same pixels.</p>
             </div>
             <div class="p-3 bg-slate-50/60 flex flex-col sm:flex-row sm:items-start gap-1 sm:gap-4">
+              <span class="font-mono font-bold text-navy-900 sm:w-28 shrink-0">a* (CIE Redness)</span>
+              <p class="text-slate-600">Green-to-red color axis in CIE L*a*b* space. Used for the <strong>QC Gate</strong>: fully aggregated controls (a* ≤ 4.5) pass, partly aggregated controls (a* 4.5 to 24) show WARN, and red/pink controls (a* &gt; 24) flag INVALID.</p>
+            </div>
+            <div class="p-3 bg-white flex flex-col sm:flex-row sm:items-start gap-1 sm:gap-4">
               <span class="font-mono font-bold text-teal-700 sm:w-28 shrink-0">Δa* &amp; ΔE</span>
               <p class="text-slate-600"><strong>Δa*</strong> is redness shift vs. Water Control (a*<sub>sample</sub> − a*<sub>water</sub>). <strong>ΔE</strong> is total 3D Euclidean color distance across L*, a*, and b*.</p>
             </div>
-            <div class="p-3 bg-white flex flex-col sm:flex-row sm:items-start gap-1 sm:gap-4">
+            <div class="p-3 bg-slate-50/60 flex flex-col sm:flex-row sm:items-start gap-1 sm:gap-4">
               <span class="font-mono font-bold text-amber-800 sm:w-28 shrink-0">Sig / Max NT</span>
               <p class="text-slate-600">Sample Signal divided by the highest Non-Target (NT) tube in the same photo. Automatically activates when any tube is tagged <strong>Non-Target (NT)</strong>.</p>
             </div>
@@ -445,7 +449,7 @@
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
               <div>
                 <label for="cutoffRelAbs" class="block font-semibold text-slate-700 mb-1">Min Signal Cutoff (Rel A_G/A_R)</label>
-                <input id="cutoffRelAbs" type="number" step="0.05" value="1.20" class="w-full font-mono px-2.5 py-1.5 rounded-lg border border-slate-300" />
+                <input id="cutoffRelAbs" type="number" step="0.005" value="1.125" class="w-full font-mono px-2.5 py-1.5 rounded-lg border border-slate-300" />
               </div>
               <div>
                 <label for="cutoffDeltaA" class="block font-semibold text-slate-700 mb-1">Research Redness Reference (Δa*)</label>
@@ -513,7 +517,7 @@
                 <span>Session Log (<span id="sessionRowCount" class="font-mono">0</span> rows)</span>
                 <span class="text-[10px] font-semibold px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800">Auto-saved</span>
               </h2>
-              <p class="text-[11px] text-slate-500">Exports all 23 research metrics (including per-tube notes, RGB, L*a*b*, Δa*, ΔE, A_G/A_R, Orig App) to CSV.</p>
+              <p class="text-[11px] text-slate-500">Exports all 24 research metrics (including per-tube notes, RGB, L*a*b*, Δa*, ΔE, A_G/A_R, Rel R/G, Orig App) to CSV.</p>
             </div>
             <div class="flex items-center gap-2">
               <button type="button" id="clearSessionBtn" onclick="clearSessionLog()" disabled
@@ -585,7 +589,7 @@
       researchMode: false,
       settingsOpen: false,
       cutoffDeltaA: 6.5,
-      cutoffRelAbs: 1.20,
+      cutoffRelAbs: 1.125,
       ntMarginDeltaA: 5.0,
       ntMarginMult: 1.25,
       qcStatus: 'PENDING',
@@ -1545,27 +1549,28 @@
         const absR = -Math.log10(normR);
         const absRatio = absG / Math.max(0.015, absR);
 
-        // Exact original Bio-Analytics formula: a = R / G, b = a * exp(a)
+        // R/G x e^(R/G): formula used for the Bio-Analytics values in the dissertation (the app's own S/N export uses e^(-(R+G+B)/R))
         const origA = item.raw.r / Math.max(1, item.raw.g);
         const origB = origA * Math.exp(origA);
 
-        return { ...item, wb: { r: wbR, g: wbG, b: wbB }, lab, absRatio, origB };
+        return { ...item, wb: { r: wbR, g: wbG, b: wbB }, lab, absRatio, rgRatio: origA, origB };
       });
 
       const controlItem = enriched.find(r => r.role === 'control');
       const ctrlAbsRatio = controlItem ? controlItem.absRatio : 1.0;
+      const ctrlRG = controlItem ? controlItem.rgRatio : 1.0;
       const ctrlOrigB = controlItem ? controlItem.origB : 1.0;
 
       let qcStatus = 'NO_CONTROL';
       if (controlItem) {
-        const cRB = controlItem.wb.r / Math.max(1, controlItem.wb.b);
-        const stayedRed = (controlItem.lab.a > 24.0 && controlItem.lab.b > -6.0 && cRB > 1.20);
-        qcStatus = stayedRed ? 'FAIL' : 'PASS';
+        const stayedRed = controlItem.lab.a > 24.0;
+        const partial = !stayedRed && controlItem.lab.a > 4.5;
+        qcStatus = stayedRed ? 'FAIL' : (partial ? 'WARN' : 'PASS');
       }
 
       const withRel = enriched.map(item => {
         if (item.role === 'white') {
-          return { ...item, deltaA: 0, deltaE: 0, relAbs: 1.0, relOrigApp: 1.0 };
+          return { ...item, deltaA: 0, deltaE: 0, relAbs: 1.0, relRG: 1.0, relOrigApp: 1.0 };
         }
         const deltaA = controlItem ? (item.lab.a - controlItem.lab.a) : 0;
         const deltaE = controlItem
@@ -1576,8 +1581,9 @@
             )
           : 0;
         const relAbs = controlItem ? (item.absRatio / Math.max(0.05, ctrlAbsRatio)) : item.absRatio;
+        const relRG = controlItem ? (item.rgRatio / Math.max(0.0001, ctrlRG)) : item.rgRatio;
         const relOrigApp = controlItem ? (item.origB / Math.max(0.0001, ctrlOrigB)) : item.origB;
-        return { ...item, deltaA, deltaE, relAbs, relOrigApp };
+        return { ...item, deltaA, deltaE, relAbs, relRG, relOrigApp };
       });
 
       const ntItems = withRel.filter(r => r.role === 'nontarget');
@@ -1597,7 +1603,7 @@
         } else if (item.role === 'nontarget') {
           call = 'NON-TARGET';
         } else {
-          if (qcStatus !== 'PASS') {
+          if (qcStatus === 'FAIL' || qcStatus === 'NO_CONTROL') {
             call = 'INVALID';
           } else {
             let effCutoffRelAbs = state.cutoffRelAbs;
@@ -1663,6 +1669,13 @@
         subtitle.textContent = `Control "${controlItem.label}" properly aggregated (a* = ${controlItem.lab.a.toFixed(1)}, b* = ${controlItem.lab.b.toFixed(1)}). Sample calls are valid.`;
         badge.className = 'text-xs font-mono font-bold px-2.5 py-1 rounded-full bg-emerald-600 text-white shrink-0';
         badge.textContent = 'PASS';
+      } else if (qcStatus === 'WARN') {
+        banner.className = 'rounded-xl border border-amber-200 bg-amber-50/70 px-4 py-3 shadow-sm flex items-center justify-between gap-3 transition-colors';
+        icon.className = 'w-9 h-9 rounded-full bg-amber-100 text-amber-700 flex items-center justify-center shrink-0';
+        title.textContent = 'Water-Control QC Gate: PARTLY AGGREGATED';
+        subtitle.textContent = `Control "${controlItem.label}" is only partly purple (a* = ${controlItem.lab.a.toFixed(1)}). Calls are shown but should be checked against the nanophotometer.`;
+        badge.className = 'text-xs font-mono font-bold px-2.5 py-1 rounded-full bg-amber-500 text-white shrink-0';
+        badge.textContent = 'WARN';
       } else if (qcStatus === 'FAIL') {
         banner.className = 'rounded-xl border border-rose-300 bg-rose-50 px-4 py-3 shadow-sm flex items-center justify-between gap-3 transition-colors';
         icon.className = 'w-9 h-9 rounded-full bg-rose-100 text-rose-700 flex items-center justify-center shrink-0';
@@ -1707,7 +1720,8 @@
             <th class="py-2 px-2 text-right"><span class="th-tip" title="Redness shift vs. Water Control (a*_sample - a*_water).">Δa*</span></th>
             <th class="py-2 px-2 text-right"><span class="th-tip" title="Total 3D Euclidean color distance from Water Control across L*, a*, and b*.">ΔE</span></th>
             <th class="py-2 px-2 text-right"><span class="th-tip" title="Relative Beer-Lambert pseudo-absorbance (A_G/A_R) normalized to Water Control (= 1.00).">Rel A_G/A_R</span></th>
-            <th class="py-2 px-2 text-right"><span class="th-tip" title="Exact original Bio-Analytics app value: a = R/G, b = a * exp(a), S/N = b_sample / b_control.">Orig App</span></th>
+            <th class="py-2 px-2 text-right"><span class="th-tip" title="Direct red-to-green ratio (R/G) normalized to the Water Control's R/G (= 1.00).">Rel R/G</span></th>
+            <th class="py-2 px-2 text-right"><span class="th-tip" title="Bio-Analytics value as calculated in the dissertation: a = R/G, b = a * exp(a), S/N = b_sample / b_control.">Orig App</span></th>
             ${showNTCol ? '<th class="py-2 px-2 text-right"><span class="th-tip" title="Sample Signal divided by the highest Non-Target (NT) tube in the photo.">Sig / Max NT</span></th>' : ''}
             <th class="py-2 px-2.5 text-center">Result</th>
             <th class="py-2 px-2 text-center">×</th>
@@ -1732,7 +1746,7 @@
         : state.computed.filter(r => r.role !== 'white');
 
       if (visibleRows.length === 0) {
-        const colSpan = isResearch ? (showNTCol ? 11 : 10) : (showNTCol ? 7 : 6);
+        const colSpan = isResearch ? (showNTCol ? 12 : 11) : (showNTCol ? 7 : 6);
         tbody.innerHTML = `<tr><td colspan="${colSpan}" class="py-8 text-center text-slate-400">Upload, drop, or paste one or more rack photos to auto-detect tubes.</td></tr>`;
         return;
       }
@@ -1778,6 +1792,7 @@
               <td class="py-2 px-2 text-right font-mono font-semibold ${item.deltaA >= state.cutoffDeltaA && !isWhite && item.role !== 'control' ? 'text-teal-700' : 'text-slate-600'}">${isWhite ? '—' : (item.deltaA >= 0 ? '+' : '') + item.deltaA.toFixed(1)}</td>
               <td class="py-2 px-2 text-right font-mono text-slate-600">${isWhite ? '—' : item.deltaE.toFixed(1)}</td>
               <td class="py-2 px-2 text-right font-mono font-semibold text-navy-900">${isWhite ? '—' : item.relAbs.toFixed(2)}</td>
+              <td class="py-2 px-2 text-right font-mono font-semibold text-teal-800">${isWhite ? '—' : item.relRG.toFixed(2)}</td>
               <td class="py-2 px-2 text-right font-mono text-slate-500">${isWhite ? '—' : item.relOrigApp.toFixed(2)}</td>
               ${showNTCol ? `<td class="py-2 px-2 text-right font-mono font-semibold text-amber-800">${item.ratioVsMaxNT != null ? item.ratioVsMaxNT.toFixed(2) + '×' : '—'}</td>` : ''}
               <td class="py-2 px-2.5 text-center">
@@ -2117,6 +2132,7 @@
           deltaE: t.deltaE.toFixed(2),
           absRatio: t.absRatio.toFixed(3),
           relAbs: t.relAbs.toFixed(3),
+          relRG: t.relRG.toFixed(3),
           relOrigApp: t.relOrigApp.toFixed(3),
           ratioVsMaxNT: t.ratioVsMaxNT != null ? t.ratioVsMaxNT.toFixed(3) : '',
           call: t.call
@@ -2216,7 +2232,7 @@
         'Timestamp', 'File_Name', 'Batch_Notes', 'Tube_Label', 'Tube_Note', 'Role', 'QC_Status',
         'Raw_R', 'Raw_G', 'Raw_B', 'WB_R', 'WB_G', 'WB_B',
         'CIE_L', 'CIE_a', 'CIE_b', 'Delta_a', 'Delta_E',
-        'PseudoAbs_AG_AR', 'Rel_AG_AR', 'Orig_BioAnalytics_SN', 'Ratio_vs_Max_NT', 'Call'
+        'PseudoAbs_AG_AR', 'Rel_AG_AR', 'Rel_RG', 'Orig_BioAnalytics_SN', 'Ratio_vs_Max_NT', 'Call'
       ];
 
       const csvRows = [headers.join(',')];
@@ -2225,7 +2241,7 @@
           r.timestamp, r.fileName, r.notes, r.tubeLabel, r.tubeNote || '', r.role, r.qcStatus,
           r.rawR, r.rawG, r.rawB, r.wbR, r.wbG, r.wbB,
           r.L_star, r.a_star, r.b_star, r.deltaA, r.deltaE,
-          r.absRatio, r.relAbs, r.relOrigApp ?? r.relLegacyRB ?? '', r.ratioVsMaxNT, r.call
+          r.absRatio, r.relAbs, r.relRG ?? '', r.relOrigApp ?? r.relLegacyRB ?? '', r.ratioVsMaxNT, r.call
         ].map(v => `"${String(v ?? '').replace(/"/g, '""')}"`);
         csvRows.push(vals.join(','));
       });
@@ -2239,7 +2255,7 @@
       a.click();
       document.body.removeChild(a);
       URL.revokeObjectURL(url);
-      showToast('Exported 23-column Session CSV.', 'success');
+      showToast('Exported 24-column Session CSV.', 'success');
     }
 
     // =========================================================================
