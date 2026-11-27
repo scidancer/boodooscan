@@ -101,6 +101,7 @@
         <div class="flex items-center gap-2 flex-wrap">
           <span class="text-xs font-bold uppercase tracking-wider text-slate-500">Batch Queue</span>
           <span id="batchCounter" class="text-xs font-mono font-semibold bg-slate-100 text-slate-700 px-2.5 py-0.5 rounded-full">Photo 1 of 1</span>
+          <span id="heicProgressBadge" class="hidden text-xs font-mono font-semibold bg-cyan-50 text-cyan-800 border border-cyan-200 px-2.5 py-0.5 rounded-full animate-pulse">Converting…</span>
           <div class="flex items-center gap-1 ml-1">
             <button id="prevPhotoBtn" type="button" class="text-xs font-semibold px-2.5 py-1 rounded-lg border border-slate-200 bg-white hover:bg-slate-50 text-slate-700 disabled:opacity-40 transition" title="Previous Photo (←)">← Prev</button>
             <button id="nextPhotoBtn" type="button" class="text-xs font-semibold px-2.5 py-1 rounded-lg border border-slate-200 bg-white hover:bg-slate-50 text-slate-700 disabled:opacity-40 transition" title="Next Photo (→)">Next →</button>
@@ -203,7 +204,7 @@
                 <span>Auto White Balance (W)</span>
               </label>
             </div>
-            <p class="text-[11px] text-slate-400">Tip: Drag cyan Scan Box edges to frame liquid tips, drag rings to fine-tune, or click inside photo to add a tube.</p>
+            <p class="text-[11px] text-slate-400">Tip: Drag cyan Scan Box corners or edges to frame liquid tips, drag rings to fine-tune, or click inside photo to add a tube.</p>
           </div>
         </div>
 
@@ -476,6 +477,7 @@
         // Batch bar
         batchBar: document.getElementById('batchBar'),
         batchCounter: document.getElementById('batchCounter'),
+        heicProgressBadge: document.getElementById('heicProgressBadge'),
         prevPhotoBtn: document.getElementById('prevPhotoBtn'),
         nextPhotoBtn: document.getElementById('nextPhotoBtn'),
         applyBoxAllBtn: document.getElementById('applyBoxAllBtn'),
@@ -626,21 +628,42 @@
         return (file.type && file.type.startsWith('image/')) || isHeicFile(file);
       }
 
-      async function decodeFileToBlob(file) {
-        if (!isHeicFile(file)) return file;
-        if (typeof window.heic2any === 'function') {
-          try {
-            const converted = await window.heic2any({
-              blob: file,
-              toType: 'image/jpeg',
-              quality: 0.92
-            });
-            return Array.isArray(converted) ? converted[0] : converted;
-          } catch (err) {
-            return file;
-          }
+      // Try fast native browser image decode first (instant on Safari/macOS/iOS or standard JPG/PNG)
+      function loadImageFromBlob(blob) {
+        return new Promise((resolve, reject) => {
+          const url = URL.createObjectURL(blob);
+          const img = new Image();
+          img.onload = () => {
+            URL.revokeObjectURL(url);
+            resolve(img);
+          };
+          img.onerror = () => {
+            URL.revokeObjectURL(url);
+            reject(new Error('Native decode failed'));
+          };
+          img.src = url;
+        });
+      }
+
+      // Decode any image file; falls back to heic2any only when native browser decode cannot read HEIC
+      async function decodeFileToImage(file) {
+        if (!isHeicFile(file)) {
+          return loadImageFromBlob(file);
         }
-        return file;
+        // 1. Attempt instant native decode first
+        try {
+          return await loadImageFromBlob(file);
+        } catch (_) {
+          // 2. Fall back to in-browser heic2any (quality 0.82 is fast and lossless for tube-area averages)
+          if (typeof window.heic2any !== 'function') throw new Error('HEIC decoder unavailable');
+          const converted = await window.heic2any({
+            blob: file,
+            toType: 'image/jpeg',
+            quality: 0.82
+          });
+          const jpegBlob = Array.isArray(converted) ? converted[0] : converted;
+          return loadImageFromBlob(jpegBlob);
+        }
       }
 
       function syncActiveToBatch() {
@@ -664,66 +687,73 @@
         }
 
         const heicCount = validFiles.filter(isHeicFile).length;
+        const total = validFiles.length;
         if (heicCount > 0) {
-          showToast(`Converting ${heicCount} HEIC photo${heicCount === 1 ? '' : 's'}… please wait.`, 'info');
+          el.batchBar.classList.remove('hidden');
+          el.heicProgressBadge.classList.remove('hidden');
+          el.heicProgressBadge.textContent = `Loading 1 / ${total}…`;
+          showToast(`Streaming ${total} photo(s) — Photo 1 will open right away while the rest convert.`, 'info');
         }
 
         syncActiveToBatch();
-        const firstNewIdx = state.batch.length;
+        let loadedCount = 0;
+        let failedCount = 0;
+        let selectedFirstNew = false;
 
-        const loadPromises = validFiles.map(async (file) => {
-          const blob = await decodeFileToBlob(file);
-          return new Promise((resolve) => {
-            const reader = new FileReader();
-            reader.onload = (ev) => {
-              const img = new Image();
-              img.onload = () => {
-                resolve({
-                  id: nextBatchId++,
-                  fileName: file.name || 'tube_photo.png',
-                  img,
-                  thumbUrl: createThumbDataUrl(img),
-                  notes: '',
-                  box: { ...DEFAULT_BOX },
-                  sensitivity: state.sensitivity,
-                  rois: [],
-                  computed: [],
-                  qcStatus: 'PENDING',
-                  saved: false
-                });
-              };
-              img.onerror = () => resolve(null);
-              img.src = ev.target.result;
+        // Progressive 1-by-1 loading keeps the UI responsive and shows Photo 1 immediately
+        for (let i = 0; i < total; i++) {
+          const file = validFiles[i];
+          if (heicCount > 0) {
+            el.heicProgressBadge.textContent = `Converting ${i + 1} / ${total}…`;
+          }
+          // Yield to browser paint/events so user can interact with Photo 1 while others decode
+          await new Promise(r => setTimeout(r, 0));
+
+          try {
+            const img = await decodeFileToImage(file);
+            const item = {
+              id: nextBatchId++,
+              fileName: file.name || 'tube_photo.png',
+              img,
+              thumbUrl: createThumbDataUrl(img),
+              notes: '',
+              box: { ...DEFAULT_BOX },
+              sensitivity: state.sensitivity,
+              rois: [],
+              computed: [],
+              qcStatus: 'PENDING',
+              saved: false
             };
-            reader.onerror = () => resolve(null);
-            reader.readAsDataURL(blob);
-          });
-        });
+            item.rois = detectTubesInImage(item.img, item.box, item.sensitivity);
+            const res = computeMetricsForImage(item.img, item.rois);
+            item.computed = res.computed;
+            item.qcStatus = res.qcStatus;
 
-        const items = await Promise.all(loadPromises);
-        const loaded = items.filter(Boolean);
-        const failedCount = validFiles.length - loaded.length;
+            state.batch.push(item);
+            loadedCount++;
 
-        if (loaded.length === 0) {
-          showToast('Could not decode the selected photo(s). If using HEIC offline, convert to JPG first.', 'error');
-          return;
+            if (!selectedFirstNew) {
+              selectedFirstNew = true;
+              selectBatchPhoto(state.batch.length - 1);
+            } else {
+              renderBatchStrip();
+              renderInlinePhotoBar();
+            }
+          } catch (err) {
+            failedCount++;
+          }
         }
 
-        loaded.forEach(item => {
-          state.batch.push(item);
-          item.rois = detectTubesInImage(item.img, item.box, item.sensitivity);
-          const res = computeMetricsForImage(item.img, item.rois);
-          item.computed = res.computed;
-          item.qcStatus = res.qcStatus;
-        });
+        el.heicProgressBadge.classList.add('hidden');
 
-        selectBatchPhoto(firstNewIdx);
-        if (failedCount > 0) {
-          showToast(`Loaded ${loaded.length} photo(s); ${failedCount} could not be decoded.`, 'error');
-        } else if (loaded.length > 1) {
-          showToast(`Added ${loaded.length} photos to Batch Queue.`, 'success');
+        if (loadedCount === 0) {
+          showToast('Could not decode the selected photo(s). If using HEIC offline, convert to JPG first.', 'error');
+        } else if (failedCount > 0) {
+          showToast(`Loaded ${loadedCount} photo(s); ${failedCount} could not be decoded.`, 'error');
+        } else if (loadedCount > 1) {
+          showToast(`Finished loading all ${loadedCount} photos into Batch Queue.`, 'success');
         } else if (heicCount > 0) {
-          showToast(`Converted and loaded "${loaded[0].fileName}".`, 'success');
+          showToast(`Converted and loaded "${state.batch[state.activeIdx].fileName}".`, 'success');
         }
       }
 
@@ -1227,12 +1257,25 @@
         ctx.fillRect(bx1 - 3, midY - 16, 6, 32);
         ctx.fillRect(bx2 - 3, midY - 16, 6, 32);
 
+        // Drag handles on the 4 corners (resize X & Y simultaneously)
+        const corners = [
+          [bx1, by1], [bx2, by1],
+          [bx1, by2], [bx2, by2]
+        ];
+        corners.forEach(([cx, cy]) => {
+          ctx.fillStyle = '#ffffff';
+          ctx.fillRect(cx - 6, cy - 6, 12, 12);
+          ctx.strokeStyle = '#0891b2';
+          ctx.lineWidth = 2;
+          ctx.strokeRect(cx - 6, cy - 6, 12, 12);
+        });
+
         // Scan Box Tag
         ctx.fillStyle = '#0891b2';
-        ctx.fillRect(bx1, Math.max(0, by1 - 18), 68, 17);
+        ctx.fillRect(bx1 + 8, Math.max(0, by1 - 18), 68, 17);
         ctx.fillStyle = '#ffffff';
         ctx.font = 'bold 10px Inter, sans-serif';
-        ctx.fillText('SCAN BOX', bx1 + 6, Math.max(12, by1 - 6));
+        ctx.fillText('SCAN BOX', bx1 + 14, Math.max(12, by1 - 6));
         ctx.restore();
 
         // Draw Tube ROIs
@@ -1494,28 +1537,189 @@
       }
 
       // =========================================================================
-      // TABLE EVENT DELEGATION (INCLUDING UP/DOWN ARROW NAVIGATION IN NOTES)
+      // CANVAS POINTER INTERACTION (DRAG BOX CORNERS/EDGES, DRAG ROIS, CLICK TO ADD)
       // =========================================================================
+      function getCanvasNormPos(evt) {
+        const rect = el.canvas.getBoundingClientRect();
+        const clientX = evt.touches ? evt.touches[0].clientX : evt.clientX;
+        const clientY = evt.touches ? evt.touches[0].clientY : evt.clientY;
+        return {
+          x: Math.max(0, Math.min(1, (clientX - rect.left) / rect.width)),
+          y: Math.max(0, Math.min(1, (clientY - rect.top) / rect.height)),
+          px: (clientX - rect.left) * (el.canvas.width / rect.width),
+          py: (clientY - rect.top) * (el.canvas.height / rect.height)
+        };
+      }
+
+      // Hit-test ROIs, Scan Box corners, and Scan Box edges
+      function hitTestCanvas(pos) {
+        const w = el.canvas.width, h = el.canvas.height;
+        // 1. Check ROI hit first
+        for (let i = state.rois.length - 1; i >= 0; i--) {
+          const r = state.rois[i];
+          const dist = Math.hypot(pos.px - r.cx * w, pos.py - r.cy * h);
+          if (dist <= Math.max(14, r.r * w + 5)) {
+            return { mode: 'roi', roiId: r.id };
+          }
+        }
+
+        const bx1 = state.box.x1 * w, bx2 = state.box.x2 * w;
+        const by1 = state.box.y1 * h, by2 = state.box.y2 * h;
+        const cornerTol = 16;
+        const edgeTol = 12;
+
+        // 2. Check 4 corners first so corners take priority over edges
+        if (Math.hypot(pos.px - bx1, pos.py - by1) <= cornerTol) return { mode: 'box-tl' };
+        if (Math.hypot(pos.px - bx2, pos.py - by1) <= cornerTol) return { mode: 'box-tr' };
+        if (Math.hypot(pos.px - bx1, pos.py - by2) <= cornerTol) return { mode: 'box-bl' };
+        if (Math.hypot(pos.px - bx2, pos.py - by2) <= cornerTol) return { mode: 'box-br' };
+
+        // 3. Check 4 edges
+        if (Math.abs(pos.py - by1) <= edgeTol && pos.px >= bx1 - edgeTol && pos.px <= bx2 + edgeTol) return { mode: 'box-t' };
+        if (Math.abs(pos.py - by2) <= edgeTol && pos.px >= bx1 - edgeTol && pos.px <= bx2 + edgeTol) return { mode: 'box-b' };
+        if (Math.abs(pos.px - bx1) <= edgeTol && pos.py >= by1 - edgeTol && pos.py <= by2 + edgeTol) return { mode: 'box-l' };
+        if (Math.abs(pos.px - bx2) <= edgeTol && pos.py >= by1 - edgeTol && pos.py <= by2 + edgeTol) return { mode: 'box-r' };
+
+        return { mode: null };
+      }
+
+      function updateCanvasCursor(evt) {
+        if (!state.img || state.dragMode) return;
+        const hit = hitTestCanvas(getCanvasNormPos(evt));
+        const cursorMap = {
+          'roi': 'grab',
+          'box-tl': 'nwse-resize',
+          'box-br': 'nwse-resize',
+          'box-tr': 'nesw-resize',
+          'box-bl': 'nesw-resize',
+          'box-t': 'ns-resize',
+          'box-b': 'ns-resize',
+          'box-l': 'ew-resize',
+          'box-r': 'ew-resize'
+        };
+        el.canvas.style.cursor = cursorMap[hit.mode] || 'crosshair';
+      }
+
+      function onPointerDown(evt) {
+        if (!state.img) return;
+        const pos = getCanvasNormPos(evt);
+        state.dragMoved = false;
+        state.dragStart = { x: pos.x, y: pos.y };
+
+        const hit = hitTestCanvas(pos);
+        state.dragMode = hit.mode;
+        state.dragRoiId = hit.roiId || null;
+
+        if (state.dragMode) {
+          if (state.dragMode === 'roi') el.canvas.style.cursor = 'grabbing';
+          evt.preventDefault();
+        }
+      }
+
+      function onPointerMove(evt) {
+        if (!state.dragMode || !state.img) return;
+        evt.preventDefault();
+        const pos = getCanvasNormPos(evt);
+        if (Math.hypot(pos.x - state.dragStart.x, pos.y - state.dragStart.y) > 0.005) {
+          state.dragMoved = true;
+        }
+
+        if (state.dragMode === 'roi') {
+          const roi = state.rois.find(r => r.id === state.dragRoiId);
+          if (roi) {
+            roi.cx = pos.x;
+            roi.cy = pos.y;
+            recomputeAndRender();
+          }
+          return;
+        }
+
+        // Update Scan Box edges and/or corners
+        const minW = 0.08, minH = 0.06;
+        if (state.dragMode === 'box-l' || state.dragMode === 'box-tl' || state.dragMode === 'box-bl') {
+          state.box.x1 = Math.max(0.01, Math.min(state.box.x2 - minW, pos.x));
+        }
+        if (state.dragMode === 'box-r' || state.dragMode === 'box-tr' || state.dragMode === 'box-br') {
+          state.box.x2 = Math.min(0.99, Math.max(state.box.x1 + minW, pos.x));
+        }
+        if (state.dragMode === 'box-t' || state.dragMode === 'box-tl' || state.dragMode === 'box-tr') {
+          state.box.y1 = Math.max(0.01, Math.min(state.box.y2 - minH, pos.y));
+        }
+        if (state.dragMode === 'box-b' || state.dragMode === 'box-bl' || state.dragMode === 'box-br') {
+          state.box.y2 = Math.min(0.99, Math.max(state.box.y1 + minH, pos.y));
+        }
+        el.boxCoordsText.textContent = `Box: X ${Math.round(state.box.x1 * 100)}%–${Math.round(state.box.x2 * 100)}% | Y ${Math.round(state.box.y1 * 100)}%–${Math.round(state.box.y2 * 100)}%`;
+        drawCanvas();
+      }
+
+      function onPointerUp(evt) {
+        if (!state.img) return;
+        const wasBox = state.dragMode && state.dragMode.startsWith('box-');
+        const wasNone = !state.dragMode;
+        state.dragMode = null;
+        state.dragRoiId = null;
+        el.canvas.style.cursor = 'crosshair';
+
+        if (wasBox && state.dragMoved) {
+          // Preserve existing notes/labels if tube count matches
+          const prevMeta = state.rois.filter(r => r.role !== 'W').map(r => ({ label: r.label, note: r.note, role: r.role }));
+          const newRois = detectTubesInImage(state.img, state.box, state.sensitivity);
+          const newTubes = newRois.filter(r => r.role !== 'W');
+          if (newTubes.length === prevMeta.length) {
+            newTubes.forEach((t, i) => {
+              t.label = prevMeta[i].label;
+              t.note = prevMeta[i].note;
+              t.role = prevMeta[i].role;
+            });
+          }
+          state.rois = newRois;
+          recomputeAndRender();
+        } else if (wasNone && !state.dragMoved) {
+          // Click on empty area adds a new manual sample tube
+          const pos = getCanvasNormPos(evt);
+          const sCount = state.rois.filter(r => r.role !== 'W').length;
+          const hasC = state.rois.some(r => r.role === 'C');
+          state.rois.push({
+            id: nextRoiId++,
+            label: hasC ? `S${sCount}` : 'Water (C)',
+            note: '',
+            role: hasC ? 'S' : 'C',
+            cx: pos.x,
+            cy: pos.y,
+            r: 0.018
+          });
+          recomputeAndRender();
+        }
+      }
+
+      // Live updates for Tube Label and Tube Note inputs
       el.resultsBody.addEventListener('input', (e) => {
         const t = e.target;
-        const id = Number(t.dataset.id);
-        if (!id) return;
+        const navType = t.dataset && t.dataset.nav;
+        const id = Number(t.dataset && t.dataset.id);
+        if (!navType || !id) return;
         const roi = state.rois.find(r => r.id === id);
         if (!roi) return;
 
-        if (t.dataset.nav === 'tube-label') {
+        if (navType === 'tube-label') {
           roi.label = t.value;
           const comp = state.computed.find(c => c.id === id);
           if (comp) comp.label = t.value;
+          if (state.activeIdx >= 0 && state.batch[state.activeIdx]) {
+            const bRoi = state.batch[state.activeIdx].rois.find(r => r.id === id);
+            if (bRoi) bRoi.label = t.value;
+          }
           drawCanvas();
-        } else if (t.dataset.nav === 'tube-note') {
+        } else if (navType === 'tube-note') {
           roi.note = t.value;
-          const comp = state.computed.find(c => c.id === id);
-          if (comp) comp.note = t.value;
+          if (state.activeIdx >= 0 && state.batch[state.activeIdx]) {
+            const bRoi = state.batch[state.activeIdx].rois.find(r => r.id === id);
+            if (bRoi) bRoi.note = t.value;
+          }
         }
       });
 
-      // ArrowDown / ArrowUp navigation between Tube Note (and Tube Label) rows
+      // ArrowDown / ArrowUp / Enter navigation between Tube Note (and Tube Label) rows
       el.resultsBody.addEventListener('keydown', (e) => {
         const t = e.target;
         const navType = t.dataset && t.dataset.nav;
@@ -1560,123 +1764,8 @@
         }
       });
 
-      // =========================================================================
-      // CANVAS POINTER INTERACTION (DRAG BOX, DRAG ROIS, CLICK TO ADD)
-      // =========================================================================
-      function getCanvasNormPos(evt) {
-        const rect = el.canvas.getBoundingClientRect();
-        const clientX = evt.touches ? evt.touches[0].clientX : evt.clientX;
-        const clientY = evt.touches ? evt.touches[0].clientY : evt.clientY;
-        return {
-          x: Math.max(0, Math.min(1, (clientX - rect.left) / rect.width)),
-          y: Math.max(0, Math.min(1, (clientY - rect.top) / rect.height)),
-          px: (clientX - rect.left) * (el.canvas.width / rect.width),
-          py: (clientY - rect.top) * (el.canvas.height / rect.height)
-        };
-      }
-
-      function onPointerDown(evt) {
-        if (!state.img) return;
-        const pos = getCanvasNormPos(evt);
-        const w = el.canvas.width, h = el.canvas.height;
-        state.dragMoved = false;
-        state.dragStart = { x: pos.x, y: pos.y };
-
-        // 1. Check ROI hit first
-        for (let i = state.rois.length - 1; i >= 0; i--) {
-          const r = state.rois[i];
-          const dist = Math.hypot(pos.px - r.cx * w, pos.py - r.cy * h);
-          if (dist <= Math.max(14, r.r * w + 5)) {
-            state.dragMode = 'roi';
-            state.dragRoiId = r.id;
-            evt.preventDefault();
-            return;
-          }
-        }
-
-        // 2. Check Scan Box edges
-        const bx1 = state.box.x1 * w, bx2 = state.box.x2 * w;
-        const by1 = state.box.y1 * h, by2 = state.box.y2 * h;
-        const tol = 14;
-        if (Math.abs(pos.py - by1) <= tol && pos.px >= bx1 - tol && pos.px <= bx2 + tol) state.dragMode = 'box-t';
-        else if (Math.abs(pos.py - by2) <= tol && pos.px >= bx1 - tol && pos.px <= bx2 + tol) state.dragMode = 'box-b';
-        else if (Math.abs(pos.px - bx1) <= tol && pos.py >= by1 - tol && pos.py <= by2 + tol) state.dragMode = 'box-l';
-        else if (Math.abs(pos.px - bx2) <= tol && pos.py >= by1 - tol && pos.py <= by2 + tol) state.dragMode = 'box-r';
-        else state.dragMode = null;
-
-        if (state.dragMode) evt.preventDefault();
-      }
-
-      function onPointerMove(evt) {
-        if (!state.dragMode || !state.img) return;
-        evt.preventDefault();
-        const pos = getCanvasNormPos(evt);
-        if (Math.hypot(pos.x - state.dragStart.x, pos.y - state.dragStart.y) > 0.005) {
-          state.dragMoved = true;
-        }
-
-        if (state.dragMode === 'roi') {
-          const roi = state.rois.find(r => r.id === state.dragRoiId);
-          if (roi) {
-            roi.cx = pos.x;
-            roi.cy = pos.y;
-            recomputeAndRender();
-          }
-        } else if (state.dragMode === 'box-l') {
-          state.box.x1 = Math.max(0.01, Math.min(state.box.x2 - 0.1, pos.x));
-          drawCanvas();
-        } else if (state.dragMode === 'box-r') {
-          state.box.x2 = Math.min(0.99, Math.max(state.box.x1 + 0.1, pos.x));
-          drawCanvas();
-        } else if (state.dragMode === 'box-t') {
-          state.box.y1 = Math.max(0.01, Math.min(state.box.y2 - 0.08, pos.y));
-          drawCanvas();
-        } else if (state.dragMode === 'box-b') {
-          state.box.y2 = Math.min(0.99, Math.max(state.box.y1 + 0.08, pos.y));
-          drawCanvas();
-        }
-      }
-
-      function onPointerUp(evt) {
-        if (!state.img) return;
-        const wasBox = state.dragMode && state.dragMode.startsWith('box-');
-        const wasNone = !state.dragMode;
-        state.dragMode = null;
-        state.dragRoiId = null;
-
-        if (wasBox && state.dragMoved) {
-          // Preserve existing notes/labels if tube count matches
-          const prevMeta = state.rois.filter(r => r.role !== 'W').map(r => ({ label: r.label, note: r.note, role: r.role }));
-          const newRois = detectTubesInImage(state.img, state.box, state.sensitivity);
-          const newTubes = newRois.filter(r => r.role !== 'W');
-          if (newTubes.length === prevMeta.length) {
-            newTubes.forEach((t, i) => {
-              t.label = prevMeta[i].label;
-              t.note = prevMeta[i].note;
-              t.role = prevMeta[i].role;
-            });
-          }
-          state.rois = newRois;
-          recomputeAndRender();
-        } else if (wasNone && !state.dragMoved) {
-          // Click on empty area adds a new manual sample tube
-          const pos = getCanvasNormPos(evt);
-          const sCount = state.rois.filter(r => r.role !== 'W').length;
-          const hasC = state.rois.some(r => r.role === 'C');
-          state.rois.push({
-            id: nextRoiId++,
-            label: hasC ? `S${sCount}` : 'Water (C)',
-            note: '',
-            role: hasC ? 'S' : 'C',
-            cx: pos.x,
-            cy: pos.y,
-            r: 0.018
-          });
-          recomputeAndRender();
-        }
-      }
-
       el.canvas.addEventListener('mousedown', onPointerDown);
+      el.canvas.addEventListener('mousemove', updateCanvasCursor);
       window.addEventListener('mousemove', onPointerMove);
       window.addEventListener('mouseup', onPointerUp);
       el.canvas.addEventListener('touchstart', onPointerDown, { passive: false });
