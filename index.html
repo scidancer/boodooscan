@@ -299,6 +299,9 @@
               <button id="inlineNextBtn" type="button" class="text-xs font-semibold px-2.5 py-1.5 rounded-lg border border-slate-200 bg-white hover:bg-slate-100 text-slate-700 disabled:opacity-40 transition shrink-0" title="Next Photo">
                 Next →
               </button>
+              <button id="inlineRemoveBtn" type="button" class="text-xs font-bold px-2 py-1.5 rounded-lg border border-slate-200 bg-white hover:bg-rose-50 hover:text-rose-600 hover:border-rose-200 text-slate-500 transition shrink-0" title="Remove current photo from queue">
+                &times;
+              </button>
             </div>
             <button id="saveAndNextBtn" type="button" class="text-xs font-semibold px-3 py-1.5 rounded-lg bg-teal-600 hover:bg-teal-500 text-white shadow-sm transition shrink-0 flex items-center gap-1" title="Save current photo to Session Log and advance to next photo">
               <span>Save &amp; Next →</span>
@@ -489,6 +492,7 @@
         inlinePrevBtn: document.getElementById('inlinePrevBtn'),
         inlinePhotoSelect: document.getElementById('inlinePhotoSelect'),
         inlineNextBtn: document.getElementById('inlineNextBtn'),
+        inlineRemoveBtn: document.getElementById('inlineRemoveBtn'),
         saveAndNextBtn: document.getElementById('saveAndNextBtn'),
         // QC Banner
         qcBanner: document.getElementById('qcBanner'),
@@ -778,6 +782,38 @@
 
         recomputeAndRender();
         renderBatchStrip();
+      }
+
+      function removeBatchPhoto(idx) {
+        if (idx < 0 || idx >= state.batch.length) return;
+        const removed = state.batch[idx];
+        const wasActive = idx === state.activeIdx;
+        if (!wasActive) syncActiveToBatch();
+
+        state.batch.splice(idx, 1);
+
+        if (state.batch.length === 0) {
+          state.activeIdx = -1;
+          state.img = null;
+          state.rois = [];
+          state.computed = [];
+          state.qcStatus = 'IDLE';
+          el.canvas.classList.add('hidden');
+          el.emptyState.classList.remove('hidden');
+          el.activeFileNameBadge.textContent = 'No photo loaded';
+          el.batchNotesInput.value = '';
+          renderBatchStrip();
+          recomputeAndRender();
+        } else if (wasActive) {
+          const nextIdx = Math.min(idx, state.batch.length - 1);
+          state.activeIdx = -1;
+          selectBatchPhoto(nextIdx);
+        } else {
+          if (idx < state.activeIdx) state.activeIdx--;
+          renderBatchStrip();
+          renderInlinePhotoBar();
+        }
+        showToast(`Removed "${removed.fileName}" from queue.`, 'info');
       }
 
       function rotateActivePhoto90() {
@@ -1510,15 +1546,16 @@
           const active = idx === state.activeIdx;
           const tubeCount = item.rois.filter(r => r.role !== 'W').length;
           return `
-            <button type="button" data-batch-idx="${idx}" class="group relative shrink-0 w-28 text-left rounded-xl border p-1.5 transition ${active ? 'border-teal-500 ring-2 ring-teal-500/30 bg-teal-50/40' : 'border-slate-200 bg-white hover:border-slate-300'}">
+            <div role="button" tabindex="0" data-batch-idx="${idx}" class="group relative shrink-0 w-28 text-left rounded-xl border p-1.5 cursor-pointer transition ${active ? 'border-teal-500 ring-2 ring-teal-500/30 bg-teal-50/40' : 'border-slate-200 bg-white hover:border-slate-300'}">
               <div class="relative h-14 rounded-lg overflow-hidden bg-slate-900 mb-1">
                 <img src="${item.thumbUrl}" alt="${escapeHtml(item.fileName)}" class="w-full h-full object-cover" />
                 <span class="batch-qc-dot absolute top-1 left-1 w-2.5 h-2.5 rounded-full ring-2 ring-white ${dotColor(item.qcStatus)}" title="QC: ${item.qcStatus}"></span>
-                ${item.saved ? '<span class="absolute top-1 right-1 bg-teal-600 text-white text-[9px] font-bold px-1.5 py-0.2 rounded-full shadow">✓</span>' : ''}
+                <button type="button" data-remove-batch-idx="${idx}" title="Remove photo from queue" class="absolute top-1 right-1 w-5 h-5 rounded-full bg-slate-900/80 hover:bg-rose-600 text-white text-xs font-bold leading-none flex items-center justify-center shadow transition">&times;</button>
+                ${item.saved ? '<span class="absolute bottom-1 right-1 bg-teal-600 text-white text-[9px] font-bold px-1.5 py-0.2 rounded-full shadow">✓</span>' : ''}
               </div>
               <p class="text-[10px] font-mono font-semibold text-slate-700 truncate">${escapeHtml(item.fileName)}</p>
               <p class="text-[9px] text-slate-400">${tubeCount} tubes</p>
-            </button>
+            </div>
           `;
         }).join('');
 
@@ -2056,10 +2093,17 @@
       el.nextPhotoBtn.addEventListener('click', () => selectBatchPhoto(state.activeIdx + 1));
       el.inlinePrevBtn.addEventListener('click', () => selectBatchPhoto(state.activeIdx - 1));
       el.inlineNextBtn.addEventListener('click', () => selectBatchPhoto(state.activeIdx + 1));
+      el.inlineRemoveBtn.addEventListener('click', () => removeBatchPhoto(state.activeIdx));
       el.inlinePhotoSelect.addEventListener('change', (e) => selectBatchPhoto(Number(e.target.value)));
       el.saveAndNextBtn.addEventListener('click', () => saveActiveRun(true));
 
       el.batchStrip.addEventListener('click', (e) => {
+        const removeBtn = e.target.closest('[data-remove-batch-idx]');
+        if (removeBtn) {
+          e.stopPropagation();
+          removeBatchPhoto(Number(removeBtn.dataset.removeBatchIdx));
+          return;
+        }
         const btn = e.target.closest('[data-batch-idx]');
         if (btn) selectBatchPhoto(Number(btn.dataset.batchIdx));
       });
